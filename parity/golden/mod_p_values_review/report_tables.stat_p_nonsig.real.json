@@ -82,12 +82,12 @@
                   "Furthermore, there was no difference between anger and sadness for benign envy, ΔM = -0.14, SE = 0.11, t(89) = -1.33, p = .19, dZ = -0.14, but anger led to higher ratings than sadness for malicious envy, ΔM = 2.75, SE = 0.12, t(89) = 22.15, p < .001, dZ = 2.33.",
                   "The effect of Turning was not significant, F(1, 97) = 1.04, p = .31, ηG² < .001, as was the interaction of Emotion X Turning, F(2, 194) = 1.14, p = .32, ηG² < .001.",
                   "The effect of Turning was not significant, F(1, 97) = 1.04, p = .31, ηG² < .001, as was the interaction of Emotion X Turning, F(2, 194) = 1.14, p = .32, ηG² < .001.",
-                  "The analysis resulted in main effects for Scale, F(1, 97) = 22.44, p < .001, ηG² = .02, Emotion, F(2, 194) = 218.31, p < .001, ηG² = .43, and Turning, F(1, 97) = 7.13, p = .01, ηG² = .002, but no interaction of Emotion X Turning, F(2, 194) = 1.95, p = .14, ηG² < .001, and no three-way-interaction, F(2, 194) = 0.26, p = .77, ηG² < .001.",
-                  "The analysis resulted in main effects for Scale, F(1, 97) = 22.44, p < .001, ηG² = .02, Emotion, F(2, 194) = 218.31, p < .001, ηG² = .43, and Turning, F(1, 97) = 7.13, p = .01, ηG² = .002, but no interaction of Emotion X Turning, F(2, 194) = 1.95, p = .14, ηG² < .001, and no three-way-interaction, F(2, 194) = 0.26, p = .77, ηG² < .001.",
+                  "The analysis resulted in main effects for Scale, F(1, 97) = 22.44, p < .001, ηG² = .02, Emotion, F(2, 194) = 218.31, p < .001, ηG² = .43, and Turning, F(1, 97) = 7.13, p = .01, ηG² = .002, but no interaction of Emotion X Turning, F(2, 194) = 1.95, p = .14, ηG² < .001, and no three-way-interaction, F…",
+                  "The analysis resulted in main effects for Scale, F(1, 97) = 22.44, p < .001, ηG² = .02, Emotion, F(2, 194) = 218.31, p < .001, ηG² = .43, and Turning, F(1, 97) = 7.13, p = .01, ηG² = .002, but no interaction of Emotion X Turning, F(2, 194) = 1.95, p = .14, ηG² < .001, and no three-way-interaction, F…",
                   "Finally, the predicted Scale X Turning interaction was not significant, F(1, 97) = 1.80, p = .18, ηG² < .001.",
                   "That is, contrary to predictions, ratings tended to be higher when the target turned towards the person as compared to the object for both benign, ΔM = 0.15, SE = 0.05, t(97) = 2.91, p = .01, dZ = 0.29, and malicious envy, ΔM = 0.08, SE = 0.05, t(97) = 1.54, p = .13, dZ = 0.16.",
-                  "The analysis resulted in main effects of Scale, F(1, 97) = 50.06, p < .001, ηG² = .06, and Emotion, F(2, 194) = 284.08, p < .001, ηG² = .38, a marginally significant effect of Turning, F(1, 97) = 3.24, p = .07, ηG² < .001, but no interaction of Emotion X Turning, F(2, 194) = 0.77, p = .46, ηG² < .001.",
-                  "The analysis resulted in main effects of Scale, F(1, 97) = 50.06, p < .001, ηG² = .06, and Emotion, F(2, 194) = 284.08, p < .001, ηG² = .38, a marginally significant effect of Turning, F(1, 97) = 3.24, p = .07, ηG² < .001, but no interaction of Emotion X Turning, F(2, 194) = 0.77, p = .46, ηG² < .001.",
+                  "The analysis resulted in main effects of Scale, F(1, 97) = 50.06, p < .001, ηG² = .06, and Emotion, F(2, 194) = 284.08, p < .001, ηG² = .38, a marginally significant effect of Turning, F(1, 97) = 3.24, p = .07, ηG² < .001, but no interaction of Emotion X Turning, F(2, 194) = 0.77, p = .46, ηG² < .00…",
+                  "The analysis resulted in main effects of Scale, F(1, 97) = 50.06, p < .001, ηG² = .06, and Emotion, F(2, 194) = 284.08, p < .001, ηG² = .38, a marginally significant effect of Turning, F(1, 97) = 3.24, p = .07, ηG² < .001, but no interaction of Emotion X Turning, F(2, 194) = 0.77, p = .46, ηG² < .00…",
                   "Next to this, there was no Scale X Turning interaction, F(1, 97) = 1.19, p = .28, ηG² < .001.",
                   "Nevertheless, turning towards the person as compared to the object led to higher malicious envy, ΔM = 0.12, SE = 0.05, t(97) = 2.48, p = .01, dZ = 0.25, but there was no effect for benign envy, ΔM = 0.04, SE = 0.06, t(97) = 0.56, p = .58, dZ = 0.06.",
                   "For females (n = 20), the selected picture in which the target expressed anger towards the person was rated at least marginally significantly higher on anger (M = 5.35, SE = 0.30) than any other emotion (Ms < 4.48, ps < .053).",
@@ -137,6 +137,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.35",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

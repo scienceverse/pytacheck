@@ -11,6 +11,7 @@ pytacheck keeps the table as data and renders it itself (see
 from __future__ import annotations
 
 import math
+import re
 from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass, field
 from typing import Any
@@ -150,12 +151,19 @@ class ReportTable:
     escape: bool = False
     column: str = "body"
     options: dict[str, Any] = field(default_factory=dict)
+    # the line under the table telling what the report leaves out of it
+    # (``_report_table_limits()``), None when the table is shown whole
+    note: str | None = None
 
     def to_canonical(self, encode: Callable[[Any], dict[str, Any]]) -> dict[str, Any]:
         """Parity encoding: the table's column names and rows, as *encode* (the
         parity encoder) writes a data frame. Widths, page length, escaping and
-        placement only change how the table looks, so they are left out."""
-        return {"t": "report_table", "table": encode(self.data)}
+        placement only change how the table looks, so they are left out. The note under a
+        shortened table is text of the report, as in R (a line after the table's chunk)."""
+        table = {"t": "report_table", "table": encode(self.data)}
+        if self.note is None:
+            return table
+        return {"t": "list", "names": None, "v": [table, encode(self.note)]}
 
     def column_defs(self) -> list[dict[str, Any]]:
         """DataTables ``columnDefs`` for the widths (``report_table()``)."""
@@ -170,6 +178,74 @@ class ReportTable:
 
     def __bool__(self) -> bool:
         return len(self.data) > 0 and self.data.shape[1] > 0
+
+
+def _report_limit_option(name: str, default: int) -> int:
+    """Port of ``.report_limit_option()``: a whole number from a report setting, or
+    *default* when the setting is not one number of at least 1."""
+    from metacheck.utils import get_option
+
+    raw = get_option(name, default)
+    if raw is None or isinstance(raw, list | tuple | dict | set):
+        return default
+    try:
+        n = int(float(raw))
+    except (TypeError, ValueError, OverflowError):
+        return default
+    return n if n >= 1 else default
+
+
+def _report_table_limits(table: pd.DataFrame) -> tuple[pd.DataFrame, str | None]:
+    """Port of ``.report_table_limits()``: what a report shows of a table.
+
+    At most ``metacheck.report_max_rows`` (100) rows and ``metacheck.report_max_cols`` (100)
+    columns, and each text cell cut to ``metacheck.report_max_cell_chars`` (300) characters
+    followed by "…", so a report's size does not grow with the size of a deposit's files (a
+    data preview of 100 rows by 1,190 columns, a list of 13,562 codebook variables and survey
+    answers of several thousand characters per cell gave reports of 15 to 25 MB of markdown
+    that could not be turned into HTML within the server's 15 minutes; metacheck 0.4.4.36).
+    A cell holding a link (``<a ...>``) is left whole, as a cut link breaks the page. Only the
+    report is shortened: the module's own output keeps every row, column and character. The
+    brief report's to-do list reads its tables back from the report, so it lists at most this
+    many rows per table. Returns the table and the line telling the reader what is left out
+    (``None`` when the table is shown whole).
+    """
+    max_rows = _report_limit_option("metacheck.report_max_rows", 100)
+    max_cols = _report_limit_option("metacheck.report_max_cols", 100)
+    max_chars = _report_limit_option("metacheck.report_max_cell_chars", 300)
+    n_rows, n_cols = table.shape
+    if n_cols > max_cols:
+        table = table.iloc[:, :max_cols]
+    if n_rows > max_rows:
+        table = table.iloc[:max_rows]
+    table = table.copy()
+    cut = False
+    for j in range(table.shape[1]):
+        s = table.iloc[:, j]
+        categorical = isinstance(s.dtype, pd.CategoricalDtype)
+        if not (categorical or s.dtype == object or pd.api.types.is_string_dtype(s.dtype)):
+            continue
+        values = s.astype(object).tolist() if categorical else s.tolist()
+        long = [isinstance(v, str) and len(v) > max_chars and not _LINK.search(v) for v in values]
+        if any(long):
+            values = [
+                v[:max_chars] + "\u2026" if lg else v for v, lg in zip(values, long, strict=True)
+            ]
+            keep = s.dtype if pd.api.types.is_string_dtype(s.dtype) and not categorical else None
+            table.isetitem(j, pd.Series(values, index=s.index, dtype=keep).array)
+            cut = True
+    shown = [
+        *([f"the first {max_rows:d} of {n_rows:d} rows"] if n_rows > max_rows else []),
+        *([f"the first {max_cols:d} of {n_cols:d} columns"] if n_cols > max_cols else []),
+    ]
+    note = [
+        *([f"Showing {' and '.join(shown)}."] if shown else []),
+        *([f"Cells longer than {max_chars:d} characters are cut (\u2026)."] if cut else []),
+    ]
+    return table, (f"*{' '.join(note)}*" if note else None)
+
+
+_LINK = re.compile(r"<a\b", re.IGNORECASE)
 
 
 def scroll_table(
@@ -193,6 +269,17 @@ def scroll_table(
         table = pd.DataFrame({"": values})
     if len(table) == 0 or table.shape[1] == 0:
         return ""
+    # the rows, columns and characters the report shows (_report_table_limits()); cut before
+    # line breaks become <br>, so no <br> is cut in two
+    n_cols = table.shape[1]
+    table, note = _report_table_limits(table)
+    # widths for columns left out are dropped with them
+    if (
+        table.shape[1] < n_cols
+        and isinstance(colwidths, list | tuple)
+        and len(colwidths) > table.shape[1]
+    ):
+        colwidths = list(colwidths)[: table.shape[1]]
     table = table.copy()
     for i in range(table.shape[1]):
         # every text column, factors included (metacheck's `table[[col]]` loop
@@ -213,7 +300,9 @@ def scroll_table(
             values = [v.replace("\n", "<br>") if isinstance(v, str) else v for v in s.tolist()]
             keep = s.dtype if pd.api.types.is_string_dtype(s.dtype) and s.dtype != object else None
             table.isetitem(i, pd.Series(values, index=s.index, dtype=keep))
-    return ReportTable(table, colwidths=colwidths, maxrows=maxrows, escape=escape, column=column)
+    return ReportTable(
+        table, colwidths=colwidths, maxrows=maxrows, escape=escape, column=column, note=note
+    )
 
 
 _CALLOUTS = ("tip", "note", "warning", "important", "caution")

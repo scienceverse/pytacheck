@@ -42,7 +42,6 @@ ALLOWED_MODULES: tuple[str, ...] = (
     "power",
     "marginal",
     "prereg_check",
-    "ethics_check",
     "ref_pubpeer",
     "ref_retraction",
     "ref_replication",
@@ -54,16 +53,19 @@ ALLOWED_MODULES: tuple[str, ...] = (
     "code_check",
     "data_check",
     "codebook_check",
+    # last: ethics_check reads the results of power, stat_p_exact, stat_check, repo_check,
+    # data_check and prereg_check when they ran first (metacheck 0.4.4.37, #695 point 18)
+    "ethics_check",
 )
 #: the checks that need no other online service, so a report is quick
 DEFAULT_MODULES: tuple[str, ...] = (
     "power",
     "marginal",
-    "ethics_check",
     "stat_check",
     "stat_p_exact",
     "stat_p_nonsig",
     "stat_effect_size",
+    "ethics_check",
 )
 #: the checks of a repository: they run one after the other on the unpacked folder
 REPOSITORY_MODULES: tuple[str, ...] = ("repo_check", "code_check", "data_check")

@@ -277,35 +277,6 @@
   "py": "metacheck.text.extract.extract_eq"
   "args":
     "paper": {"$chr": ["t = 2, p = .05"]}
-# ----------------------------------------------------------- .detect_live_data
-- "id": "detect_live_data.demo"
-  "r": "metacheck:::.detect_live_data"
-  "py": "metacheck.text.extract._detect_live_data"
-  "args":
-    "paper": {"$paper": "demo"}
-- "id": "detect_live_data.psychsci"
-  "r": "metacheck:::.detect_live_data"
-  "py": "metacheck.text.extract._detect_live_data"
-  "args":
-    "paper": *psychsci
-- "id": "detect_live_data.test_paper"
-  "r": "metacheck:::.detect_live_data"
-  "py": "metacheck.text.extract._detect_live_data"
-  "args":
-    "paper":
-      "$test_paper":
-        "text":
-        - "Participants were recruited via Prolific."
-        - "We recruited 50 students."
-        - "All participants gave written informed consent."
-        - "Data were collected from an existing database."
-        - "Mice were housed in standard cages."
-        - "We used MTurk workers."
-        - "Exclusion criteria were applied to 10 patients."
-        - "The model was tested on held-out data."
-        - "Our subjects completed the task."
-        - "Respondents were asked to rate items."
-  "compare": {"ignore": ["paper_id"]}
 # --------------------------------------------------------------- extract_tests
 - "id": "extract_tests.demo"
   "r": "extract_tests"

@@ -2963,6 +2963,36 @@
         - "r"
         "file_name":
         - "raw.csv"
+- "id": "code_missing_files.review.windows_drive"
+  "r": "metacheck:::.code_missing_files"
+  "py": "metacheck.codecheck.core._code_missing_files"
+  "args":
+    "code_files":
+      "$df":
+        "paper_id":
+        - "p"
+        "repo_url":
+        - "r"
+        "file_name":
+        - "a.R"
+        "loaded_refs":
+        - "C://folder/x.csv\x1Fhttps://site/y.csv"
+        "files_written":
+        - ""
+    "all_files":
+      "$df":
+        "repo_url":
+        - "r"
+        "file_name":
+        - "raw.csv"
+- "id": "is_web_address.review.schemes"
+  "r": "metacheck:::.is_web_address"
+  "py": "metacheck.utils._is_web_address"
+  "args":
+    "x":
+      "$expr":
+        "r": "c('https://site/x.csv', 'ftp://h/x', 's3://bucket/x', 'file:///C:/x.csv', 'url(\"https://site/x.csv\")', 'C://folder/x.csv', 'C:/folder/x.csv', 'data/x.csv', NA)"
+        "py": "['https://site/x.csv', 'ftp://h/x', 's3://bucket/x', 'file:///C:/x.csv', 'url(\"https://site/x.csv\")', 'C://folder/x.csv', 'C:/folder/x.csv', 'data/x.csv', None]"
 - "id": "code_missing_files.review.sync_no_refs_column"
   "r": "metacheck:::.code_missing_files"
   "py": "metacheck.codecheck.core._code_missing_files"

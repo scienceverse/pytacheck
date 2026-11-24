@@ -48,6 +48,7 @@
           "header",
           "section_type",
           "ethics",
+          "sign",
           "live_data"
         ],
         "v": [
@@ -106,6 +107,12 @@
             ]
           },
           {
+            "t": "chr",
+            "v": [
+              "own"
+            ]
+          },
+          {
             "t": "lgl",
             "v": [
               true
@@ -116,7 +123,7 @@
       {
         "t": "chr",
         "v": [
-          "Based on the following text, we would expect an ethics approval statement, but it was not present:\n\n> Participants were recruited from a local community sample and gave informed consent."
+          "The paper appears to report data that the authors collected from people or animals, but we found no ethics statement. Such data need one: approval by an ethics committee, or a reason why none was needed. We based this on the sentences below. A paper can describe someone else's study in the same words; if these data are not the authors' own, no statement is needed.\n\nWe based this on:\n\n> Participants were recruited from a local community sample and gave informed consent."
         ]
       },
       {
@@ -128,7 +135,7 @@
       {
         "t": "chr",
         "v": [
-          "1 of 1 paper appeared to involve live data collection and lacked an ethics approval statement."
+          "1 of 1 paper appeared to report data about people or animals that need an ethics statement, and lacked one."
         ]
       },
       {
@@ -138,9 +145,10 @@
           "paper_id",
           "ethics_approved",
           "ethics_statements",
+          "data_source",
           "needs_ethics",
-          "live_data_statements",
-          "states_no_participants"
+          "data_source_signs",
+          "data_source_statements"
         ],
         "v": [
           {
@@ -168,9 +176,21 @@
             ]
           },
           {
+            "t": "chr",
+            "v": [
+              "own"
+            ]
+          },
+          {
             "t": "lgl",
             "v": [
               true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "consent; recruitment"
             ]
           },
           {
@@ -184,28 +204,15 @@
                 ]
               }
             ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              false
-            ]
           }
         ]
       },
       {
         "t": "list",
         "names": [
-          "ethics_approved",
-          "states_no_participants"
+          "ethics_approved"
         ],
         "v": [
-          {
-            "t": "lgl",
-            "v": [
-              false
-            ]
-          },
           {
             "t": "lgl",
             "v": [
@@ -216,6 +223,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.35",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

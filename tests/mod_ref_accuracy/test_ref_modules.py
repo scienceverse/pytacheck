@@ -8,6 +8,7 @@ import pytest
 import metacheck as pc
 from metacheck.modules import ref_accuracy as ra
 from metacheck.report.blocks import ReportTable
+from metacheck.utils import local_options
 from tests.mod_ref_accuracy.edits import ra_demo, ra_report_tables, ra_set, ra_xrefs
 
 # ---------------------------------------------------------------------------
@@ -236,7 +237,9 @@ def test_ref_accuracy_report_strikes_cited_values() -> None:
             ("bib_match", 2, "doi", "10.9999/other"),
         ]
     )
-    out = pc.module_run(paper, "ref_accuracy")
+    # the five labels of the cell are longer than the report's default cut of a cell
+    with local_options({"metacheck.report_max_cell_chars": 2000}):
+        out = pc.module_run(paper, "ref_accuracy")
     row = out.table[out.table["bib_id"] == 2].iloc[0]
     for flag in ("title", "author", "container", "year", "doi"):
         assert row[f"{flag}_mismatch"]

@@ -43,6 +43,7 @@ from urllib.parse import urlsplit
 from metacheck._r import grepl, gsub, plural, strsplit, sub
 from metacheck._values import is_missing
 from metacheck.archives._atomic import atomic_write
+from metacheck.utils import _is_web_address
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -774,18 +775,16 @@ def _entry_table(infos: Sequence[zipfile.ZipInfo]) -> pd.DataFrame:
     )
 
 
-_URL_SCHEME = re.compile(r"^[A-Za-z][A-Za-z0-9+.-]*://")
-
-
 def _is_local_file(x: Any) -> bool:
     """Port of ``R/zip-peek.R::.is_local_file()``: an existing file, not a URL.
 
-    Anything with a URL scheme (``https://``, ``file://``) is a URL.
+    Anything with a URL scheme (``https://``, ``file://``) is a URL; a Windows drive written
+    as ``C://`` is a path (metacheck 0.4.4.37, #723).
     """
     if not isinstance(x, str | os.PathLike):
         return False
     s = os.fspath(x)
-    if not isinstance(s, str) or not s or _URL_SCHEME.match(s):
+    if not isinstance(s, str) or not s or _is_web_address(s):
         return False
     return os.path.isfile(s)
 

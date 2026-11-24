@@ -1,0 +1,480 @@
+{
+  "id": "ethics_check.statements.more_names",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ethics_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Ethics Approval Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 10,
+        "names": [
+          "text_id",
+          "section_id",
+          "paragraph_id",
+          "text",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "ethics",
+          "sign",
+          "live_data"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "This study was evaluated and approved by the ETH Zurich Ethics Commission as proposal EK-2023-N-258.",
+              "The empirical study was approved by the Bioethics Commission of the university.",
+              "It was approved by the Regional Committees for Medical and Health Research Ethics (2017/2205).",
+              "All procedures were approved by the University of Nebraska-Lincoln Internal Review Board.",
+              "The Swedish Ethical Review Authority approved the study protocol.",
+              "The data were collected under a protocol approved by the Office for Human Subjects Protection at Florida State University.",
+              "This secondary analysis did not require further ethical review.",
+              "As such, this work was exempt from formal human research ethics review.",
+              "This study was approved by the XXX University ethics committee.",
+              "The study received ethical approval from the institutional review board (EK 227052019). [INSERT TABLE 1 HERE]"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "This study was evaluated and approved by the ETH Zurich Ethics Commission as proposal EK-2023-N-258.",
+              "The empirical study was approved by the Bioethics Commission of the university.",
+              "It was approved by the Regional Committees for Medical and Health Research Ethics (2017/2205).",
+              "All procedures were approved by the University of Nebraska-Lincoln Internal Review Board.",
+              "The Swedish Ethical Review Authority approved the study protocol.",
+              "The data were collected under a protocol approved by the Office for Human Subjects Protection at Florida State University.",
+              "This secondary analysis did not require further ethical review.",
+              "As such, this work was exempt from formal human research ethics review.",
+              "This study was approved by the XXX University ethics committee.",
+              "The study received ethical approval from the institutional review board (EK 227052019). [INSERT TABLE 1 HERE]"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "s0",
+              "s1",
+              "s2",
+              "s3",
+              "s4",
+              "s5",
+              "s6",
+              "s7",
+              "s8",
+              "s9"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "No papers appeared to report data about people or animals that need an ethics statement."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "na"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "No papers appeared to report data about people or animals that need an ethics statement."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 10,
+        "names": [
+          "paper_id",
+          "ethics_approved",
+          "ethics_statements",
+          "data_source",
+          "needs_ethics",
+          "data_source_signs",
+          "data_source_statements"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "s0",
+              "s1",
+              "s2",
+              "s3",
+              "s4",
+              "s5",
+              "s6",
+              "s7",
+              "s8",
+              "s9"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "This study was evaluated and approved by the ETH Zurich Ethics Commission as proposal EK-2023-N-258."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "The empirical study was approved by the Bioethics Commission of the university."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "It was approved by the Regional Committees for Medical and Health Research Ethics (2017/2205)."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "All procedures were approved by the University of Nebraska-Lincoln Internal Review Board."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "The Swedish Ethical Review Authority approved the study protocol."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "The data were collected under a protocol approved by the Office for Human Subjects Protection at Florida State University."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "This secondary analysis did not require further ethical review."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "As such, this work was exempt from formal human research ethics review."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "This study was approved by the XXX University ethics committee."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "The study received ethical approval from the institutional review board (EK 227052019). [INSERT TABLE 1 HERE]"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "none",
+              "none",
+              "none",
+              "none",
+              "none",
+              "none",
+              "none",
+              "none",
+              "none",
+              "none"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "ethics_approved"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.40",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

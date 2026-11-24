@@ -9,6 +9,6 @@
       "**1 data path in the code does not work in the repository as deposited.** We pointed it to where the file is, so the code could run: `d.csv` to `data/d.csv` (in a.R). The code should be changed, because as written it does not find the file."
     ]
   },
-  "metacheck_version": "0.4.4.35",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

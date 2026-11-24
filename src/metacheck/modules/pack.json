@@ -70,7 +70,6 @@
         "power",
         "marginal",
         "prereg_check",
-        "ethics_check",
         "ref_pubpeer",
         "ref_retraction",
         "ref_replication",
@@ -81,7 +80,8 @@
         "repo_check",
         "code_check",
         "data_check",
-        "codebook_check"
+        "codebook_check",
+        "ethics_check"
       ]
     }
   }

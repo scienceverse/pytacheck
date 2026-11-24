@@ -7,7 +7,7 @@
   ],
   "value": {
     "t": "df",
-    "nrow": 115,
+    "nrow": 116,
     "names": [
       "repo_url",
       "file_name",
@@ -20,6 +20,7 @@
       {
         "t": "chr",
         "v": [
+          "upstream/metacheck/R",
           "upstream/metacheck/R",
           "upstream/metacheck/R",
           "upstream/metacheck/R",
@@ -173,6 +174,7 @@
           "causal_sentences.R",
           "code_check.R",
           "data_check_helpers.R",
+          "data-source.R",
           "db-crossref.R",
           "db-pubpeer.R",
           "db-regcheck.R",
@@ -374,6 +376,7 @@
           null,
           null,
           null,
+          null,
           null
         ]
       },
@@ -413,6 +416,7 @@
           "<repo>/upstream/metacheck/R/causal_sentences.R",
           "<repo>/upstream/metacheck/R/code_check.R",
           "<repo>/upstream/metacheck/R/data_check_helpers.R",
+          "<repo>/upstream/metacheck/R/data-source.R",
           "<repo>/upstream/metacheck/R/db-crossref.R",
           "<repo>/upstream/metacheck/R/db-pubpeer.R",
           "<repo>/upstream/metacheck/R/db-regcheck.R",
@@ -503,7 +507,7 @@
           14889,
           3388,
           17848,
-          20721,
+          20729,
           10017,
           6813,
           28966,
@@ -531,8 +535,9 @@
           4819,
           2885,
           11540,
-          173368,
+          173435,
           416702,
+          36642,
           32616,
           2030,
           17632,
@@ -547,7 +552,7 @@
           481,
           19507,
           5080,
-          18363,
+          18412,
           5460,
           11732,
           22812,
@@ -578,17 +583,17 @@
           6483,
           5367,
           18842,
-          66119,
+          66284,
           20164,
           13701,
-          64972,
+          68911,
           52542,
           91704,
           29568,
           44115,
           42550,
           45037,
-          419721,
+          419785,
           1278,
           121234,
           37005,
@@ -600,19 +605,19 @@
           937,
           7301,
           1934,
-          4815,
+          5310,
           3888,
           13318,
           3761,
           3914,
           10254,
-          31125,
+          25127,
           3653,
           3360,
           32778,
           3913,
           4662,
-          112951,
+          112984,
           3570,
           3344
         ]
@@ -734,11 +739,12 @@
           "code",
           "code",
           "code",
+          "code",
           null
         ]
       }
     ]
   },
-  "metacheck_version": "0.4.4.35",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

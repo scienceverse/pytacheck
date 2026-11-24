@@ -75,11 +75,14 @@ def validated_checks() -> tuple[str, ...]:
 
     table = status_table()
     prefix = "metacheck::"
-    return tuple(
+    names = [
         str(ref).removeprefix(prefix)
         for ref, label in zip(table["module"], table["label"], strict=True)
         if str(ref).startswith(prefix) and label == "validated"
-    )
+    ]
+    # ethics_check last: it reads the results of power, stat_p_exact, stat_check, repo_check,
+    # data_check and prereg_check when they ran first (metacheck 0.4.4.37, #695 point 18)
+    return (*(n for n in names if n != "ethics_check"), *(n for n in names if n == "ethics_check"))
 
 
 @cache

@@ -37,6 +37,8 @@ report_tbl <- function(o) {
   chunk <- Filter(function(x) grepl("# table data", x, fixed = TRUE), o$report)[[1]]
   code <- gsub("```[^\n]*", "", chunk)
   code <- sub("metacheck::report_table(", "report_table(", code, fixed = TRUE)
+  # the line under a table that a report cuts (0.4.4.36) is text, not code
+  code <- sub("\n\\*[^\n]*\\*\n*$", "\n", code)
   e <- new.env()
   e$report_table <- function(table, colwidths, maxrows, escape) {
     list(table = as.data.frame(table), colwidths = colwidths, maxrows = maxrows, escape = escape)

@@ -18,6 +18,17 @@ package's. The R commit each release is compared against is in
 - **Not done yet:** `run_code` is off unless `--run-code` is given and Docker runs; `crossref` only reaches GROBID.
 - **Fixed:** the site's job queue woke its clean-up thread instead of a worker when a job arrived, so a job could wait until the next one came.
 
+### Compared with metacheck 0.4.4.40 (`dev` at 5cdb9d3)
+
+- **Changed:** the parity checks compare pytacheck with metacheck `dev` at 5cdb9d3 (0.4.4.40) instead of 991f766 (0.4.4.35): five commits, 0.4.4.36 to 0.4.4.40. The goldens, including the accuracy goldens, were made again with R.
+- **Changed:** ethics_check decides from where the paper's data came from (`data_source`; #695 point 18): the authors' own data from people or animals, records about individual people obtained for the study, existing data of an unclear source, an open resource, none, uncertain, or no text. A statement is expected for the first three, and a paper without one is yellow, not red. The summary table has `data_source`, `needs_ethics`, `data_source_signs` and `data_source_statements` instead of `live_data_statements` and `states_no_participants`. The decision weighs where a sentence stands (title, abstract, Participants or Method headings), leaves out other people's studies and review, commentary, tutorial and simulation papers, and reads the results of power, stat_p_exact, stat_check, repo_check, data_check and prereg_check when they ran first, so the app and the site now run ethics_check last.
+- **Changed:** more committee names (plural committees, "Ethics Commission", "Ethikkommission", review authorities, "did not require further ethical review") count as ethics statements; template lines ("[Add ethics approval ... here.]") and "IEC" followed by a number do not. ethics_check gives "na" for an empty paper list again.
+- **Changed:** a report shows at most 100 rows and 100 columns of a table, and cuts text cells longer than 300 characters (a cell holding a link is left whole), with a line under the table saying what is left out; the settings are `metacheck.report_max_rows`, `metacheck.report_max_cols` and `metacheck.report_max_cell_chars`. Only the report changes: the modules' output keeps everything, and the brief report's to-do list reads at most 100 rows per table.
+- **Fixed:** a Windows path written with a double slash ("C://folder/data.csv") is a path again, not a web address (`_is_web_address()`; #723): code_check counts such a file as missing from the deposit, the reproducibility check keeps it in its prediction, a local zip file and a local folder's name in the file tree are told from web addresses with the same test.
+- **Fixed:** reproducibility_check no longer runs a JAGS or BUGS model saved as `.R` as an R script: a file code_check left unchecked is looked at too, and a model found there is marked `jags_model`.
+- **Changed:** D162: `_detect_live_data()` stays as a private helper of the data package (R removed it and `.detect_no_participants()`). D84, D85 and U102 reworded.
+- **Not ported:** the quieter warning in `.own_reference_links()` (R only changed `$` to `[[ ]]`); nothing else of the range is left out.
+
 ### Compared with metacheck 0.4.4.35 (`dev` at 991f766)
 
 - **Changed:** the parity checks compare pytacheck with metacheck `dev` at 991f766 (0.4.4.35) instead of 4150b31 (0.4.4.29): six commits, 0.4.4.30 to 0.4.4.35. The goldens, including the accuracy goldens, were made again with R.

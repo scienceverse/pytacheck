@@ -37,7 +37,7 @@
       },
       {
         "t": "df",
-        "nrow": 1,
+        "nrow": 0,
         "names": [
           "text_id",
           "section_id",
@@ -48,87 +48,72 @@
           "header",
           "section_type",
           "ethics",
+          "sign",
           "live_data"
         ],
         "v": [
           {
             "t": "int",
-            "v": [
-              1
-            ]
+            "v": []
           },
           {
             "t": "dbl",
-            "v": [
-              0
-            ]
+            "v": []
           },
           {
             "t": "dbl",
-            "v": [
-              0
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              "Participants were recruited online."
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              "Participants were recruited online."
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              "p1"
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              "Section 1"
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              "method"
-            ]
+            "v": []
           },
           {
             "t": "lgl",
-            "v": [
-              null
-            ]
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
           },
           {
             "t": "lgl",
-            "v": [
-              true
-            ]
+            "v": []
           }
         ]
       },
       {
         "t": "chr",
         "v": [
-          "Based on the following text, we would expect an ethics approval statement, but it was not present:\n\n> Participants were recruited online."
+          "The paper does not appear to report data about individual people or animals (we found no method part, no sample description and no statistical results, and at most one sign that the authors collected data), so we do not expect an ethics statement."
         ]
       },
       {
         "t": "chr",
         "v": [
-          "yellow"
+          "na"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "1 of 1 paper appeared to involve live data collection and lacked an ethics approval statement."
+          "No papers appeared to report data about people or animals that need an ethics statement."
         ]
       },
       {
@@ -138,9 +123,10 @@
           "paper_id",
           "ethics_approved",
           "ethics_statements",
+          "data_source",
           "needs_ethics",
-          "live_data_statements",
-          "states_no_participants"
+          "data_source_signs",
+          "data_source_statements"
         ],
         "v": [
           {
@@ -168,9 +154,21 @@
             ]
           },
           {
+            "t": "chr",
+            "v": [
+              "none"
+            ]
+          },
+          {
             "t": "lgl",
             "v": [
-              true
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
             ]
           },
           {
@@ -180,15 +178,9 @@
               {
                 "t": "chr",
                 "v": [
-                  "Participants were recruited online."
+                  null
                 ]
               }
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              false
             ]
           }
         ]
@@ -196,16 +188,9 @@
       {
         "t": "list",
         "names": [
-          "ethics_approved",
-          "states_no_participants"
+          "ethics_approved"
         ],
         "v": [
-          {
-            "t": "lgl",
-            "v": [
-              false
-            ]
-          },
           {
             "t": "lgl",
             "v": [
@@ -216,6 +201,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.35",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -473,7 +473,7 @@ A module on the core (ethics_check; its logic went from 141 to 69 lines, **S**):
 ```python
 ETHICS = patterns(*_ETHICS_WORDS, name="ethics_check.ethics")   # metacheck's 63 patterns, verbatim
 SUMMARY = Schema(ethics_approved="boolean", ethics_statements="list",
-                 needs_ethics="boolean", live_data_statements="list")
+                 needs_ethics="boolean", live_data_statements="list")  # since 0.4.4.37: data_source="string", data_source_signs, data_source_statements instead of live_data_statements
 
 @module(title="Ethics Approval Check", ...)
 def ethics_check(paper) -> Result:

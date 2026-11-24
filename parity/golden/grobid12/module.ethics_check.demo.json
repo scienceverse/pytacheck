@@ -37,7 +37,7 @@
       },
       {
         "t": "df",
-        "nrow": 0,
+        "nrow": 1,
         "names": [
           "text",
           "text_id",
@@ -49,59 +49,88 @@
           "header",
           "section_type",
           "ethics",
+          "sign",
           "live_data"
         ],
         "v": [
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "This paper demonstrates some good and poor practices for use with the {metacheck} R package."
+            ]
           },
           {
             "t": "int",
-            "v": []
+            "v": [
+              1
+            ]
           },
           {
             "t": "int",
-            "v": []
+            "v": [
+              1
+            ]
           },
           {
             "t": "int",
-            "v": []
+            "v": [
+              1
+            ]
           },
           {
             "t": "int",
-            "v": []
+            "v": [
+              null
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              null
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "to_err_is_human"
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "Abstract"
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              "abstract"
+            ]
           },
           {
             "t": "lgl",
-            "v": []
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "none"
+            ]
           },
           {
             "t": "lgl",
-            "v": []
+            "v": [
+              false
+            ]
           }
         ]
       },
       {
         "t": "chr",
         "v": [
-          "We did not detect an ethics approval statement, and this paper does not appear to involve live data collection from human or animal participants. Ethics approval is typically not required for theoretical work, simulations, reviews, meta-analyses, or secondary analyses of published data."
+          "The paper does not appear to report data about individual people or animals (we found: a tutorial or software paper named in the title or abstract), so we do not expect an ethics statement.\n\nWe based this on:\n\n> This paper demonstrates some good and poor practices for use with the {metacheck} R package."
         ]
       },
       {
@@ -113,7 +142,7 @@
       {
         "t": "chr",
         "v": [
-          "No papers appeared to involve live data collection requiring an ethics approval statement."
+          "No papers appeared to report data about people or animals that need an ethics statement."
         ]
       },
       {
@@ -123,9 +152,10 @@
           "paper_id",
           "ethics_approved",
           "ethics_statements",
+          "data_source",
           "needs_ethics",
-          "live_data_statements",
-          "states_no_participants"
+          "data_source_signs",
+          "data_source_statements"
         ],
         "v": [
           {
@@ -153,9 +183,21 @@
             ]
           },
           {
+            "t": "chr",
+            "v": [
+              "none"
+            ]
+          },
+          {
             "t": "lgl",
             "v": [
               false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a tutorial or software paper named in the title or abstract"
             ]
           },
           {
@@ -165,15 +207,9 @@
               {
                 "t": "chr",
                 "v": [
-                  null
+                  "This paper demonstrates some good and poor practices for use with the {metacheck} R package."
                 ]
               }
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              false
             ]
           }
         ]
@@ -181,16 +217,9 @@
       {
         "t": "list",
         "names": [
-          "ethics_approved",
-          "states_no_participants"
+          "ethics_approved"
         ],
         "v": [
-          {
-            "t": "lgl",
-            "v": [
-              false
-            ]
-          },
           {
             "t": "lgl",
             "v": [
@@ -201,6 +230,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.35",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

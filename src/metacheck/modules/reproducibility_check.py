@@ -27,7 +27,7 @@ from typing import Any
 import pandas as pd
 
 from metacheck._r import bind_rows, grepl, plural, strsplit
-from metacheck._values import as_str
+from metacheck._values import as_str, is_missing
 from metacheck.codecheck.core import code_read
 from metacheck.module import module
 from metacheck.modules import _reproducibility as h
@@ -1695,11 +1695,25 @@ def _assess_r(
     # JSON/HTML dumps, binary data, JAGS/BUGS models.
     sniff_type: list[str | None] = [None] * n_code
     sniff_detail: list[str | None] = [None] * n_code
-    for i in [i for i in range(n_code) if parse_error_raw[i] or is_binary[i]]:
+    # code_check does not parse a JAGS or BUGS model saved as .R (0.4.4.33): its parse_error is
+    # NA ("not checked"), not TRUE, so such a file was not looked at here and was run as an R
+    # script. A file code_check did not check is looked at too, but only to find a model; a
+    # model found that way counts as not parsing, as code_check had it before, so it is not run
+    # as R either (runs_as_r, below).
+    not_checked = (
+        [is_missing(v) for v in h._col(r_files, "parse_error")]
+        if "parse_error" in r_files.columns
+        else [False] * n_code
+    )
+    for i in [i for i in range(n_code) if parse_error_raw[i] or is_binary[i] or not_checked[i]]:
         others = [raw_texts[j] for j in range(n_code) if j != i]
         if _repro_is_jags_model(raw_texts[i], names[i], other_code_text=others):
             sniff_type[i] = "jags_model"
             sniff_detail[i] = "JAGS/BUGS model definition (not standalone R)"
+            if not_checked[i]:
+                parse_error_raw[i] = True
+            continue
+        if not parse_error_raw[i] and not is_binary[i]:
             continue
         path_i = resolve(i)
         detected = reads[i][1] if path_i is not None and h._file_exists(path_i) else None

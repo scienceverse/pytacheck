@@ -140,7 +140,9 @@ def _parse_r_response(text: str) -> httpx.Response:
         chars = re.search(r'body = charToRaw\("((?:[^"\\]|\\.)*)"\)', text, re.S)
         if chars:
             body = _r_unescape(chars.group(1)).encode("utf-8")
-    headers.pop("content-encoding", None)
+    # the recorded body is already decoded, so a recorded "Content-Encoding: gzip" (any case)
+    # would make httpx decompress it again
+    headers = {k: v for k, v in headers.items() if k.lower() != "content-encoding"}
     headers.pop("content-length", None)
     return httpx.Response(int(status.group(1)) if status else 200, headers=headers, content=body)
 

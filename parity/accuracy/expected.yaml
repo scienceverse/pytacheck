@@ -48,6 +48,16 @@ differences:
     reason: >-
       sentences keep 'see Fig. 3a' and 'see Fig. 4'; metacheck's link-text replacement over
       every row turns 'Fig' into the supplement's URL
+  - module: stat_p_nonsig
+    input: problems/0956797617737129.xml
+    field: [report]
+    match: values
+    kind: r_bug_fixed
+    ref: U28
+    reason: >-
+      the report's table keeps the whole sentence 'see Fig ... Supplemental Material' (391
+      characters), so it is cut to 300 and a line says so (metacheck 0.4.4.36); metacheck's
+      link-text replacement makes the same sentence 286 characters, which is shown whole
   - module: all_urls
     input: problems/0956797617737129.xml
     field: [summary_table.urls, table]

@@ -442,6 +442,21 @@ def _import_failure(label: str, exc: BaseException, dependencies: Sequence[str] 
     return f"The module '{label}' cannot run: {problem}{hint}."
 
 
+_WEB_ADDRESS = re.compile(r"(^|[^A-Za-z0-9+.-])[A-Za-z][A-Za-z0-9+.-]+://")
+
+
+def _is_web_address(x: Any) -> Any:
+    """Port of ``.is_web_address()``: TRUE for a web address, a scheme of at least two
+    letters before "://" ("http", "https", "ftp", "s3", "file"), at the start of ``x`` or
+    after a character that cannot belong to a scheme (``url("https://...")``). A Windows
+    drive written with a double slash ("C://folder/data.csv") is a path, not a web address:
+    taken for one, a file the deposit lacks was not counted missing (metacheck 0.4.4.37, #723).
+    A string (or ``None``) gives a bool, a sequence a list of them, as R's vector."""
+    if x is None or isinstance(x, str):
+        return x is not None and _WEB_ADDRESS.search(x) is not None
+    return [_is_web_address(v if isinstance(v, str) else None) for v in x]
+
+
 def _lfs_pointer_size(paths: Sequence[str | None]) -> list[float]:
     """Port of ``.lfs_pointer_size()``: the size a Git LFS pointer states, for each file.
 

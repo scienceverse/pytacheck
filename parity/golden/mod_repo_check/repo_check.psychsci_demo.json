@@ -3,7 +3,6 @@
   "ok": true,
   "error": null,
   "warnings": [
-    "Unknown or uninitialised column: `repo_type`.",
     "Could not download https://researchbox.org/4377: download failed (HTTP 404)"
   ],
   "value": {
@@ -1323,6 +1322,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.35",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -1219,7 +1219,7 @@
           {
             "t": "chr",
             "v": [
-              "<span title='Column name becomes \"x\" when special characters are replaced, the same as 1 other identically named column: tools that sanitize names (R&#39;s make.names(), SPSS/SAS/Stata import, codebook section links) cannot tell these columns apart.'>👥 Colliding column names — Column name becomes \"x\" when special characters are replaced, the s...<\/span>",
+              "<span title='Column name becomes \"x\" when special characters are replaced, the same as 1 other identically named column: tools that sanitize names (R&#39;s make.names(), SPSS/SAS/Stata import, codebook section links) cannot tell these columns apart.'>👥 Colliding column names — Column name becomes \"x…",
               "<span title='Column is 80% numeric but 1 value cannot be parsed: \"a\"'>#️⃣ Numeric as text — Column is 80% numeric but 1 value cannot be parsed: \"a\"<\/span>",
               "<span title='Categories differing only by case: Apple/apple; banana/Banana'>🔤 Case issues — Categories differing only by case: Apple/apple<\/span>"
             ]
@@ -1228,6 +1228,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.35",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

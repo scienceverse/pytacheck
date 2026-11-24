@@ -181,28 +181,6 @@
       "$expr":
         "r": "paperlist(local({p <- test_paper(c('https://osf.io/b', 'x')); p$paper_id <- 'b'; p}), local({p <- test_paper(c('none')); p$paper_id <- 'B'; p}), local({p <- test_paper(c('www.a.org and osf.io/a')); p$paper_id <- 'a'; p}))"
         "py": "pc.PaperList([(lambda p, i: (p.__setitem__('paper_id', i), p)[1])(pc.test_paper(t), i) for t, i in [(['https://osf.io/b', 'x'], 'b'), (['none'], 'B'), (['www.a.org and osf.io/a'], 'a')]])"
-# ----------------------------------------------------------- .detect_live_data
-- "id": "detect_live_data.review.df"
-  "r": "metacheck:::.detect_live_data"
-  "py": "metacheck.text.extract._detect_live_data"
-  "args":
-    "paper":
-      "$df":
-        "text":
-        - "PARTICIPANTS WERE RECRUITED online."
-        - "Participants were paid."
-        - "Informed consent was obtained from all."
-        - "The rats were housed in pairs."
-        - "Nothing to see."
-        - "Participants were recruited and gave informed consent via Prolific."
-- "id": "detect_live_data.review.paperlist_ids"
-  "r": "metacheck:::.detect_live_data"
-  "py": "metacheck.text.extract._detect_live_data"
-  "args":
-    "paper":
-      "$expr":
-        "r": "paperlist(local({p <- test_paper(c('We used MTurk.', 'x')); p$paper_id <- 'b'; p}), local({p <- test_paper(c('none')); p$paper_id <- 'B'; p}), local({p <- test_paper(c('Subjects were debriefed.', 'our participants')); p$paper_id <- 'a'; p}))"
-        "py": "pc.PaperList([(lambda p, i: (p.__setitem__('paper_id', i), p)[1])(pc.test_paper(t), i) for t, i in [(['We used MTurk.', 'x'], 'b'), (['none'], 'B'), (['Subjects were debriefed.', 'our participants'], 'a')]])"
 # --------------------------------------------------------------- extract_tests
 - "id": "extract_tests.review.eq_table"
   "r": "extract_tests"

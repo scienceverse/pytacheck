@@ -154,19 +154,19 @@
           {
             "t": "dbl",
             "v": [
-              null,
-              null,
-              null,
-              null
+              7000,
+              7000,
+              7000,
+              7000
             ]
           },
           {
             "t": "int",
             "v": [
-              null,
-              null,
-              null,
-              null
+              4,
+              4,
+              4,
+              4
             ]
           },
           {
@@ -228,7 +228,6 @@
       {
         "t": "chr",
         "v": [
-          "#### Partly Listed Repositories\n\nThe OSF refused part of the listing of https://osf.io/629bx (4 files listed), also when asked again, so what this report says about its files describes only the part that was listed. Run the check again later.",
           "#### Whose Deposits",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = \"<a href='https://osf.io/629bx' target='_blank'>osf.io/629bx<\/a>\", \n    \"Cited in\" = \"text\", Whose = \"the authors', for this paper\", \n    Why = \"a link in the main text, not shown to be anyone else's\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Repositories",
@@ -249,7 +248,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We listed only part of 1 OSF project, because the OSF refused part of the listing; run the check again.\n-  We found 4 files in 1 repository.\n-  We found 0 README files and 1 repository without READMEs.\n-  We found 1 archive file."
+          "\n-  We found 4 files in 1 repository.\n-  We found 0 README files and 1 repository without READMEs.\n-  We found 1 archive file."
         ]
       },
       {
@@ -458,7 +457,7 @@
       },
       {
         "t": "df",
-        "nrow": 1,
+        "nrow": 0,
         "names": [
           "paper_id",
           "repo_url",
@@ -468,27 +467,19 @@
         "v": [
           {
             "t": "chr",
-            "v": [
-              "p_629bx"
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              "https://osf.io/629bx"
-            ]
+            "v": []
           },
           {
             "t": "int",
-            "v": [
-              4
-            ]
+            "v": []
           },
           {
-            "t": "chr",
-            "v": [
-              "refused by the OSF"
-            ]
+            "t": "lgl",
+            "v": []
           }
         ]
       },
@@ -944,7 +935,7 @@
           {
             "t": "lgl",
             "v": [
-              true
+              false
             ]
           }
         ]
@@ -1138,6 +1129,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.35",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

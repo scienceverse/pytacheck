@@ -58,20 +58,31 @@ def test_the_lock_sees_only_the_row_count() -> None:
     assert lockfile.digest(comparable(canonical(_table()), Options())) == lockfile.digest(before)
 
 
+def _table_node(block: dict) -> dict | None:
+    """The report_table node of a block: a table with a note is a list of the table and
+    its note (metacheck 0.4.4.36 writes the note after the table)."""
+    if block["t"] == "report_table":
+        return block
+    if block["t"] == "list":
+        found = [b for b in block["v"] if b["t"] == "report_table"]
+        return found[0] if found else None
+    return None
+
+
 def test_module_report_tables(demo) -> None:
     out = module_run(demo, "marginal")
     tables = [b for b in out.report if isinstance(b, ReportTable)]
     assert len(tables) == 1
     encoded = canonical(out)
     report = encoded["v"][encoded["names"].index("report")]
-    (node,) = [b for b in report["v"] if b["t"] == "report_table"]
+    (node,) = [_table_node(b) for b in report["v"] if _table_node(b)]
     assert node["table"] == canonical(tables[0].data)
     assert node["table"]["nrow"] > 0
 
     exact = comparable(encoded, Options(report="exact"))
     report = exact["v"][exact["names"].index("report")]
     nrow = len(tables[0].data)
-    assert [b for b in report["v"] if b["t"] == "report_table"] == [
+    assert [_table_node(b) for b in report["v"] if _table_node(b)] == [
         {"t": "report_table", "nrow": nrow}
     ]
     prose = comparable(encoded, Options())

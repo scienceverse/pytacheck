@@ -64,7 +64,7 @@ from metacheck.repro.core import (
     _write_lines,
 )
 from metacheck.repro.outcomes import _repro_mb, _repro_unopened_files
-from metacheck.utils import _lfs_pointer_size
+from metacheck.utils import _is_web_address, _lfs_pointer_size
 
 # ---------------------------------------------------------------------------
 # small helpers
@@ -1221,8 +1221,9 @@ def _repro_ref_checkable(d: pd.DataFrame, built: Sequence[str | None] = ()) -> l
         b = base[i]
         piece = bool(grepl(r"^[._]", b)) or "." not in (b or "")
         placeholder = bool(grepl(r"[%{}$*]|: ", ref[i]))
-        # a file read from a web address is not one the deposit should hold (#695)
-        web = "://" in (ref[i] or "")
+        # a file read from a web address is not one the deposit should hold (#695);
+        # a Windows drive written as "C://" is a path, not a web address (#723)
+        web = _is_web_address(ref[i])
         out.append(
             not is_call[i]
             and not piece

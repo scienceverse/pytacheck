@@ -37,7 +37,7 @@
       },
       {
         "t": "df",
-        "nrow": 2,
+        "nrow": 1,
         "names": [
           "text_id",
           "section_id",
@@ -48,77 +48,74 @@
           "header",
           "section_type",
           "ethics",
+          "sign",
           "live_data"
         ],
         "v": [
           {
             "t": "int",
             "v": [
-              1,
               2
             ]
           },
           {
             "t": "dbl",
             "v": [
-              0,
               0
             ]
           },
           {
             "t": "dbl",
             "v": [
-              0,
               0
             ]
           },
           {
             "t": "chr",
             "v": [
-              "Participants were recruited online.",
               "No human subjects were involved in this study."
             ]
           },
           {
             "t": "chr",
             "v": [
-              "Participants were recruited online.",
               "No human subjects were involved in this study."
             ]
           },
           {
             "t": "chr",
             "v": [
-              "6c4258abe0fec3",
               "6c4258abe0fec3"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "Test",
               "Test"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "unknown",
               "unknown"
             ]
           },
           {
             "t": "lgl",
             "v": [
-              null,
               null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "none"
             ]
           },
           {
             "t": "lgl",
             "v": [
-              true,
-              true
+              false
             ]
           }
         ]
@@ -126,7 +123,7 @@
       {
         "t": "chr",
         "v": [
-          "We did not detect an ethics approval statement. The paper states that no human or animal participants took part, so we do not expect one:\n\n> No human subjects were involved in this study."
+          "The paper does not appear to report data about individual people or animals (we found: a statement that there are no data), so we do not expect an ethics statement.\n\nWe based this on:\n\n> No human subjects were involved in this study."
         ]
       },
       {
@@ -138,7 +135,7 @@
       {
         "t": "chr",
         "v": [
-          "No papers appeared to involve live data collection requiring an ethics approval statement."
+          "No papers appeared to report data about people or animals that need an ethics statement."
         ]
       },
       {
@@ -148,9 +145,10 @@
           "paper_id",
           "ethics_approved",
           "ethics_statements",
+          "data_source",
           "needs_ethics",
-          "live_data_statements",
-          "states_no_participants"
+          "data_source_signs",
+          "data_source_statements"
         ],
         "v": [
           {
@@ -178,9 +176,21 @@
             ]
           },
           {
+            "t": "chr",
+            "v": [
+              "none"
+            ]
+          },
+          {
             "t": "lgl",
             "v": [
               false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a statement that there are no data"
             ]
           },
           {
@@ -190,16 +200,9 @@
               {
                 "t": "chr",
                 "v": [
-                  "Participants were recruited online.",
                   "No human subjects were involved in this study."
                 ]
               }
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              true
             ]
           }
         ]
@@ -207,16 +210,9 @@
       {
         "t": "list",
         "names": [
-          "ethics_approved",
-          "states_no_participants"
+          "ethics_approved"
         ],
         "v": [
-          {
-            "t": "lgl",
-            "v": [
-              false
-            ]
-          },
           {
             "t": "lgl",
             "v": [
@@ -227,6 +223,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.35",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -415,20 +415,3 @@ def test_partial_eta_squared_is_not_a_p_value() -> None:
         "F", "p", "ƞ²p", "η² p", "t", "η² P", "p",
         "η 2 p", "p", "η²", "p",
     ]  # fmt: skip
-
-
-def test_detect_no_participants() -> None:
-    from metacheck.text.extract import _detect_no_participants
-
-    hits = _detect_no_participants(
-        pc.test_paper(
-            [
-                "No human subjects were involved.",
-                "This did not involve human participants.",
-                "People took part, not as subjects.",
-                "No participants were excluded.",
-                "Without our participants this would be impossible.",
-            ]
-        )
-    )
-    assert hits["text_id"].tolist() == [1, 2, 3]

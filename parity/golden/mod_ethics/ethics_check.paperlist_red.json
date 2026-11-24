@@ -37,7 +37,7 @@
       },
       {
         "t": "df",
-        "nrow": 3,
+        "nrow": 1,
         "names": [
           "text_id",
           "section_id",
@@ -48,87 +48,74 @@
           "header",
           "section_type",
           "ethics",
+          "sign",
           "live_data"
         ],
         "v": [
           {
             "t": "int",
             "v": [
-              2,
-              1,
-              1
+              2
             ]
           },
           {
             "t": "dbl",
             "v": [
-              0,
-              0,
               0
             ]
           },
           {
             "t": "dbl",
             "v": [
-              0,
-              0,
               0
             ]
           },
           {
             "t": "chr",
             "v": [
-              "The IRB approved the study.",
-              "Participants were recruited online.",
-              "Participants were recruited online."
+              "The IRB approved the study."
             ]
           },
           {
             "t": "chr",
             "v": [
-              "The IRB approved the study.",
-              "Participants were recruited online.",
-              "Participants were recruited online."
+              "The IRB approved the study."
             ]
           },
           {
             "t": "chr",
             "v": [
-              "z9",
-              "z9",
-              "a1"
+              "z9"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "Test",
-              "Test",
               "Test"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "unknown",
-              "unknown",
               "unknown"
             ]
           },
           {
             "t": "lgl",
             "v": [
-              true,
-              null,
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               null
             ]
           },
           {
             "t": "lgl",
             "v": [
-              null,
-              true,
-              true
+              null
             ]
           }
         ]
@@ -136,19 +123,19 @@
       {
         "t": "chr",
         "v": [
-          "1 of 3 papers appeared to involve live data collection and lacked an ethics approval statement."
+          "No papers appeared to report data about people or animals that need an ethics statement."
         ]
       },
       {
         "t": "chr",
         "v": [
-          "yellow"
+          "na"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "1 of 3 papers appeared to involve live data collection and lacked an ethics approval statement."
+          "No papers appeared to report data about people or animals that need an ethics statement."
         ]
       },
       {
@@ -158,9 +145,10 @@
           "paper_id",
           "ethics_approved",
           "ethics_statements",
+          "data_source",
           "needs_ethics",
-          "live_data_statements",
-          "states_no_participants"
+          "data_source_signs",
+          "data_source_statements"
         ],
         "v": [
           {
@@ -204,11 +192,27 @@
             ]
           },
           {
+            "t": "chr",
+            "v": [
+              "none",
+              "none",
+              "none"
+            ]
+          },
+          {
             "t": "lgl",
             "v": [
-              true,
-              true,
+              false,
+              false,
               false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              ""
             ]
           },
           {
@@ -218,13 +222,13 @@
               {
                 "t": "chr",
                 "v": [
-                  "Participants were recruited online."
+                  null
                 ]
               },
               {
                 "t": "chr",
                 "v": [
-                  "Participants were recruited online."
+                  null
                 ]
               },
               {
@@ -234,30 +238,15 @@
                 ]
               }
             ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              false,
-              false,
-              false
-            ]
           }
         ]
       },
       {
         "t": "list",
         "names": [
-          "ethics_approved",
-          "states_no_participants"
+          "ethics_approved"
         ],
         "v": [
-          {
-            "t": "lgl",
-            "v": [
-              false
-            ]
-          },
           {
             "t": "lgl",
             "v": [
@@ -268,6 +257,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.35",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -36,6 +36,7 @@ from typing import Any
 import pandas as pd
 
 from metacheck._r.base import r_sort_key
+from metacheck.utils import _is_web_address
 
 __all__ = [
     "brief_file_tree",
@@ -448,9 +449,6 @@ def file_tree_entries(
     )
 
 
-_URL = re.compile(r"^[A-Za-z][A-Za-z0-9+.-]*://")
-
-
 def file_tree_block(
     files: pd.DataFrame | None,
     naming_issues: pd.DataFrame | None = None,
@@ -548,7 +546,7 @@ def file_tree_block(
     for b in blocks:
         # a local folder by its own name: its full path is the place on the
         # computer that ran the check, on a server its job folder
-        label = b["repo"] if _URL.match(b["repo"]) else os.path.basename(b["repo"].rstrip("/"))
+        label = b["repo"] if _is_web_address(b["repo"]) else os.path.basename(b["repo"].rstrip("/"))
         sections.append(f"**Repository: {label}**")
         # a fenced block with no language, in a box of about 30 lines with its
         # own scroll bar; one element, so the report's blank-line joins do not

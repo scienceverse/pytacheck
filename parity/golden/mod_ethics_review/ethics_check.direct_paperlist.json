@@ -16,7 +16,7 @@
     "v": [
       {
         "t": "df",
-        "nrow": 2,
+        "nrow": 1,
         "names": [
           "text_id",
           "section_id",
@@ -27,77 +27,74 @@
           "header",
           "section_type",
           "ethics",
+          "sign",
           "live_data"
         ],
         "v": [
           {
             "t": "int",
             "v": [
-              1,
               1
             ]
           },
           {
             "t": "dbl",
             "v": [
-              0,
               0
             ]
           },
           {
             "t": "dbl",
             "v": [
-              0,
               0
             ]
           },
           {
             "t": "chr",
             "v": [
-              "The IRB approved it.",
-              "Participants were recruited."
+              "The IRB approved it."
             ]
           },
           {
             "t": "chr",
             "v": [
-              "The IRB approved it.",
-              "Participants were recruited."
+              "The IRB approved it."
             ]
           },
           {
             "t": "chr",
             "v": [
-              "a",
-              "b"
+              "a"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "Test",
               "Test"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "unknown",
               "unknown"
             ]
           },
           {
             "t": "lgl",
             "v": [
-              true,
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               null
             ]
           },
           {
             "t": "lgl",
             "v": [
-              null,
-              true
+              null
             ]
           }
         ]
@@ -109,9 +106,10 @@
           "paper_id",
           "ethics_approved",
           "ethics_statements",
+          "data_source",
           "needs_ethics",
-          "live_data_statements",
-          "states_no_participants"
+          "data_source_signs",
+          "data_source_statements"
         ],
         "v": [
           {
@@ -147,10 +145,24 @@
             ]
           },
           {
+            "t": "chr",
+            "v": [
+              "none",
+              "none"
+            ]
+          },
+          {
             "t": "lgl",
             "v": [
               false,
-              true
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              ""
             ]
           },
           {
@@ -166,16 +178,9 @@
               {
                 "t": "chr",
                 "v": [
-                  "Participants were recruited."
+                  null
                 ]
               }
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              false,
-              false
             ]
           }
         ]
@@ -183,16 +188,9 @@
       {
         "t": "list",
         "names": [
-          "ethics_approved",
-          "states_no_participants"
+          "ethics_approved"
         ],
         "v": [
-          {
-            "t": "lgl",
-            "v": [
-              false
-            ]
-          },
           {
             "t": "lgl",
             "v": [
@@ -204,13 +202,13 @@
       {
         "t": "chr",
         "v": [
-          "yellow"
+          "na"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "1 of 2 papers appeared to involve live data collection and lacked an ethics approval statement."
+          "No papers appeared to report data about people or animals that need an ethics statement."
         ]
       },
       {
@@ -218,6 +216,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.35",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

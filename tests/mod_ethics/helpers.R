@@ -49,3 +49,19 @@ ec_set <- function(p, table, col, value) {
   p[[table]][[col]] <- value
   p
 }
+
+# A small paper with a title, an abstract and one more part (as the rule of .data_source()
+# weighs where a sentence stands, #695 point 18), with a fixed paper_id.
+ds_paper <- function(abstract = character(0), body = character(0),
+                     header = "Method", title = "Test Paper", id = "p1") {
+  p <- test_paper(c(abstract, body))
+  p$paper_id <- id
+  p$text$section_id <- c(rep(0, length(abstract)), rep(1, length(body)))
+  p$section <- dplyr::tibble(
+    section_id = c(0, 1), header = c("Abstract", header),
+    parent_section_id = NA_integer_, section_type = c("abstract", "method"),
+    classification_score = 0
+  )
+  p$info$title <- title
+  p
+}

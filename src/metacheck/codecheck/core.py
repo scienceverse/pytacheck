@@ -44,6 +44,7 @@ from metacheck._r.regex import (
 )
 from metacheck._values import field, is_missing
 from metacheck.codecheck._rcoerce import r_as_character, r_unlist_chr
+from metacheck.utils import _is_web_address
 
 __all__ = [
     "code_abs_path",
@@ -3640,11 +3641,12 @@ def _code_missing_files(code_files: pd.DataFrame, all_files: pd.DataFrame) -> pd
             continue
         # a file read from a web address is not one the repository should hold:
         # read.spss("http://journal.sjdm.org/.../study1.sav") was reported as the missing file
-        # study1.sav (#695), as .repro_ref_checkable() also leaves out
+        # study1.sav (#695), as .repro_ref_checkable() also leaves out.
+        # A Windows drive written as "C://" is a path, not a web address (#723).
         parts = [
             r.replace("\\", "/").rstrip("/").rsplit("/", 1)[-1]
             for r in str(refs).split("\u001f")
-            if str(refs) != "" and "://" not in r
+            if str(refs) != "" and not _is_web_address(r)
         ]
         # a piece, and a name with a placeholder ("Ax1_s{seed}.jsonl"), are no file names, as
         # reproducibility_check also leaves them out (.repro_ref_checkable())

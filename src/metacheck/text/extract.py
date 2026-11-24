@@ -654,32 +654,13 @@ def _eq_frame(
 
 
 def _detect_live_data(paper: Any) -> pd.DataFrame:
-    """Sentences indicating live data collection (port of ``.detect_live_data()``).
+    """Sentences indicating live data collection (was ``.detect_live_data()``).
 
     Searches for participant recruitment, informed consent, online
     recruitment platforms, student pools, inclusion/exclusion criteria and
-    animal data collection. Used by the ``ethics_check`` module.
+    animal data collection. metacheck 0.4.4.37 removed it (``ethics_check`` now sorts a
+    paper by where its data came from, ``.data_source()``, D162); pytacheck keeps it as
+    its own helper for the data package (``metacheck.datapackage``), whose documents
+    have no data-source rule.
     """
     return cast(pd.DataFrame, text_search(paper, list(_LIVE_WORDS)))
-
-
-_NONE_WORDS = (
-    r"\bno\s+(identifiable\s+)?(human|animal)\s+(research\s+)?(subjects?|participants?|volunteers?)"
-    r"\s+(were|was|are|is)\s+(involved|used)",
-    r"\b(did|does|do)\s+not\s+(involve|include)\s+(any\s+)?(human|animal)\s+(subjects?|participants?)",
-    r"\bno\s+(animals|humans)\s+(nor|or|and)\s+(human\s+)?(participants?|subjects?)\s+were\s+involved",
-    r"\bnot\s+as\s+(research\s+)?(subjects?|participants?)\b",
-)
-
-
-def _detect_no_participants(paper: Any) -> pd.DataFrame:
-    """Sentences stating that no participants took part (port of ``.detect_no_participants()``).
-
-    "no human subjects were involved", "did not involve human participants", "no animals
-    nor human participants were involved", or people taking part "not as subjects". Such
-    a statement overrides :func:`_detect_live_data` in the ``ethics_check`` module. A
-    negation near a participant phrase is not enough ("No participants were excluded"
-    reports a study with participants), so each pattern names human or animal subjects,
-    or "not as subjects".
-    """
-    return cast(pd.DataFrame, text_search(paper, list(_NONE_WORDS), perl=True))

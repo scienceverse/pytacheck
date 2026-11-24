@@ -368,7 +368,7 @@
           "We examined 3 columns across 1 data file.",
           "#### Issues Identified",
           "1 file/column combination has at least one issue.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"latin1.csv\", Column = \"city\", Issues = \"<span title='3 values are not valid UTF-8 (bytes from a legacy encoding such as Latin-1/Windows-1252, e.g. a mis-encoded accent or apostrophe); metacheck re-interpreted them as Latin-1 to continue. Such characters corrupt silently when the file is opened on another system. Re-save the file with UTF-8 encoding: in Excel use &#39;Save As &gt; CSV UTF-8 (Comma delimited)&#39;; in R, write.csv(..., fileEncoding = \\\"UTF-8\\\"); in SPSS, &#39;Save as type: CSV&#39; with Encoding &#39;UTF-8&#39;.'>🔣 Mixed encoding — 3 values are not valid UTF-8 (bytes from a legacy encoding such as ...<\/span>\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 20, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"latin1.csv\", Column = \"city\", Issues = \"<span title='3 values are not valid UTF-8 (bytes from a legacy encoding such as Latin-1/Windows-1252, e.g. a mis-encoded accent or apostrophe); metacheck re-interpreted them as Latin-1 to continue. Such characters corrupt silently when the file is opened on another system. Re-save the file with UTF-…\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 20, FALSE)\n```\n\n*Cells longer than 300 characters are cut (…).*\n",
           "#### Careless Responding",
           "No file could be screened for careless responding.",
           "**What this does not cover.** Only 0 of 1 data file could be screened: the rest had no detectable multi-item scale block, or too few respondents. Even in a screened file, these checks only look at multi-item rating scales — the only place where a repeated or flat answer pattern is interpretable. Single questions, open text, demographics and any item outside a detected scale block are never examined. A respondent can therefore answer most of a survey carelessly and still not be flagged here, and finding nothing is not evidence that a dataset is free of careless responding."
@@ -918,6 +918,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.35",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

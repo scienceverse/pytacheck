@@ -72,6 +72,7 @@ FILE_MODULES: dict[str, str | list[tuple[int, str]]] = {
     "R/fair-repo.R": "metacheck.fair.repo",
     "R/file-naming.R": "metacheck.fileinfo.naming",
     "R/file-share.R": "metacheck.archives.file_share",
+    "R/data-source.R": "metacheck.modules._data_source",
     "R/file-tree.R": "metacheck.report.file_tree",
     "R/file_category.R": "metacheck.fileinfo.category",
     "R/file_types.R": "metacheck.fileinfo.types",

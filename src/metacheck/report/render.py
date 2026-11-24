@@ -66,7 +66,8 @@ def table_chunk(block: ReportTable, static: bool = False) -> str:
     ``static`` writes the plain table of a simple report (every row, no
     pagination).
     """
-    return f"\n```{{=html}}\n{_table_html(block, static)}\n```\n"
+    note = f"\n{block.note}\n" if block.note else ""
+    return f"\n```{{=html}}\n{_table_html(block, static)}\n```\n{note}"
 
 
 def static_table_chunk(block: ReportTable) -> str:
@@ -415,6 +416,8 @@ def table_gfm(block: ReportTable) -> str:
     ]
     columns = [df.iloc[:, i].tolist() for i in range(df.shape[1])]
     lines.extend("| " + " | ".join(cell(col[r]) for col in columns) + " |" for r in range(len(df)))
+    if block.note:
+        lines.extend(["", block.note])
     return "\n".join(lines)
 
 
@@ -977,7 +980,8 @@ class TableSlots:
 
     def __call__(self, block: ReportTable) -> str:
         self.tables.append(block)
-        return "\n" + _TABLE_MARK.format(len(self.tables) - 1) + "\n"
+        note = f"\n{block.note}\n" if block.note else ""
+        return "\n" + _TABLE_MARK.format(len(self.tables) - 1) + "\n" + note
 
     def fill(self, html: str) -> str:
         """Replace the placeholders in *html* with the tables (one pass)."""
