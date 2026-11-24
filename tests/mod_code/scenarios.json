@@ -1086,5 +1086,48 @@
         ]
       }
     ]
+  },
+  "review_archive": {
+    "repos": [
+      {
+        "repo_url": "https://osf.io/refs",
+        "dir": "tests/mod_code/fixtures/review/refs",
+        "files": [
+          "refs.R",
+          "data.csv"
+        ]
+      }
+    ],
+    "archive_deposits": [
+      {
+        "paper_id": "p1",
+        "archive": "SRA",
+        "accession": "PRJNA123456"
+      },
+      {
+        "paper_id": "p2",
+        "archive": "GEO",
+        "accession": "GSE99999"
+      }
+    ]
+  },
+  "not_checked": {
+    "repos": [
+      {
+        "repo_url": "https://osf.io/nochk",
+        "dir": "tests/mod_code/fixtures/not_checked",
+        "files": [
+          "analysis.jl",
+          "bglmm.R",
+          "big.R",
+          "html_named.py",
+          "ok.R",
+          "png_named.R",
+          "pointer.R",
+          "pointer_nosize.R",
+          "rdata_named.R"
+        ]
+      }
+    ]
   }
 }

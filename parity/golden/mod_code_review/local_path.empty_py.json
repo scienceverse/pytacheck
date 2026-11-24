@@ -15,7 +15,8 @@
       "summary_text",
       "summary_table",
       "na_replace",
-      "version_pin"
+      "version_pin",
+      "count_refused"
     ],
     "v": [
       {
@@ -50,6 +51,7 @@
           "file_path",
           "data_type",
           "doc_role",
+          "file_kind",
           "group",
           "paper_id",
           "language",
@@ -72,7 +74,8 @@
           "has_docstring",
           "files_written",
           "loaded_files_missing",
-          "loaded_files_missing_names"
+          "loaded_files_missing_names",
+          "loaded_files_fetched_names"
         ],
         "v": [
           {
@@ -153,6 +156,14 @@
               null,
               null,
               null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code",
+              "code",
+              "code"
             ]
           },
           {
@@ -338,6 +349,14 @@
               "",
               ""
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
           }
         ]
       },
@@ -398,6 +417,7 @@
           "code_min_comments",
           "code_parse_errors",
           "code_packages_n",
+          "code_files_failed",
           "code_version_pinned"
         ],
         "v": [
@@ -447,6 +467,12 @@
             "t": "dbl",
             "v": [
               0.5
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
             ]
           },
           {
@@ -615,9 +641,32 @@
             "v": []
           }
         ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "n_files",
+          "message"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

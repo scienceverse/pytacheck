@@ -256,6 +256,138 @@ add(
 )
 
 
+# -- metacheck 0.4.4.8 to 0.4.4.18 (data_check_helpers.R) -----------------------
+PLAIN = "tests/datacheck_files/data/plain_table"
+for tag, names, paths, group in [
+    # shell scripts are code; a web page or Markdown file with "data" in its name is a document;
+    # a licence that names what it covers is a licence (#648)
+    (
+        "names",
+        [
+            "run.sh",
+            "go.bash",
+            "x.zsh",
+            "build.bat",
+            "a.cmd",
+            "setup.ps1",
+            "data_report.html",
+            "data_notes.md",
+            "data.csv",
+            "LICENSE_code_MIT.txt",
+            "license_data.txt",
+            "license_code.R",
+        ],
+        None,
+        None,
+    ),
+    # code in a release folder is by others only beside code outside it (#648, K5)
+    (
+        "release_group",
+        ["plugin.js", "run.R", "run2.R"],
+        ["lib-1.2.3/plugin.js", "run.R", "run2.R"],
+        ["a", "b", "b"],
+    ),
+    ("release_same_group", ["plugin.js", "run.R"], ["lib-1.2.3/plugin.js", "run.R"], ["a", "a"]),
+    ("release_alone", ["run.R"], ["analysis-v2.1.0/run.R"], None),
+    (
+        "others_folders",
+        ["b.js", "x.php", "a.ado", "app.min.js", "own.js", "x.csv"],
+        [
+            "node_modules/a/b.js",
+            "vendor/x.php",
+            "ados/a.ado",
+            "app.min.js",
+            "src/own.js",
+            "vendor/x.csv",
+        ],
+        None,
+    ),
+]:
+    args: dict[str, Any] = {"file_name": {"$chr": names}}
+    if paths is not None:
+        args["file_path"] = {"$chr": paths}
+    if group is not None:
+        args["group"] = {"$chr": group}
+    add(f"sync04418.data_classify_files.{tag}", r="data_classify_files",
+        py=f"{PY}.data_classify_files", args=args)  # fmt: skip
+add("sync04418.is_others_code_path.folders", r=".is_others_code_path",
+    py=f"{PY}._is_others_code_path",
+    args={"path": {"$chr": ["node_modules/a/b.js", "vendor/x.php", "ados/a.ado", "app.min.js",
+                            "src/own.js", "a.R", "lib-1.2.3/p.js", "tools\\lib-1.2.3\\p.js"]}})  # fmt: skip
+add("sync04418.is_others_code_path.group", r=".is_others_code_path",
+    py=f"{PY}._is_others_code_path",
+    args={"path": {"$chr": ["lib-1.2.3/p.js", "run.R", "lib-2.0/p.js", "other.R", "o2.R"]},
+          "is_code": {"$expr": {"r": "c(TRUE, TRUE, TRUE, TRUE, TRUE)",
+                                "py": "[True, True, True, True, True]"}},
+          "group": {"$chr": ["a", "a", "b", "c", "c"]}})  # fmt: skip
+
+# a package alone in a subfolder is the deposit (#505)
+_PKG = ["good 2/DESCRIPTION", "good 2/NAMESPACE", "good 2/R/f.R", "good 2/man/f.Rd"]
+for tag, paths in [
+    ("subfolder_alone", _PKG),
+    ("subfolder_with_code", [*_PKG, "analysis.R"]),
+    ("subfolder_with_readme", [*_PKG, "README.Rmd", "README.md"]),
+    ("two_packages", [*_PKG, "other/DESCRIPTION", "other/NAMESPACE", "other/R/g.R"]),
+    ("two_packages_with_data", [*_PKG, "other/DESCRIPTION", "other/NAMESPACE", "d/x.csv"]),
+]:
+    add(f"sync04418.is_r_package_file.{tag}", r=".is_r_package_file",
+        py=f"{PY}._is_r_package_file", args={"file_path": {"$chr": paths}})  # fmt: skip
+
+# a study number in a path ends there; a pilot study is a pilot (#648, K7)
+add("sync04418.data_group_from_path.study_numbers", r=".data_group_from_path",
+    py=f"{PY}._data_group_from_path",
+    args={"paths": {"$chr": [
+        "study104/a.csv", "data/study03032026.csv", "STUDY-20-00338.pdf", "Pilot Study 1A/x.csv",
+        "pilot2_data.csv", "pilot/x.csv", "Study 2/a.csv", "study2a_data.csv",
+        "experiment3explicit.csv", "Exp1/raw.csv", "study2_2019.csv", "study1_2.csv", "index1.csv",
+        "study1_20230512.csv", "Study2_15032021_data.csv", "study3_12345678.csv",
+        "Pilot experiment 3b/x.csv", "study12/a.csv", "study_1/a.csv"]}})  # fmt: skip
+
+# only a path that can hold a study label is read, with the same results (#702)
+add("sync04435.data_group_from_path.prefilter", r=".data_group_from_path",
+    py=f"{PY}._data_group_from_path",
+    args={"paths": {"$chr": [
+        "Study 1/data.csv", "pilot/x.csv", "Pilot Study 1A/a.csv", "exp2/b.csv", "text1.csv",
+        "study2_2019.csv", "a/b/c", None, "", "index2.csv", "Study 1/data.csv"]}})  # fmt: skip
+add(
+    "sync04435.data_group_from_path.empty",
+    r=".data_group_from_path",
+    py=f"{PY}._data_group_from_path",
+    args={"paths": {"$chr": []}},
+)
+
+# the unnamed, empty columns at the right end of a table are left out of a whole file (#695, #31)
+for name in ("wide_blank.csv", "wide_blank_stop.csv"):
+    typed_head(name)
+    add(
+        f"sync04435.blank_cols_dropped.{name}",
+        r="identity",
+        py=f"{HELP}.blank_cols_dropped",
+        args={"x": {"$expr": {"r": (
+            f'local({{d <- data_read_head(rpath("{REVIEW}/{name}"), n_rows = Inf); '
+            "list(ncol = ncol(d), dropped = attr(d, \"blank_cols_dropped\"))})"), "py": "None"}}},
+        py_drop=["x"],
+        py_args={"path": f"{REVIEW}/{name}"},
+    )  # fmt: skip
+
+# a table from an .rds or .RData file is a plain data frame (0.4.4.15)
+for name in ("loo.rds", "idate.rds", "mixed.rds", "spss.rds", "predictions.rds",
+             "predictions.RData"):  # fmt: skip
+    add(
+        f"sync04418.read_head_attrs.{name}",
+        r="identity",
+        py="tests.datacheck_files.parity_helpers.read_head_attrs",
+        args={"x": {"$expr": {"r": (
+            f'local({{d <- data_read_head(rpath("{PLAIN}/{name}"), n_rows = Inf); '
+            "list(names = names(d), attrs = lapply(d, function(x) {a <- attributes(x); "
+            "a$levels <- NULL; a$names <- NULL; if (!is.null(a$labels)) a$labels <- as.list(a$labels); "
+            "if (length(a)) a[order(names(a))] else NULL}), utf8_repaired = NULL)})"
+        ), "py": "None"}}},
+        py_drop=["x"],
+        py_args={"path": f"{PLAIN}/{name}", "n_rows": None},
+    )  # fmt: skip
+
+
 class _Dumper(yaml.SafeDumper):
     pass
 

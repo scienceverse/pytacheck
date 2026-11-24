@@ -497,6 +497,8 @@ class _Cleaner:
         out = pd.concat(new_cols, axis=1) if new_cols else df.copy()
         out.columns = pd.Index(cols, dtype=df.columns.dtype)
         out.index = df.index
+        # what a module noted on its table (R's attributes) is not text to clean
+        out.attrs = dict(df.attrs)
         return out
 
 
@@ -781,12 +783,13 @@ def _key_scan_repo_files(
     file_name = _col(files, "file_name")
     shown_name = [s if s else f for s, f in zip(shown_name, file_name, strict=True)]
     repo = _col(files, "repo_url")
+    storage = _col(files, "provider")
     pid = _col(files, "paper_id")
     is_data = [t == "data" for t in _col(files, "data_type")]
     on_disk = [la is not None and os.path.exists(la) for la in loc]
     for i in range(len(files)):
         if not on_disk[i] and repo[i] and shown_name[i]:
-            p = _repo_cache_path(repo[i], shown_name[i], cache=cache)
+            p = _repo_cache_path(repo[i], shown_name[i], cache=cache, storage=storage[i])
             if os.path.isfile(p):
                 loc[i] = str(p)
     for folder in dict.fromkeys(r for r in repo if r and os.path.isdir(r)):

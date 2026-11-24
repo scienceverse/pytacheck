@@ -21,6 +21,7 @@
       "structure",
       "previews",
       "gated_repos",
+      "count_refused",
       "manifest_path",
       "group_no_evidence"
     ],
@@ -86,6 +87,9 @@
           "column_n",
           "empty_col_n",
           "key_n",
+          "files_failed",
+          "llm_cols_unanswered",
+          "llm_files_unanswered",
           "spreadsheet_file_n",
           "spreadsheet_flagged_file_n",
           "flagged_n"
@@ -124,6 +128,27 @@
             "v": [
               0,
               0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null
             ]
           },
           {
@@ -480,6 +505,29 @@
         "t": "null"
       },
       {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "n_files",
+          "message"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
         "t": "null"
       },
       {
@@ -490,6 +538,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -16,6 +16,7 @@ a pass after the first (:func:`_repro_later_pass`).
 from __future__ import annotations
 
 import math
+import re
 from collections.abc import Mapping, Sequence
 from typing import Any
 
@@ -39,6 +40,7 @@ from metacheck.repro.core import (
     _run_r,
     _setdiff,
     _unique,
+    repro_defined_vars,
 )
 
 __all__: list[str] = []
@@ -360,6 +362,94 @@ def _repro_missing_fn_pkgs(
     if name == "%>%" and not any(provides_all(_unique([*own, *others]))):
         return ["magrittr"]
     return []
+
+
+_FN_MISSING_RE = re.compile(r"could not find function ['\"]([^'\"]+)['\"]")
+
+
+def _repro_more_library_lines(
+    run_results: pd.DataFrame | None,
+    code_text_list: Mapping[str, Any],
+    candidates: Sequence[str | None] | None,
+    unavailable: Sequence[str | None] = (),
+    injected: Mapping[str, Sequence[str]] | None = None,
+) -> dict[str, list[str]]:
+    """Port of ``R/reproducibility_check.R::.repro_more_library_lines()``.
+
+    The ``library()`` lines to add in a later run (#592): for each script that stopped on
+    "could not find function" for a function no other script defines, the packages
+    :func:`_repro_missing_fn_pkgs` gives that the script did not get yet. The corrective
+    run looks only at the first run's errors, so a script that it gave ``library()`` lines
+    and that then stopped on another missing function was left as it was: 22 scripts in 14
+    papers in the BES run of 0.4.4.27. A dict, script -> new packages; empty when there are
+    none.
+    """
+    if run_results is None or len(run_results) == 0 or "outcome" not in run_results.columns:
+        return {}
+    injected = injected or {}
+    outcome = _chr_list(run_results["outcome"])
+    error = (
+        _chr_list(run_results["error"]) if "error" in run_results.columns else [None] * len(outcome)
+    )
+    names = _chr_list(run_results["file_name"])
+    rows = [
+        i
+        for i, (o, e) in enumerate(zip(outcome, error, strict=True))
+        if o == "errored" and e is not None and _FN_MISSING_RE.search(e)
+    ]
+    if not rows or len(code_text_list) == 0:
+        return {}
+    defs = repro_defined_vars(code_text_list)
+    def_names = _chr_list(defs["file_name"])
+    def_sets = [list(d) if d is not None else [] for d in defs["defines"]]
+    out: dict[str, list[str]] = {}
+    for i in rows:
+        user = names[i]
+        if user is None or user not in code_text_list:
+            continue
+        m = _FN_MISSING_RE.search(error[i] or "")
+        v = m.group(1) if m else ""
+        # defined in another script: loading that one first is the corrective run's task, and
+        # a package is no answer
+        if any(v in d for n, d in zip(def_names, def_sets, strict=True) if n != user):
+            continue
+        new = _setdiff(
+            _repro_missing_fn_pkgs(v, user, code_text_list, candidates, unavailable),
+            [*injected.get(user, []), *out.get(user, [])],
+        )
+        if new:
+            out[user] = [*out.get(user, []), *new]
+    return out
+
+
+_MISSING_PKG_PATS = (
+    r"there is no package called .([A-Za-z][A-Za-z0-9.]*[A-Za-z0-9])",
+    r"[Pp]ackage .([A-Za-z][A-Za-z0-9.]*[A-Za-z0-9]). (?:is )?required",
+    r"The ([A-Za-z][A-Za-z0-9.]*[A-Za-z0-9]) package needs to be installed",
+)
+
+
+def _repro_missing_pkg_names(txt: str | Sequence[str | None] | None) -> list[str | None]:
+    """Port of ``R/reproducibility_check.R::.repro_missing_pkg_names()``.
+
+    The package an R error says is missing, one per text (``None`` when none): R's own
+    "there is no package called 'B'", insight's "Package `B` required" (performance, see,
+    parameters and the rest of the easystats family), rlang's and broom.helpers' "The
+    package \"B\" is required", and "The B package needs to be installed" (rnaturalearth). A
+    package that another package needs only for one function is in neither script's
+    ``library()`` calls, so it was never installed (#587).
+    """
+    texts = [txt] if isinstance(txt, str) else list(txt or [])
+    out: list[str | None] = [None] * len(texts)
+    flat = ["" if is_missing(t) else str(t) for t in texts]
+    for pat in _MISSING_PKG_PATS:
+        rx = re.compile(pat)
+        for i, t in enumerate(flat):
+            if out[i] is None:
+                m = rx.search(t)
+                if m:
+                    out[i] = m.group(1)
+    return out
 
 
 # ---------------------------------------------------------------------------

@@ -23,7 +23,6 @@ import tempfile
 import threading
 import time
 import warnings
-import zipfile
 from collections.abc import Callable, Sequence
 from concurrent.futures import ThreadPoolExecutor
 from contextvars import ContextVar, copy_context
@@ -393,18 +392,37 @@ def _column_name(table: pd.DataFrame, id_col: int | str) -> str:
     return str(id_col)
 
 
+def _quiet_all_pages(url: str) -> Any:
+    """:func:`osf_get_all_pages` that does not mark the listing under way as incomplete.
+
+    The walk of :func:`osf_info` asks again for what failed, so it decides itself whether the
+    listing is short (:func:`_fetch_listings`).
+    """
+    _LISTING_COMPLETE.set(None)
+    return osf_get_all_pages(url)
+
+
+def _fetch_pages(urls: list[str], quiet: bool = False) -> list[Any]:
+    """``lapply(urls, osf_get_all_pages)``: the answer for each of *urls*, in order.
+
+    With *quiet*, a failed answer does not mark the listing under way as incomplete.
+    """
+    if not urls:
+        return []
+    fn = _quiet_all_pages if quiet else osf_get_all_pages
+    if len(urls) == 1:
+        return [copy_context().run(fn, urls[0]) if quiet else fn(urls[0])]
+    with ThreadPoolExecutor(max_workers=min(4, len(urls))) as pool:
+        futures = [pool.submit(copy_context().run, fn, u) for u in urls]
+        return [f.result() for f in futures]
+
+
 def _fetch_listings(urls: list[str]) -> OsfResult:
     """``lapply(urls, osf_get_all_pages) |> bind_rows()`` (listings only, in order)."""
     if not urls:
         return OsfResult()
-    if len(urls) == 1:
-        pages = [osf_get_all_pages(urls[0])]
-    else:
-        with ThreadPoolExecutor(max_workers=min(4, len(urls))) as pool:
-            futures = [pool.submit(copy_context().run, osf_get_all_pages, u) for u in urls]
-            pages = [f.result() for f in futures]
     out = OsfResult()
-    for page in pages:
+    for page in _fetch_pages(urls):
         _checked_pages(page)
         if isinstance(page, list):
             out.extend(page)
@@ -441,6 +459,12 @@ def osf_info(
     short is kept for the session under its limit only, and with *cache* its progress is
     kept on disk: the next call goes on from there with up to *max_requests* more requests,
     until the listing is complete.
+
+    With *recursive*, a folder or component the OSF refused or sent back short (as it does under
+    load) is asked for once more, after 30 seconds; when it still fails, the result has a column
+    ``listing_short`` (``True``), with a warning: files in that folder are missing from it. Such a
+    listing is not kept in either cache. A project's contributors are completed (``contributors``,
+    ``contributor_families`` and ``n_contributors``): the OSF names only the first 10 in its answer.
     """
     from metacheck.archives import _spinner, _tick
     from metacheck.archives.info_cache import (
@@ -481,6 +505,16 @@ def osf_info(
                     and _listing_ok(data)
                     and _public_listing(data, osf_url)
                 ):
+                    # a listing stored with a project's first 10 contributors only gets the full
+                    # list, and is stored again with it (metacheck #682)
+                    from metacheck.archives.osf_helpers import _osf_complete_table
+
+                    done: pd.DataFrame = _osf_complete_table(data)
+                    if done is not data:
+                        data = done
+                        _repo_info_cache_put(
+                            "osf_tree", cache_key, {"created": created, "data": data}
+                        )
                     with _LISTING_LOCK:
                         _LISTING_CACHE[cache_key] = data.copy()
                         _LISTING_TIMES[cache_key] = time.monotonic() - (time.time() - created)
@@ -607,6 +641,7 @@ def _osf_walk(
     can go on where it stopped: with ``cache``, the state is stored (``osf_listing_part``) and
     the next run lists up to ``max_requests`` more, until the listing is complete.
     """
+    from metacheck import http
     from metacheck.archives import _tick
     from metacheck.archives.info_cache import _repo_info_cache_get
     from metacheck.archives.osf_helpers import (
@@ -618,12 +653,28 @@ def _osf_walk(
 
     n_start = _OSF_REQUESTS[0]
     cut = False
+    # Every listing request made from here on is counted, and a folder that answers with a failed or
+    # short page (a refusal under load) is noted (``failed_urls``): such a listing is not kept in any
+    # cache, because it lacks files the project has. A folder the OSF calls not found or gone is a
+    # settled answer, not a short listing; so is one it calls forbidden, except an OSF Storage folder
+    # or a component listing in a project the OSF has already shown to be public, as the OSF also
+    # refuses public projects for a while under load (:func:`_osf_refusable_url`). Each stage asks
+    # for its failed folders once more after waiting (:func:`_osf_retry_wait`), and what still fails
+    # makes the listing short (``short``, the column ``listing_short``): in a corpus run, a project's
+    # listing lacked the files of two of its components after a refusal (metacheck #681), and the
+    # checks reported on the rest without a word.
+    failed_urls: list[str] = []
+    lost_urls: list[str] = []
+    is_public = "public" in info and bool((info["public"] == True).fillna(False).any())  # noqa: E712
 
     def budget_left() -> float:
         return max_requests - (_OSF_REQUESTS[0] - n_start)
 
     def fetch(urls: list[str]) -> tuple[OsfResult, list[str]]:
-        """Lists *urls* in order while the limit lasts; the rows and the urls not yet asked for."""
+        """Lists *urls* in order while the limit lasts; the rows and the urls not yet asked for.
+
+        The urls the OSF refused or answered short for are added to ``failed_urls``.
+        """
         nonlocal cut
         out = OsfResult()
         done = 0
@@ -633,9 +684,47 @@ def _osf_walk(
                 cut = True
                 break
             chunk = urls[done : done + int(min(4, room))]
-            out.extend(_fetch_listings(chunk))
+            for u, page in zip(chunk, _fetch_pages(chunk, quiet=True), strict=True):
+                err = _osf_err(page)
+                if (
+                    err == "request_failed"
+                    or getattr(page, "osf_incomplete", None)
+                    or (err == "forbidden" and is_public and _osf_refusable_url(u))
+                ):
+                    failed_urls.append(u)
+                else:
+                    _checked_pages(page)
+                if isinstance(page, list):
+                    out.extend(page)
             done += len(chunk)
         return out, urls[done:]
+
+    def retry_failed(retried: bool) -> list[str]:
+        """Once per stage: wait for the OSF, then the urls it refused to ask again (else none)."""
+        if cut or retried or not failed_urls:
+            return []
+        urls = list(dict.fromkeys(failed_urls))
+        failed_urls.clear()
+        wait = _osf_retry_wait()
+        _tick(
+            pb,
+            f"Waiting {int(wait)} seconds before asking the OSF again for {len(urls)} "
+            f"folder{plural(len(urls))} it refused",
+        )
+        http.sleep(wait)
+        return urls
+
+    def drop_seen(rows: Any, seen: Any) -> Any:
+        """The rows of a folder asked for again that an answer cut short had already given."""
+        if (
+            not isinstance(rows, pd.DataFrame)
+            or len(rows) == 0
+            or "osf_id" not in rows
+            or not isinstance(seen, pd.DataFrame)
+            or "osf_id" not in seen
+        ):
+            return rows
+        return rows[rows["osf_id"].isna() | ~rows["osf_id"].isin(seen["osf_id"])]
 
     st: Any = _repo_info_cache_get("osf_listing_part", disk_key) if disk_key is not None else None
     if isinstance(st, dict) and st.get("stage") in ("trees", "components", "files"):
@@ -693,21 +782,36 @@ def _osf_walk(
 
     if not cut and st["stage"] == "components":
         depth = 0
-        while st["urls"]:
-            depth += 1
-            _tick(
-                pb,
-                f"Listing components: level {depth}, {len(st['urls'])} to check "
-                f"({len(st['child'])} found so far)",
-            )
-            got, left = fetch(st["urls"])
-            children = _osf_parse_response(got)
-            if children is not None:
-                st["child"] = _cat(st["child"], children)
-                st["walked"] = _cat(st["walked"], children)
-            st["urls"] = [*left, *_non_na(children, "children")]
+        retried = False
+        while True:
+            while st["urls"]:
+                depth += 1
+                _tick(
+                    pb,
+                    f"Listing components: level {depth}, {len(st['urls'])} to check "
+                    f"({len(st['child'])} found so far)",
+                )
+                got, left = fetch(st["urls"])
+                children = _osf_parse_response(got)
+                if retried:
+                    children = drop_seen(children, st["child"])
+                if children is not None:
+                    st["child"] = _cat(st["child"], children)
+                    st["walked"] = _cat(st["walked"], children)
+                st["urls"] = [*left, *_non_na(children, "children")]
+                if cut:
+                    break
             if cut:
                 break
+            again = retry_failed(retried)
+            if not again:
+                break
+            st["urls"] = again
+            retried = True
+        # what this stage could not list, kept apart so the next stage does not ask for it again
+        # as a folder
+        lost_urls.extend(failed_urls)
+        failed_urls.clear()
         if not cut:
             if len(st["child"]) > 0:
                 n = len(st["child"])
@@ -725,32 +829,48 @@ def _osf_walk(
             st["stage"] = "files"
 
     if not cut and st["stage"] == "files":
-        while st["urls"]:
-            # a linked GitHub repository is listed through GitHub itself (2 requests, with
-            # sizes); only the add-on's top folder is matched, so when that fails it is listed
-            # through the OSF in full
-            for u in dict.fromkeys(st["urls"]):
-                if (m := _GITHUB_FILES_LINK.search(u)) is None:
-                    continue
-                gh_rows = _osf_github_files(m.group(1))
-                if gh_rows is not None:
-                    st["files"] = _cat(st["files"], gh_rows)
-                    st["urls"] = [x for x in st["urls"] if x != u]
-            if not st["urls"]:
-                break
-            n_files = _count_files(st["files"])
-            _tick(
-                pb,
-                f"Listing files: {len(st['urls'])} folder{plural(len(st['urls']))} to check "
-                f"({n_files} file{plural(n_files)} found so far)",
-            )
-            got, left = fetch(st["urls"])
-            files = _osf_parse_response(got)
-            if files is not None:
-                st["files"] = _cat(st["files"], files)
-            st["urls"] = [*left, *_non_na(files, "files")]
+        retried = False
+        while True:
+            while st["urls"]:
+                # a linked GitHub repository is listed through GitHub itself (2 requests, with
+                # sizes); only the add-on's top folder is matched, so when that fails it is listed
+                # through the OSF in full
+                for u in dict.fromkeys(st["urls"]):
+                    if (m := _GITHUB_FILES_LINK.search(u)) is None:
+                        continue
+                    gh_rows = _osf_github_files(m.group(1))
+                    if gh_rows is not None:
+                        st["files"] = _cat(st["files"], gh_rows)
+                        st["urls"] = [x for x in st["urls"] if x != u]
+                if not st["urls"]:
+                    break
+                n_files = _count_files(st["files"])
+                _tick(
+                    pb,
+                    f"Listing files: {len(st['urls'])} folder{plural(len(st['urls']))} to check "
+                    f"({n_files} file{plural(n_files)} found so far)",
+                )
+                got, left = fetch(st["urls"])
+                files = _osf_parse_response(got)
+                if retried:
+                    files = drop_seen(files, st["files"])
+                if files is not None:
+                    st["files"] = _cat(st["files"], files)
+                st["urls"] = [*left, *_non_na(files, "files")]
+                if cut:
+                    break
             if cut:
                 break
+            again = retry_failed(retried)
+            if not again:
+                break
+            st["urls"] = again
+            retried = True
+        lost_urls.extend(failed_urls)
+        failed_urls.clear()
+
+    # What the OSF still refused after it was asked again (#681).
+    short = len(lost_urls) > 0
 
     # Until the files stage, the providers listed with the trees are kept in st["providers"]
     # only; they are part of what was found so far.
@@ -779,6 +899,22 @@ def _osf_walk(
         if part is not None:
             part["cut"] = True
             part["state"] = st
+    if short:
+        n_files = _count_files(found_files)
+        n_lost = len(set(lost_urls))
+        data = data.copy()
+        data["listing_short"] = True
+        ids = ", ".join(dict.fromkeys(str(i) for i in info["osf_id"].dropna()))
+        warnings.warn(
+            f"The OSF refused part of the listing of {ids}, also when asked again "
+            f"({n_lost} folder{plural(n_lost)}), with {n_files} file{plural(n_files)} listed: "
+            "files in those folders are missing from it. Run again later.",
+            stacklevel=3,
+        )
+        # a listing with a gap is kept in no cache
+        flag = _LISTING_COMPLETE.get()
+        if flag is not None:
+            flag[0] = False
     return data
 
 
@@ -799,8 +935,9 @@ def osf_type(guid: Any) -> Any:
     """Port of R/archive-osf.R::osf_type(): the type of an OSF GUID.
 
     ``"nodes"``, ``"files"``, ``"preprints"``, ``"registrations"``,
-    ``"users"``...; ``"inaccessible"`` when the ID is well-formed but the
-    resource could not be reached (private, embargoed, withdrawn, deleted);
+    ``"users"``...; ``"inaccessible"`` when the ID is well-formed but the OSF refused it or does
+    not have it (private, embargoed, withdrawn, deleted); ``"unreachable"`` when the request itself
+    failed (no connection, a server error, too many requests), so nothing is known about the link;
     ``None`` when the input is not a valid OSF ID. A sequence gives a list.
     """
     if not isinstance(guid, str) and guid is not None and isinstance(guid, Sequence | pd.Series):
@@ -830,14 +967,46 @@ def osf_type(guid: Any) -> Any:
     ident = re.sub(r"[?/].*$", "", ident, flags=re.S)
     suffix = f"&view_only={key}" if key else ""
     info = osf_get_all_pages(f"{_api()}/guids/{ident}/?resolve=false{suffix}")
-    if _osf_err(info) is not None:
-        return "inaccessible"
+    # A request that failed (no connection, a server error, too many requests) says nothing about
+    # the link: "inaccessible" made prereg_check call such a link private, embargoed or withdrawn
+    # (metacheck #541)
+    err = _osf_err(info)
+    if err is not None:
+        return "unreachable" if err == "request_failed" else "inaccessible"
     from metacheck.archives.osf_helpers import _get
 
     otype = _get(info, "relationships", "referent", "links", "related", "meta", "type")
     if otype is None or (isinstance(otype, list) and len(otype) == 0):
         return None
     return otype[0] if isinstance(otype, list) else otype
+
+
+def _osf_refusable_url(url: str) -> bool:
+    """Port of ``.osf_refusable_url()``: can a refusal (HTTP 403) of this listing be one under load?
+
+    In a project the OSF has shown to be public, a refusal of a component listing (``/children/``),
+    a node's list of storages (``/files/``) or an OSF Storage folder is a refusal under load rather
+    than a settled answer (see :func:`osf_info`). A linked storage such as Google Drive or Dropbox
+    can refuse for good when its link to the account has lapsed, so its folders keep a 403 as
+    settled.
+    """
+    url = _strip_query(url)
+    return bool(grepl(r"/children/?$|/files/?$|/files/osfstorage(/[^/]*)?/?$", url))
+
+
+#: answers of the OSF API worth asking again for at once: a rate limit (429), and a server error,
+#: which the OSF gives under load (``.osf_is_transient()``, metacheck #681)
+_OSF_TRANSIENT_STATUSES = (429, 500, 502, 503, 504)
+
+
+def _osf_retry_wait() -> float:
+    """Port of ``.osf_retry_wait()``: how long :func:`osf_info` waits before asking again (seconds).
+
+    Under load the OSF refuses requests in bursts; the retries of :func:`osf_get_all_pages` (2 and 4
+    seconds) fall inside such a burst, while the folder that failed in the corpus run of #681 was
+    listed in full by a later run.
+    """
+    return 30
 
 
 def _osf_max_page_size(url: str) -> str:
@@ -948,10 +1117,28 @@ def osf_get_all_pages(url: str, page_end: float = math.inf) -> Any:
     if per_page is None:
         per_page = _num(_get_path(content, "meta", "per_page"))
     if next_page_num is None or total is None or per_page is None or per_page <= 0:
+        # A later page that failed (after its own retries), or came back short, makes this listing
+        # short too: it was dropped without the mark, so the listing looked complete (metacheck
+        # #681). A short later page has already said so in its own warning.
         subdata = osf_get_all_pages(next_url, page_end)
-        if _osf_err(subdata) is not None or not isinstance(subdata, list):
+        lost = _osf_err(subdata) is not None or not isinstance(subdata, list)
+        short_later = getattr(subdata, "osf_incomplete", None) is not None
+        if lost:
             subdata = []
-        return OsfResult(first + list(subdata))
+        out = OsfResult(first + list(subdata))
+        if lost or short_later:
+            got = len(out)
+            if lost:
+                warnings.warn(
+                    f"The OSF did not send every page of the listing of {_strip_query(url)} "
+                    f"({got} item{plural(got)} listed). Anything not listed is not retrieved, so "
+                    "this listing is incomplete. Run again (see ?osf_pat, which raises the request "
+                    "limit).",
+                    stacklevel=2,
+                )
+            out.osf_incomplete = {"expected": math.nan, "got": float(got)}
+            return _checked_pages(out)
+        return out
 
     last_page = min(math.ceil(total / per_page), page_end)
     if last_page < next_page_num:
@@ -1013,7 +1200,7 @@ def _osf_get_one_page(url: str) -> Any:
             _osf_max_page_size(url),
             headers=_osf_headers()["headers"],
             max_tries=3,
-            retry_statuses=(429,),
+            retry_statuses=_OSF_TRANSIENT_STATUSES,
         )
         if resp is None:
             return _osf_error_result("request_failed")
@@ -1586,7 +1773,10 @@ def _osf_file_download_ids(
                 f"{n_big} file{plural(n_big)} in {osf_id} exceeded the {cap_num(max_file_size)} "
                 f"MB per-file limit and {'was' if n_big == 1 else 'were'} skipped (the rest of "
                 f"the repository was downloaded). Largest: {names[largest]} "
-                f"({cap_num(round(max(big_sizes) / _MB))} MB). Raise max_file_size to include them."
+                # rounded up to 0.1 MB: rounded to whole MB, a 1.4 MB file over a 1 MB limit read
+                # "(1 MB)" (#699)
+                f"({cap_num(math.ceil(max(big_sizes) / _MB * 10) / 10)} MB). Raise max_file_size "
+                "to include them."
             )
             files = files.drop(index=too_big).reset_index(drop=True)
             size_num = size_num.drop(index=too_big).reset_index(drop=True)
@@ -1933,8 +2123,21 @@ def _osf_zip_mode(
         if unzip is True:
             unzip_dir = tempfile.mkdtemp(prefix="osf-zip-")
             tmp_dirs.append(unzip_dir)
-            with zipfile.ZipFile(zip_path) as zf:
-                zf.extractall(unzip_dir)
+            # A name in the old DOS characters (CP437, as the OSF stores an accented letter)
+            # stopped a whole-zip utils::unzip() on Windows, and with it the whole download
+            # (#680); _unzip_all() takes such a member out. A member it cannot unpack is
+            # downloaded individually below, with the rest of the files the archive did not
+            # deliver.
+            from metacheck.archives.zip_peek import _unzip_all, _unzip_failed_note
+
+            unpacked = _unzip_all(zip_path, unzip_dir)
+            note = (
+                "the archive could not be read"
+                if unpacked is None
+                else _unzip_failed_note(unpacked, zip_name)
+            )
+            if note is not None:
+                _message(f"[zip] {node}: {note}; downloaded individually below.")
             paths = files["path"].tolist()
             copied = []
             for i in node_idx:

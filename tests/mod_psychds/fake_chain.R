@@ -106,6 +106,13 @@ psychds_fake_chain <- function(name, file = "chains.json") {
     structure = psychds_structure(spec),
     group_no_evidence = gne
   )
+  if (isTRUE(spec$count_refused)) {
+    repo <- "https://doi.org/10.5281/zenodo.3826426"
+    out$count_refused <- data.frame(
+      repo_url = repo, n_files = 369548L,
+      message = metacheck:::.repo_count_message(repo, 369548, 100000),
+      stringsAsFactors = FALSE)
+  }
   class(out) <- "metacheck_module_output"
   out
 }

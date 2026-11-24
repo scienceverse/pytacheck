@@ -235,6 +235,90 @@ def test_a_file_of_unknown_size_is_downloaded_with_a_limit(
     assert "unknown size not downloaded" in dl.attrs["gated"]["message"].iloc[0]
 
 
+def test_each_file_left_out_by_a_limit_is_named_with_its_reason(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # R: "each file left out by a limit is named with its reason (#699)"
+    # over max_file_size
+    files = make_dl_files(tmp_path, sizes=(50, 5000))
+    cap_mb = files["file_size"].iloc[1] / (1024 * 1024) * 0.5
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        dl = download_repo_files(files, max_file_size=cap_mb, max_download_size=100)
+    refused = dl.attrs["limit_refused"]
+    assert len(refused) == 2
+    assert pd.isna(refused.iloc[0])
+    assert "per-file limit (max_file_size)" in refused.iloc[1]
+
+    # over the budget
+    files = make_dl_files(tmp_path, sizes=(1000, 3000))
+    cap = (files["file_size"].iloc[0] + files["file_size"].sum()) / 2 / (1024 * 1024)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        dl = download_repo_files(files, max_file_size=100, max_download_size=cap)
+    refused = dl.attrs["limit_refused"]
+    assert pd.isna(refused.iloc[0])
+    assert "budget for its repository was spent" in refused.iloc[1]
+
+    # over max_files_per_repo
+    files = make_dl_files(tmp_path, sizes=(100, 100, 100))
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        dl = download_repo_files(files, max_files_per_repo=2)
+    assert all("more than max_files_per_repo (2)" in r for r in dl.attrs["limit_refused"])
+
+    # of unknown size and over its limit while downloading
+    monkeypatch.setattr(dlm, "_remote_size", lambda *a, **k: math.nan)
+    files = make_dl_files(tmp_path, (5000,))
+    files["file_size"] = math.nan
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        dl = download_repo_files(files, max_file_size=0.001)
+    assert "per-file limit" in dl.attrs["limit_refused"].iloc[0]
+
+    # a file that is downloaded is not named
+    files = make_dl_files(tmp_path, (100, 200))
+    dl = download_repo_files(files)
+    assert dl.attrs["limit_refused"].isna().tolist() == [True, True]
+
+
+def test_the_largest_file_over_the_limit_is_given_rounded_up_to_a_tenth_of_a_mb(
+    tmp_path: Path, messages: list[str]
+) -> None:
+    # R (#699): rounded to whole MB, a 1.4 MB file over a 1 MB limit read "(1 MB)"
+    files = make_dl_files(tmp_path, (100,))
+    files["file_size"] = 1.4 * 1024 * 1024
+    download_repo_files(files, max_file_size=1, max_download_size=100)
+    assert any("(1.4 MB)" in m for m in messages)
+
+
+def test_download_capped_sends_a_prepared_request(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # R (#699): .download_capped() takes a prepared request (ResearchBox's POST), sent as it is
+    seen: dict[str, Any] = {}
+
+    def fake(method: str, url: str, headers: Any = None, **kw: Any) -> Any:
+        seen.update(method=method, url=url, headers=headers, auth=kw["auth"], content=kw["content"])
+        resp = httpx.Response(200, content=b"x" * 50)
+        kw["sink"](resp)
+        return resp
+
+    monkeypatch.setattr(dlm, "_storage_request", fake)
+    err, over, _ = dlm._download_capped(
+        "https://researchbox.org/download_files.php",
+        str(tmp_path / "a.zip"),
+        max_bytes=10,
+        method="POST",
+        headers={"Content-Type": "application/json"},
+        content=b"{}",
+        auth=False,
+    )
+    assert over and err == "over the byte limit"
+    assert seen["method"] == "POST" and seen["content"] == b"{}" and seen["auth"] is False
+    assert not (tmp_path / "a.zip").exists()
+
+
 def test_a_file_the_listing_says_is_empty_is_written_when_the_host_refuses_it(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -1306,10 +1390,29 @@ def test_archive_members_may_take_the_whole_archive(
         download_repo_files(files, max_download_size=2)
     dryad, zenodo = seen
     assert dryad["request_bytes"] == math.inf and zenodo["request_bytes"] == 1048576
-    assert dryad["max_whole_bytes"] == 2 * 1048576
+    # a whole copy may use what is left of the repository's budget after its 10-byte member (#698)
+    assert dryad["max_whole_bytes"] == 2 * 1048576 - 10
     assert dryad["size"] == 12345.0
     # kept beside its members' folder, so a restarted run does not ask for it again
     assert dryad["dest"] == dryad["archive_path"] + ".contents"
+
+    # the whole copy is a file like any other: held to max_file_size too (#699)
+    seen.clear()
+    for arc in ("https://datadryad.org/api/v2/files/9/download", "https://zenodo.org/x.zip"):
+        files = pd.DataFrame(
+            {
+                "repo_url": ["https://example.org/repo-" + secrets.token_hex(4)],
+                "file_name": ["a.csv"],
+                "file_path": ["x.zip/a.csv"],
+                "file_url": [None],
+                "file_size": [10.0],
+                "archive_url": [arc],
+                "archive_member": ["a.csv"],
+                "archive_size": [12345.0],
+            }
+        )
+        download_repo_files(files, max_file_size=2, max_download_size=10)
+    assert [s_["max_whole_bytes"] for s_ in seen] == [2 * 1048576, 2 * 1048576]
 
 
 def test_dryad_archive_members_come_from_one_download(tmp_path: Path) -> None:
@@ -1436,3 +1539,201 @@ def test_member_fetched_fills_file_location(
     dl = download_repo_files(_archive_member_files())
     assert dl["file_location"].iloc[0] == str(extracted)
     assert len(dl.attrs["failed"]) == 0
+
+
+# -- #699: one choice of files per repository for the whole run ----------------
+
+
+def test_omit_for_size_keeps_the_smallest_files_that_fit() -> None:
+    from metacheck.archives.dataverse import _omit_for_size
+
+    class Pb:
+        def tick(self, *args: Any, **kwargs: Any) -> None:
+            return None
+
+    mb = 1024 * 1024
+    size = [4 * mb, 1 * mb, 3 * mb, 2 * mb, math.nan, 30 * mb]
+    name = ["d", "a", "c", "b", "unknown", "big"]
+    exempt = [False, False, False, False, False, True]
+
+    def omitted(max_file_size: float, max_download_size: float) -> list[str]:
+        om = _omit_for_size(size, name, exempt, max_file_size, max_download_size, Pb())
+        return [n for n, o in zip(name, om, strict=True) if o]
+
+    # budget 6 MB: a (1) + b (2) + c (3) fit, d (4) does not
+    assert omitted(10, 6) == ["d"]
+    # budget 4.5 MB: a + b; the unknown size and the exempt zip are kept
+    assert sorted(omitted(10, 4.5)) == ["c", "d"]
+    # over max_file_size: left out whatever the budget; exempt and unknown sizes kept
+    assert omitted(3.5, math.inf) == ["d"]
+
+
+def test_a_long_path_is_shortened_below_the_repositorys_folder(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # Under a long folder, a path over the length limit had every folder name over 40
+    # characters shortened, the repository's own folder included: the files of an archive went
+    # to a second folder beside it, which the repository's budget (counting its own folder) did
+    # not see. (The 250-character limit is Windows' only: set here as it is there.)
+    from metacheck import utils
+    from metacheck.archives.download import _archive_member_paths
+
+    root = (tmp_path / ("d" * 40)).as_posix()
+    # a limit that leaves 140 characters below the folder, whatever the length of the
+    # temporary folder of the machine
+    limit = len(os.path.abspath(root)) + 140
+    monkeypatch.setattr(utils, "_MAX_PATH_CHARS", limit)
+    with local_options({"metacheck.repo_cache.session_dir": root}):
+        repo = "https://github.com/someone/a-repository-name-of-more-than-forty-characters"
+        sub = _repo_cache_subdir(repo, cache=False).replace("\\", "/")
+        assert len(Path(sub).name) > 40
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            arc, dest = _archive_member_paths(
+                "https://raw.githubusercontent.com/someone/"
+                + "x" * 60
+                + "/main/archives/bundle.zip",
+                repo,
+                cache=False,
+            )
+        assert arc.replace("\\", "/").startswith(sub + "/")
+        assert dest.replace("\\", "/").startswith(sub + "/")
+        assert len(os.path.abspath(dest)) <= limit
+
+
+def test_a_repository_over_max_files_per_repo_has_no_files_fetched_from_its_archives_either(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # On Lakens/metacheck-download-test (41 files, max_files_per_repo = 20) the repository was
+    # reported as "skipped entirely" while the scripts in its zip and tar were fetched: a call
+    # given only the archive rows counted 2 files.
+    import metacheck.archives.zip_peek as zp
+
+    files = _archive_member_files()
+    other = make_dl_files(tmp_path, sizes=(100, 100, 100))
+    other["repo_url"] = files["repo_url"].iloc[0]
+    other["archive_url"] = pd.Series([None] * 3, dtype="string")
+    other["archive_member"] = pd.Series([None] * 3, dtype="string")
+    other["paper_id"] = "p.1"
+    listing = pd.concat([files, other[list(files.columns)]], ignore_index=True)
+    called: list[bool] = []
+
+    def refused(*args: Any, **kwargs: Any) -> Any:
+        called.append(True)
+        raise AssertionError("must not be called")
+
+    monkeypatch.setattr(zp, "_zip_fetch_members", refused)
+    with (
+        pytest.warns(UserWarning, match="holds 4 files, exceeding the 3-file cap"),
+        warnings.catch_warnings(),
+    ):
+        dl = download_repo_files(files, repo_listing=listing, max_files_per_repo=3)
+    assert not called
+    assert pd.isna(dl["file_location"].iloc[0])
+    assert "more than max_files_per_repo (3)" in dl.attrs["limit_refused"].iloc[0]
+    assert len(dl.attrs["gated"]) == 1
+
+    # within the limit, the member is fetched as before
+    monkeypatch.setattr(zp, "_zip_fetch_members", lambda *a, **k: called.append(True))
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        download_repo_files(files, repo_listing=listing, max_files_per_repo=4)
+    assert called
+
+
+def test_one_choice_of_files_per_repository_holds_across_calls_in_any_order(
+    tmp_path: Path,
+) -> None:
+    mb = 1024 * 1024
+    files = make_dl_files(tmp_path, sizes=(3000, 3000, 3000, 500))
+    files["file_name"] = ["d1.csv", "d2.csv", "d3.csv", "analysis.R"]
+    files["file_path"] = ["x/" + n for n in files["file_name"]]
+    # the three data files fit the budget, but not with the script as well
+    budget = (files["file_size"].iloc[:3].sum() + 10) / mb
+    folder = _repo_cache_subdir(files["repo_url"].iloc[0], cache=False)
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        # data_check first, asking for the data files only: the script's place is kept, so the
+        # largest data file is left out
+        dl1 = download_repo_files(files.iloc[:3], max_download_size=budget, repo_listing=files)
+        assert dl1["file_location"].isna().tolist() == [False, False, True]
+        assert "budget for its repository" in dl1.attrs["limit_refused"].iloc[2]
+
+        # code_check next: the script still fits
+        dl2 = download_repo_files(files.iloc[[3]], max_download_size=budget, repo_listing=files)
+        assert dl2["file_location"].notna().all()
+
+        # asking again for everything adds nothing; the folder stays within the budget
+        dl3 = download_repo_files(files, max_download_size=budget, repo_listing=files)
+        assert pd.isna(dl3["file_location"].iloc[2])
+        assert dlm._repo_disk_bytes(folder) <= budget * mb
+
+        # without the listing, the first call took all three data files, and the script did
+        # not fit afterwards
+        files2 = make_dl_files(tmp_path, sizes=(3000, 3000, 3000, 500))
+        files2["file_name"] = files["file_name"]
+        files2["file_path"] = files["file_path"]
+        dl4 = download_repo_files(files2.iloc[:3], max_download_size=budget)
+        assert dl4["file_location"].notna().all()
+        dl5 = download_repo_files(files2.iloc[[3]], max_download_size=budget)
+        assert dl5["file_location"].isna().all()
+
+
+def test_what_a_repositorys_folder_already_holds_counts_for_its_budget(tmp_path: Path) -> None:
+    files = make_dl_files(tmp_path, sizes=(1000,))
+    folder = Path(_repo_cache_subdir(files["repo_url"].iloc[0], cache=False))
+    folder.mkdir(parents=True)
+    (folder / "from_an_earlier_call.bin").write_bytes(bytes(5000))
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        dl = download_repo_files(files, max_download_size=5500 / 1024**2)
+    assert dl["file_location"].isna().all()
+    dl = download_repo_files(files, max_download_size=7000 / 1024**2)
+    assert dl["file_location"].notna().all()
+
+
+def test_repo_disk_bytes_counts_an_archive_and_the_files_unpacked_from_it(
+    tmp_path: Path,
+) -> None:
+    # both are on disk: osf.io/nugzb held 61 MB under a 50 MB budget when the files unpacked
+    # from a 7.1 MB zip were left out
+    (tmp_path / "a.zip").write_bytes(bytes(100))
+    (tmp_path / "a.zip.contents" / "sub").mkdir(parents=True)
+    (tmp_path / "a.zip.contents" / "sub" / "x.csv").write_bytes(bytes(1000))
+    # members fetched one by one, without a copy of their archive, count
+    (tmp_path / ".archive_members" / "b.zip.contents").mkdir(parents=True)
+    (tmp_path / ".archive_members" / "b.zip.contents" / "y.csv").write_bytes(bytes(50))
+    assert dlm._repo_disk_bytes(str(tmp_path)) == 1150
+    assert dlm._repo_disk_bytes(str(tmp_path / "absent")) == 0
+
+
+def test_files_of_unknown_size_together_stay_within_what_is_left_of_the_budget(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(dlm, "_remote_size", lambda *a, **k: math.nan, raising=False)
+    files = make_dl_files(tmp_path, sizes=(3000, 3000))
+    files["file_size"] = math.nan
+    # each one alone fits the budget, both together do not
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        dl = download_repo_files(files, max_download_size=4000 / 1024**2)
+    assert int(dl["file_location"].notna().sum()) == 1
+    refused = [v for v in dl.attrs["limit_refused"].tolist() if not pd.isna(v)]
+    assert len(refused) == 1 and "budget for its repository" in refused[0]
+
+
+def test_budget_counted_counts_the_kinds_of_files_the_checks_download() -> None:
+    names = [
+        "a.R", "b.csv", "c.sav", "README.md", "codebook.pdf", "notes.txt", "run.iqdat",
+        "out.spv", "report.html", "data.zip", "photo.png", "paper.pdf", "talk.mp4", "lib.R",
+    ]  # fmt: skip
+    listing = pd.DataFrame(
+        {
+            "repo_url": "r",
+            "file_name": names,
+            "file_path": [*names[:-1], "renv/library/lib.R"],
+        }
+    )
+    assert dlm._budget_counted(listing) == [True] * 10 + [False] * 4
+    assert dlm._budget_counted(listing.iloc[0:0]) == []

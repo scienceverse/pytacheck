@@ -72,7 +72,7 @@
       },
       {
         "t": "df",
-        "nrow": 2,
+        "nrow": 1,
         "names": [
           "repo_url",
           "file_name",
@@ -84,36 +84,31 @@
           {
             "t": "chr",
             "v": [
-              "https://example.org/rp",
               "https://example.org/rp"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "b.csv",
-              "evil.csv"
+              "b.csv"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "https://srv.example.org/paths.zip",
               "https://srv.example.org/paths.zip"
             ]
           },
           {
             "t": "chr",
             "v": [
-              null,
               null
             ]
           },
           {
             "t": "chr",
             "v": [
-              "could not write the extracted member to disk",
-              "entry path escapes the archive (path traversal)"
+              "could not write the extracted member to disk"
             ]
           }
         ]
@@ -142,6 +137,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

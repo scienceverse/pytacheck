@@ -1,0 +1,60 @@
+{
+  "id": "file_share_links.mixed",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "paper_id",
+      "href",
+      "text_id",
+      "service"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://drive.google.com/drive/folders/1AbC?usp=sharing",
+          "www.dropbox.com/s/abc123/code.zip?dl=0",
+          "https://1drv.ms/u/s!AbC",
+          "https://app.box.com/s/xyz9",
+          "https://surfdrive.surf.nl/files/index.php/s/AbCd"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          2,
+          4,
+          4
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Google Drive",
+          "Dropbox",
+          "OneDrive",
+          "Box",
+          "SURFdrive"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.40",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

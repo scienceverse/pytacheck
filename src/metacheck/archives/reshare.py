@@ -473,8 +473,8 @@ _FILE_COLUMNS = (
 def reshare_file_download(
     reshare_id: Any,
     download_to: str = ".",
-    max_file_size: float | None = 10,
-    max_download_size: float | None = 100,
+    max_file_size: float | None = 100,
+    max_download_size: float | None = 500,
     unzip_types: Any = None,
     pb: Any = None,
 ) -> pd.DataFrame | None:
@@ -483,8 +483,10 @@ def reshare_file_download(
     *reshare_id* is an eprint id, URL or DOI, or a sequence of them. Creates
     a ``reshare_<id>`` folder under *download_to* (``_1``, ``_2``... when it
     exists) and downloads each file into it. Files over *max_file_size* MB
-    are skipped, then the largest files until the total is under
-    *max_download_size* MB (``None``/``inf``: no limit). Zips are downloaded
+    (default 100) are skipped, and the largest files are left out until the total
+    is under *max_download_size* MB (default 500; ``None``/``inf``: no limit), so
+    the smallest are kept while they fit, as in
+    :func:`~metacheck.archives.download.download_repo_files`. Zips are downloaded
     whole unless *unzip_types* names file categories (as
     ``data_classify_files()`` does) to extract from them instead. Returns the
     file table (``None`` when the deposit lists no files); files left out by
@@ -586,7 +588,7 @@ def _reshare_zip_members(
     url: str,
     dest: str,
     keep_types: Any = ("data", "documentation"),
-    max_file_size: float | None = 10,
+    max_file_size: float | None = 100,
     size: Any = None,
 ) -> pd.DataFrame | None:
     """Port of R/archive-reshare.R::.reshare_zip_members(): extract wanted zip members.

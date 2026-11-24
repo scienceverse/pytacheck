@@ -15,6 +15,7 @@
       "summary_text",
       "summary_table",
       "gated_repos",
+      "archive_deposits",
       "partial_repos",
       "naming_issues",
       "repo_metadata",
@@ -23,6 +24,7 @@
       "roster_check",
       "group_no_evidence",
       "useless_files",
+      "symlinks",
       "view_only",
       "na_replace"
     ],
@@ -57,9 +59,13 @@
           "file_size",
           "file_type",
           "provider",
+          "osf_node",
+          "storage_size",
+          "storage_n",
           "repo_name",
           "data_type",
           "doc_role",
+          "file_kind",
           "group",
           "paper_id"
         ],
@@ -146,6 +152,33 @@
             ]
           },
           {
+            "t": "dbl",
+            "v": [
+              7000,
+              7000,
+              7000,
+              7000
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4,
+              4,
+              4,
+              4
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "regor",
+              "regor",
+              "regor",
+              "regor"
+            ]
+          },
+          {
             "t": "chr",
             "v": [
               "code",
@@ -161,6 +194,15 @@
               null,
               null,
               null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code",
+              "code",
+              "data",
+              "archive"
             ]
           },
           {
@@ -226,6 +268,11 @@
           "repo_own",
           "repo_others",
           "ref_others",
+          "file_share_n",
+          "icpsr_own_n",
+          "cran_own_n",
+          "archive_own_n",
+          "ref_own",
           "repo_view_only",
           "roster_mismatch"
         ],
@@ -315,6 +362,36 @@
             ]
           },
           {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
             "t": "lgl",
             "v": [
               false
@@ -326,11 +403,44 @@
         "t": "df",
         "nrow": 0,
         "names": [
+          "paper_id",
           "repo_url",
           "repo_type",
           "repo_error"
         ],
         "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "paper_id",
+          "accession",
+          "archive",
+          "repo_url"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
           {
             "t": "chr",
             "v": []
@@ -351,7 +461,8 @@
         "names": [
           "paper_id",
           "repo_url",
-          "files_listed"
+          "files_listed",
+          "reason"
         ],
         "v": [
           {
@@ -364,6 +475,10 @@
           },
           {
             "t": "int",
+            "v": []
+          },
+          {
+            "t": "lgl",
             "v": []
           }
         ]
@@ -524,9 +639,13 @@
           "dep_description",
           "dep_creators",
           "dep_orcids",
+          "dep_creator_families",
+          "dep_n_creators",
           "dep_type",
+          "dep_org",
           "dep_related",
           "dep_date",
+          "dep_updated",
           "dep_year",
           "osf_type",
           "osf_category",
@@ -551,7 +670,8 @@
           "citing",
           "citing_sections",
           "cff_dois",
-          "listing_cut"
+          "listing_cut",
+          "listing_short"
         ],
         "v": [
           {
@@ -635,7 +755,31 @@
           {
             "t": "chr",
             "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "2020-12-28"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
             ]
           },
           {
@@ -787,6 +931,12 @@
             "v": [
               false
             ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
           }
         ]
       },
@@ -802,9 +952,13 @@
           "file_size",
           "file_type",
           "provider",
+          "osf_node",
+          "storage_size",
+          "storage_n",
           "repo_name",
           "data_type",
-          "doc_role"
+          "doc_role",
+          "file_kind"
         ],
         "v": [
           {
@@ -833,6 +987,22 @@
           },
           {
             "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "dbl",
+            "v": []
+          },
+          {
+            "t": "int",
             "v": []
           },
           {
@@ -926,6 +1096,9 @@
         ]
       },
       {
+        "t": "null"
+      },
+      {
         "t": "df",
         "nrow": 0,
         "names": [
@@ -956,6 +1129,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -3,7 +3,7 @@
   "ok": true,
   "error": null,
   "warnings": [
-    "An archive in repository https://example.org/rp exceeds the 0.0 MB per-repository budget: fetched the smallest members up to the cap, 1 member omitted. Raise `max_download_size` to include more."
+    "Repository https://example.org/rp exceeds the 0.0 MB per-repository budget: fetched the smallest archive members up to the cap, 1 member omitted. Raise `max_download_size` to include more."
   ],
   "value": {
     "t": "list",
@@ -42,7 +42,7 @@
           {
             "t": "chr",
             "v": [
-              "An archive in repository https://example.org/rp exceeds the 0.0 MB per-repository budget: fetched the smallest members up to the cap, 1 member omitted. Raise `max_download_size` to include more."
+              "Repository https://example.org/rp exceeds the 0.0 MB per-repository budget: fetched the smallest archive members up to the cap, 1 member omitted. Raise `max_download_size` to include more."
             ]
           }
         ]
@@ -129,6 +129,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

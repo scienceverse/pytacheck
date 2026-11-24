@@ -110,7 +110,7 @@
         "t": "chr",
         "v": [
           "We checked 5 references with DOIs. You cited 3 references with comments in PubPeer.\n\nPubpeer is a platform for post-publication peer review. We have filtered out Pubpeer comments by 'Statcheck'. You can check out the comments by visiting the URLs below:",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reference = c(\"Reference 1. https://doi.org/10.9999/pp.stat\", \n\"Reference 0. https://doi.org/10.9999/pp.one\", \"Reference 1. https://doi.org/10.9999/pp.dup\"\n), Comments = c(12, 2, 1), \"PubPeer Link\" = c(\"<a href='https://pubpeer.com/publications/PP.MANY' target='_blank'>link<\/a>\", \n\"<a href='https://pubpeer.com/publications/PP.ONE' target='_blank'>link<\/a>\", \n\"<a href='https://pubpeer.com/publications/PP.DUP' target='_blank'>link<\/a>\"\n)), row.names = c(NA, -3L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n"
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reference = c(\"Reference 1. https://doi.org/10.9999/pp.stat\", \n\"Reference 0. https://doi.org/10.9999/pp.one\", \"Reference 1. https://doi.org/10.9999/pp.dup\"\n), Comments = c(12, 2, 1), Commenters = c(\"Alpha, Beta, Gamma\", \n\"Jane Doe, John Roe\", \"Dup Checker\"), \"PubPeer Link\" = c(\"<a href='https://pubpeer.com/publications/PP.MANY' target='_blank'>link<\/a>\", \n\"<a href='https://pubpeer.com/publications/PP.ONE' target='_blank'>link<\/a>\", \n\"<a href='https://pubpeer.com/publications/PP.DUP' target='_blank'>link<\/a>\"\n)), row.names = c(NA, -3L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n"
         ]
       },
       {
@@ -159,6 +159,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

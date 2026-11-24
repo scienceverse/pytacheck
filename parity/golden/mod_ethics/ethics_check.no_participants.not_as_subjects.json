@@ -37,7 +37,7 @@
       },
       {
         "t": "df",
-        "nrow": 1,
+        "nrow": 0,
         "names": [
           "text_id",
           "section_id",
@@ -48,75 +48,60 @@
           "header",
           "section_type",
           "ethics",
+          "sign",
           "live_data"
         ],
         "v": [
           {
             "t": "int",
-            "v": [
-              1
-            ]
+            "v": []
           },
           {
             "t": "dbl",
-            "v": [
-              0
-            ]
+            "v": []
           },
           {
             "t": "dbl",
-            "v": [
-              0
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              "The professionals described their own work as collaborators in the projects, not as subjects recruited for a study."
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              "The professionals described their own work as collaborators in the projects, not as subjects recruited for a study."
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              "6c4258abe0fec3"
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              "Test"
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              "unknown"
-            ]
+            "v": []
           },
           {
             "t": "lgl",
-            "v": [
-              null
-            ]
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
           },
           {
             "t": "lgl",
-            "v": [
-              true
-            ]
+            "v": []
           }
         ]
       },
       {
         "t": "chr",
         "v": [
-          "We did not detect an ethics approval statement. The paper states that no human or animal participants took part, so we do not expect one:\n\n> The professionals described their own work as collaborators in the projects, not as subjects recruited for a study."
+          "The paper does not appear to report data about individual people or animals (we found no method part, no sample description and no statistical results, and at most one sign that the authors collected data), so we do not expect an ethics statement."
         ]
       },
       {
@@ -128,7 +113,7 @@
       {
         "t": "chr",
         "v": [
-          "No papers appeared to involve live data collection requiring an ethics approval statement."
+          "No papers appeared to report data about people or animals that need an ethics statement."
         ]
       },
       {
@@ -138,9 +123,10 @@
           "paper_id",
           "ethics_approved",
           "ethics_statements",
+          "data_source",
           "needs_ethics",
-          "live_data_statements",
-          "states_no_participants"
+          "data_source_signs",
+          "data_source_statements"
         ],
         "v": [
           {
@@ -168,9 +154,21 @@
             ]
           },
           {
+            "t": "chr",
+            "v": [
+              "none"
+            ]
+          },
+          {
             "t": "lgl",
             "v": [
               false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
             ]
           },
           {
@@ -180,15 +178,9 @@
               {
                 "t": "chr",
                 "v": [
-                  "The professionals described their own work as collaborators in the projects, not as subjects recruited for a study."
+                  null
                 ]
               }
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              true
             ]
           }
         ]
@@ -196,16 +188,9 @@
       {
         "t": "list",
         "names": [
-          "ethics_approved",
-          "states_no_participants"
+          "ethics_approved"
         ],
         "v": [
-          {
-            "t": "lgl",
-            "v": [
-              false
-            ]
-          },
           {
             "t": "lgl",
             "v": [
@@ -216,6 +201,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -226,7 +226,9 @@ def test_figshare_pat_and_headers(monkeypatch: pytest.MonkeyPatch) -> None:
 
 def test_figshare_file_download(mock_api: object, tmp_path: Path) -> None:
     with pytest.warns(UserWarning, match="2 of 3 files from Figshare article 18093368"):
-        dl = figshare_file_download("10.6084/m9.figshare.18093368.v1", download_to=str(tmp_path))
+        dl = figshare_file_download(
+            "10.6084/m9.figshare.18093368.v1", download_to=str(tmp_path), max_file_size=10
+        )
     assert dl is not None
     assert dl.columns.tolist() == list(figshare._FILE_COLUMNS)
     # the omitted (too large) video stays in the table, not downloaded (U36)

@@ -130,6 +130,10 @@ def test_coi_psychsci(module: str, psychsci: pc.PaperList) -> None:
         "The authors declared that they had no conflicts of interest with respect to their "
         "authorship or the publication of this article."
     )
+    if module == "coi_check":
+        # metacheck 0.4.4.35: a section headed as a conflict of interest is the statement, with
+        # its heading (#695, point 19)
+        expected = "Declaration of Conflicting Interests " + expected
     assert mo.table["text"].tolist() == [expected] * 3
     assert mo.summary_table["coi_found"].tolist() == [True] * 3
 
@@ -171,9 +175,14 @@ def test_coi_references_excluded(module: str) -> None:
 def test_coi_section_headers() -> None:
     # expected values from R (metacheck at the pinned commit)
     paper = pc.read(FIXTURES / "coi_headers.json")
-    # coi_check only reads sentences: headers, the null sentence and blanks add nothing
+    # coi_check reads sentences, and (metacheck 0.4.4.35, #695 point 19) takes the first
+    # paragraph under each heading that names a conflict of interest, with the heading, as the
+    # statement of the paper
     mo = pc.module_run(paper, "coi_check")
-    assert mo.table["text"].tolist() == ["Conflict of interest was absent."]
+    assert mo.table["text"].tolist() == [
+        "Conflict of Interest None. Competing Interests The authors declare none. "
+        "Funding was provided by X. Declaration of interests None declared."
+    ]
     # coi_check_oi also searches headers (search_header = TRUE), then merges by section
     mo = pc.module_run(paper, "coi_check_oi")
     assert mo.table["text"].tolist() == [
@@ -370,3 +379,80 @@ def test_cut_after_authors_uses_tre_minimal_end() -> None:
     s = "The author has no competing interest. A. B. The authors declare no conflict of interest. Y z."
     assert _cut_after_authors(s) == "The author has no competing interest."
     assert _cut_after_authors("No match here. At all.") == "No match here. At all."
+
+
+# -- metacheck 0.4.4.35 (#695, point 19): the section headed as a conflict of interest ----------
+
+
+def _coi_paper(header: str, paragraphs: list[str]) -> pc.Paper:
+    p = pc.test_paper(["We ran a study.", *paragraphs])
+    n = len(paragraphs)
+    p.text["section_id"] = pd.Series([1.0] + [2.0] * n, dtype="float64")
+    p.text["paragraph_id"] = pd.Series([1.0] + [float(i + 2) for i in range(n)], dtype="float64")
+    p.section = pd.DataFrame(
+        {
+            "section_id": pd.Series([1.0, 2.0], dtype="float64"),
+            "header": pd.Series(["Method", header], dtype="string"),
+            "parent_section_id": pd.Series([pd.NA, pd.NA], dtype="Int64"),
+            "section_type": pd.Series(["unknown", "unknown"], dtype="string"),
+            "classification_score": pd.Series([0.0, 0.0], dtype="float64"),
+        }
+    )
+    return p
+
+
+def test_coi_check_takes_the_statement_under_a_conflict_of_interest_heading() -> None:
+    # a statement without the words "conflict of interest" ("None declared.") under such a
+    # heading was missed; only the section's first paragraph is taken, and a bare "Disclosure"
+    # heading counts only when it is about interests
+    mo = pc.module_run(
+        _coi_paper("Conflicts of Interest", ["None declared.", "Publisher's note: maps."]),
+        "coi_check",
+    )
+    assert mo.traffic_light == "green"
+    assert mo.table["text"].tolist() == ["Conflicts of Interest None declared."]
+    # letters split apart by the PDF reading
+    mo = pc.module_run(_coi_paper("Co n fli c t o f i nte r e s t", ["None."]), "coi_check")
+    assert mo.traffic_light == "green"
+    mo = pc.module_run(
+        _coi_paper("Disclosure", ["The authors have no financial ties to report."]), "coi_check"
+    )
+    assert mo.traffic_light == "green"
+    mo = pc.module_run(
+        _coi_paper(
+            "Disclosure",
+            ["Statement of inclusion: our study brings together authors from several countries."],
+        ),
+        "coi_check",
+    )
+    assert mo.traffic_light == "red"
+    mo = pc.module_run(_coi_paper("Financial disclosure", ["None."]), "coi_check")
+    assert mo.traffic_light == "red"
+
+
+def test_coi_check_report_shows_at_most_5_sentences_and_1000_characters() -> None:
+    # the reading can let the paragraph under the heading run on into an appendix's tables; the
+    # table keeps the whole statement
+    from metacheck.modules.coi_check import _coi_short_text
+
+    tables = [f"Table A{i} lists values." for i in range(1, 9)]
+    p = pc.test_paper(["We ran a study.", "None declared.", *tables])
+    p.text["section_id"] = pd.Series([1.0] + [2.0] * 9, dtype="float64")
+    p.text["paragraph_id"] = pd.Series([1.0] + [2.0] * 9, dtype="float64")
+    p.section = _coi_paper("Conflict of interest", ["x"]).section
+    mo = pc.module_run(p, "coi_check")
+    shown = " ".join(str(x) for x in mo.report[1].data.iloc[:, 0])
+    assert "Table A4 lists values.…" in shown
+    assert "Table A5" not in shown
+    assert "Table A8" in mo.table["text"].iloc[0]
+    long = _coi_short_text(["Conflict of interest " + "x" * 1500])
+    assert len(long[0]) == 1000
+
+
+def test_coi_check_text_rows_without_a_section_id() -> None:
+    # a text row with no section id (a PDF reading's front matter) is no match for a
+    # conflict-of-interest section and must not stop the module
+    p = _coi_paper("Conflict of interest", ["None declared."])
+    p.text["section_id"] = pd.Series([pd.NA, 2.0], dtype="Float64")
+    mo = pc.module_run(p, "coi_check")
+    assert mo.table["text"].tolist() == ["Conflict of interest None declared."]

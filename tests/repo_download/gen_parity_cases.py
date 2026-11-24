@@ -517,6 +517,53 @@ def download_cases() -> list[dict[str, Any]]:
         max_files_per_repo=3,
         repo_file_counts={repo_a: 4000},
     )
+    # #699: the file count and the choice of files for the budget come from the full listing
+    listing_extra = {
+        "$df": {
+            "repo_url": [repo_a, repo_a],
+            "file_name": ["analysis.R", "d.csv"],
+            "file_path": ["analysis.R", "d.csv"],
+            "file_url": ["x", "x"],
+            "file_size": [300, 5000000],
+        }
+    }
+    dl(
+        "listing_counts",
+        {
+            "repo_url": [repo_a],
+            "file_name": ["a.csv"],
+            "file_path": ["a.csv"],
+            "file_url": ["x"],
+            "file_size": [714],
+        },
+        file_url=["data/results.csv.gz"],
+        max_files_per_repo=2,
+        listing_extra=listing_extra,
+    )
+    dl(
+        "listing_choice",
+        {
+            "repo_url": [repo_a, repo_a],
+            "file_name": ["b.csv", "c.csv"],
+            "file_path": ["b.csv", "c.csv"],
+            "file_url": ["x", "x"],
+            "file_size": [557, 452],
+        },
+        file_url=["data/results.csv.bz2", "data/results.csv.xz"],
+        max_file_size=10,
+        # 1,100 bytes: the choice is the script (300) and c.csv (452); b.csv (557) is not in it
+        # and fits only what is left after them, which it does not
+        max_download_size=0.00105,
+        listing_extra={
+            "$df": {
+                "repo_url": [repo_a],
+                "file_name": ["analysis.R"],
+                "file_path": ["analysis.R"],
+                "file_url": ["x"],
+                "file_size": [300],
+            }
+        },
+    )
     dl(
         "unknown_sizes_probed",
         {
@@ -718,6 +765,20 @@ def _new_helper_cases() -> list[dict[str, Any]]:
             "'https://gitlab.com/a/b']}))",
         ),
         _expr_case(
+            "run_download_want.github_raw_address",
+            'metacheck:::.run_download_want(data.frame(file_name = c("a.R", "b.png", "c.png", "d.pdf"), '
+            'file_url = c("https://raw.githubusercontent.com/o/r/main/a.R", '
+            '"https://raw.githubusercontent.com/o/r/main/b.png", "https://osf.io/download/x/", '
+            '"https://RAW.githubusercontent.com/o/r/main/d.pdf"), '
+            'repo_url = rep("https://osf.io/abcde", 4)))',
+            f"{dl}._run_download_want(__import__('pandas').DataFrame("
+            "{'file_name': ['a.R', 'b.png', 'c.png', 'd.pdf'], "
+            "'file_url': ['https://raw.githubusercontent.com/o/r/main/a.R', "
+            "'https://raw.githubusercontent.com/o/r/main/b.png', 'https://osf.io/download/x/', "
+            "'https://RAW.githubusercontent.com/o/r/main/d.pdf'], "
+            "'repo_url': ['https://osf.io/abcde'] * 4}))",
+        ),
+        _expr_case(
             "run_download_want.empty",
             "metacheck:::.run_download_want(data.frame(file_name = character(0), repo_url = character(0)))",
             f"{dl}._run_download_want(__import__('pandas').DataFrame("
@@ -726,10 +787,320 @@ def _new_helper_cases() -> list[dict[str, Any]]:
     ]
 
 
+def _budget_cases() -> list[dict[str, Any]]:
+    """metacheck 0.4.4.29: one choice of files per repository (#699)."""
+    dl = "__import__('metacheck.archives.download', fromlist=['x'])"
+    zp = "__import__('metacheck.archives.zip_peek', fromlist=['x'])"
+    dv = "__import__('metacheck.archives.dataverse', fromlist=['x'])"
+    mb = "1024 * 1024"
+    pb_py = "type('Pb', (), {'tick': lambda self, *a, **k: None})()"
+    pb_r = "list(tick = function(...) invisible(NULL))"
+    out: list[dict[str, Any]] = []
+    sizes_r = f"c(4, 1, 3, 2, NA, 30) * {mb}"
+    sizes_py = f"[4 * {mb}, 1 * {mb}, 3 * {mb}, 2 * {mb}, float('nan'), 30 * {mb}]"
+    names_r = 'c("d", "a", "c", "b", "unknown", "big")'
+    names_py = '["d", "a", "c", "b", "unknown", "big"]'
+    ex_r = "c(FALSE, FALSE, FALSE, FALSE, FALSE, TRUE)"
+    ex_py = "[False, False, False, False, False, True]"
+    for cid, mfs, mds in (
+        ("budget_6", 10, 6),
+        ("budget_4_5", 10, 4.5),
+        ("file_limit", 3.5, "Inf"),
+        ("no_limits", "Inf", "Inf"),
+    ):
+        mds_py = "float('inf')" if mds == "Inf" else str(mds)
+        mfs_py = "float('inf')" if mfs == "Inf" else str(mfs)
+        out.append(
+            _expr_case(
+                f"omit_for_size.{cid}",
+                f"metacheck:::.omit_for_size({sizes_r}, {names_r}, {ex_r}, max_file_size = {mfs}, "
+                f"max_download_size = {mds}, pb = {pb_r})",
+                f"{dv}._omit_for_size({sizes_py}, {names_py}, {ex_py}, {mfs_py}, {mds_py}, "
+                f"{pb_py})",
+            )
+        )
+    for cid, size_r, size_py, total_r, total_py in (
+        ("smallest_first", "c(5, 1, 3, NA)", "[5, 1, 3, float('nan')]", "4", "4"),
+        ("no_limit", "c(5, NA)", "[5, float('nan')]", "Inf", "float('inf')"),
+        ("ties_by_name", "c(2, 2, 2)", "[2, 2, 2]", "4", "4"),
+        ("empty", "numeric(0)", "[]", "10", "10"),
+    ):
+        out.append(
+            _expr_case(
+                f"fit_budget.{cid}",
+                f"metacheck:::.fit_budget({size_r}, {total_r})",
+                f"{zp}._fit_budget({size_py}, {total_py})",
+            )
+        )
+    names = [
+        "a.R", "b.csv", "c.sav", "README.md", "codebook.pdf", "notes.txt", "run.iqdat",
+        "out.spv", "report.html", "data.zip", "photo.png", "paper.pdf", "talk.mp4", "lib.R",
+    ]  # fmt: skip
+    paths = [*names[:-1], "renv/library/lib.R"]
+
+    def r_chr(v: list[str]) -> str:
+        return "c(" + ", ".join('"' + x + '"' for x in v) + ")"
+
+    def py_chr(v: list[str]) -> str:
+        return "[" + ", ".join('"' + x + '"' for x in v) + "]"
+
+    out.append(
+        _expr_case(
+            "budget_counted.kinds",
+            f'metacheck:::.budget_counted(data.frame(repo_url = "r", file_name = {r_chr(names)}, '
+            f"file_path = {r_chr(paths)}))",
+            f"{dl}._budget_counted(__import__('pandas').DataFrame("
+            f"{{'repo_url': 'r', 'file_name': {py_chr(names)}, 'file_path': {py_chr(paths)}}}))",
+        )
+    )
+    out.append(
+        _expr_case(
+            "budget_counted.empty",
+            "metacheck:::.budget_counted(data.frame(repo_url = character(0), "
+            "file_name = character(0)))",
+            f"{dl}._budget_counted(__import__('pandas').DataFrame("
+            "{'repo_url': [], 'file_name': []}))",
+        )
+    )
+    out.append(
+        _expr_case(
+            "repo_disk_bytes.archive_and_members",
+            "local({d <- tempfile(); on.exit(unlink(d, recursive = TRUE)); "
+            'dir.create(file.path(d, "a.zip.contents", "sub"), recursive = TRUE); '
+            'writeBin(raw(100), file.path(d, "a.zip")); '
+            'writeBin(raw(1000), file.path(d, "a.zip.contents", "sub", "x.csv")); '
+            'dir.create(file.path(d, ".archive_members", "b.zip.contents"), recursive = TRUE); '
+            'writeBin(raw(50), file.path(d, ".archive_members", "b.zip.contents", "y.csv")); '
+            'c(metacheck:::.repo_disk_bytes(d), metacheck:::.repo_disk_bytes(file.path(d, "absent")))})',
+            "(lambda d: [__import__('os').makedirs(d + '/a.zip.contents/sub'), "
+            "__import__('os').makedirs(d + '/.archive_members/b.zip.contents'), "
+            "open(d + '/a.zip', 'wb').write(bytes(100)), "
+            "open(d + '/a.zip.contents/sub/x.csv', 'wb').write(bytes(1000)), "
+            "open(d + '/.archive_members/b.zip.contents/y.csv', 'wb').write(bytes(50)), "
+            f"[{dl}._repo_disk_bytes(d), {dl}._repo_disk_bytes(d + '/absent')]][-1])"
+            "(__import__('tempfile').mkdtemp())",
+        )
+    )
+    return out
+
+
+def _osf_archive_cases() -> list[dict[str, Any]]:
+    """metacheck 0.4.4.12 and 0.4.4.17: failed-download text, storage archives (#667, #675)."""
+    dl = "__import__('metacheck.archives.download', fromlist=['x'])"
+    pd_ = "__import__('pandas')"
+    mb = "1024^2"
+    cases: list[dict[str, Any]] = []
+
+    def failed(cid: str, repos: list[str], names: list[str], errors: list[str]) -> None:
+        r = (
+            f"metacheck:::.download_failed_text(data.frame(repo_url = {_r_chr(repos)}, "
+            f"file_name = {_r_chr(names)}, error = {_r_chr(errors)}, stringsAsFactors = FALSE))"
+        )
+        py = (
+            f"{dl}._download_failed_text({pd_}.DataFrame({{'repo_url': {repos!r}, "
+            f"'file_name': {names!r}, 'error': {errors!r}}}))"
+        )
+        cases.append(_expr_case(f"download_failed_text.{cid}", r, py))
+
+    failed(
+        "two_files",
+        ["https://osf.io/abcde"] * 2,
+        ["statcheck output.csv", "notes.txt"],
+        ["Failed to parse URL: Malformed input to a URL function\nmore", "HTTP 503"],
+    )
+    many = [f"file {i}.csv" for i in range(1, 13)]
+    failed(
+        "many_files_grouped",
+        ["https://github.com/o/r"] * 12,
+        many,
+        ["HTTP 503"] * 5
+        + ["HTTP 404 Not Found."] * 3
+        + [
+            "Failed to perform HTTP request.\nCaused by error in `curl::curl_fetch_disk()`:\n! Timeout was reached: [x]"
+        ]
+        * 2
+        + ["HTTP 410", "HTTP 400:"],
+    )
+    failed(
+        "tied_reasons_alphabetical",
+        ["r"] * 6,
+        ["a", "b", "c", "d", "e", "f"],
+        ["zeta", "alpha", "Zeta", "alpha", "zeta", "Zeta"],
+    )
+    failed("same_file_twice", ["r", "r", "r"], ["a.csv", "a.csv", "b.csv"], ["HTTP 500"] * 3)
+    failed("one_file", ["r"], ["a.csv"], ["empty response"])
+    failed("only_noise_lines", ["r"], ["a.csv"], ["Failed to perform HTTP request."])
+    cases.append(
+        _expr_case(
+            "download_failed_text.null",
+            "metacheck:::.download_failed_text(NULL)",
+            f"{dl}._download_failed_text(None)",
+        )
+    )
+    cases.append(
+        _expr_case(
+            "download_failed_text.no_rows",
+            "metacheck:::.download_failed_text(data.frame(repo_url = character(0), "
+            "file_name = character(0), error = character(0)))",
+            f"{dl}._download_failed_text({pd_}.DataFrame("
+            "{'repo_url': [], 'file_name': [], 'error': []}))",
+        )
+    )
+
+    for cid, args in (
+        ("enough_files", {"n_wanted": 3, "record_n": 3, "wanted_bytes": 100, "archive_bytes": 100}),
+        (
+            "many_wanted",
+            {"n_wanted": 60, "record_n": 500, "wanted_bytes": 1e6, "archive_bytes": 1.5e6},
+        ),
+        (
+            "too_few_files",
+            {"n_wanted": 3, "record_n": 500, "wanted_bytes": 1e6, "archive_bytes": 1.1e6},
+        ),
+        (
+            "too_much_data",
+            {"n_wanted": 60, "record_n": 61, "wanted_bytes": 1e6, "archive_bytes": 1e9},
+        ),
+        ("sizes_unknown", {"n_wanted": 3, "record_n": 3, "wanted_bytes": 0, "archive_bytes": 100}),
+        (
+            "archive_size_na",
+            {
+                "n_wanted": 3,
+                "record_n": 3,
+                "wanted_bytes": 100,
+                "archive_bytes": {"$expr": {"r": "NA_real_", "py": "float('nan')"}},
+            },
+        ),
+        (
+            "exactly_twice",
+            {"n_wanted": 3, "record_n": 6, "wanted_bytes": 100, "archive_bytes": 200},
+        ),
+    ):
+        cases.append(
+            fn_case(f"archive_worth_it.{cid}", ".archive_worth_it", DL + "_archive_worth_it", args)
+        )
+
+    def skip(cid: str, cols: dict[str, list[Any]], max_dl: float = 100) -> None:
+        n = len(next(iter(cols.values())))
+        r_cols = ", ".join(f"{k} = {_r_num(v)}" for k, v in cols.items())
+        py_cols = repr(cols).replace("None", "float('nan')")
+        cases.append(
+            _expr_case(
+                f"storage_archive_skip.{cid}",
+                f"metacheck:::.storage_archive_skip(data.frame({r_cols}), seq_len({n}), "
+                f"{max_dl}, {mb})",
+                f"{dl}._storage_archive_skip({pd_}.DataFrame({py_cols}), "
+                f"list(range({n})), {max_dl}, 1024**2)",
+            )
+        )
+
+    skip("worth_it", {"file_size": [1000, 1000], "storage_size": [2000, 2000], "storage_n": [2, 2]})
+    skip("component_too_large", {"file_size": [1000], "storage_size": [1e6], "storage_n": [400]})
+    skip(
+        "thousands_of_files",
+        {"file_size": [1000], "storage_size": [3e9], "storage_n": [12345]},
+        max_dl=100000,
+    )
+    skip("over_budget", {"file_size": [1000] * 3, "storage_size": [5e8] * 3, "storage_n": [3] * 3})
+    skip("no_storage_columns", {"file_size": [1000, 2000]})
+    skip("sizes_unknown", {"file_size": [None, None]})
+    skip("storage_n_unknown", {"file_size": [1000, 1000], "storage_size": [1500, 1500]})
+    skip(
+        "storage_size_unknown_uses_files",
+        {"file_size": [1000, 1000], "storage_size": [None, None], "storage_n": [2, 2]},
+    )
+
+    cases.append(
+        _expr_case(
+            "storage_size_estimate.listed_total",
+            "metacheck:::.storage_size_estimate(data.frame(file_size = c(10, 20), "
+            "storage_size = c(NA, 500)), 1:2)",
+            f"{dl}._storage_size_estimate({pd_}.DataFrame({{'file_size': [10, 20], "
+            "'storage_size': [float('nan'), 500]}), [0, 1])",
+        )
+    )
+    cases.append(
+        _expr_case(
+            "storage_size_estimate.sum_of_files",
+            "metacheck:::.storage_size_estimate(data.frame(file_size = c(10, NA, 5)), 1:3)",
+            f"{dl}._storage_size_estimate({pd_}.DataFrame({{'file_size': [10, float('nan'), 5]}}), "
+            "[0, 1, 2])",
+        )
+    )
+    cases.append(
+        _expr_case(
+            "storage_size_estimate.nothing_known",
+            "metacheck:::.storage_size_estimate(data.frame(file_size = c(NA_real_, NA_real_)), 1:2)",
+            f"{dl}._storage_size_estimate({pd_}.DataFrame({{'file_size': "
+            "[float('nan'), float('nan')]}), [0, 1])",
+        )
+    )
+
+    totals_r = (
+        'data.frame(osf_node = c("n1", "n1", "n1", "n2", "n1", NA), '
+        'provider = c("osfstorage", "osfstorage", "github", "osfstorage", "osfstorage", "osfstorage"), '
+        'file_path = c("a.csv", "b.csv", "c.R", "a.csv", "a.csv", "x.csv"), '
+        "file_size = c(100, 50, 10, NA, 100, 5))"
+    )
+    totals_py = (
+        f"{pd_}.DataFrame({{'osf_node': ['n1', 'n1', 'n1', 'n2', 'n1', None], "
+        "'provider': ['osfstorage', 'osfstorage', 'github', 'osfstorage', 'osfstorage', 'osfstorage'], "
+        "'file_path': ['a.csv', 'b.csv', 'c.R', 'a.csv', 'a.csv', 'x.csv'], "
+        "'file_size': [100, 50, 10, float('nan'), 100, 5]})"
+    )
+    cases.append(
+        _expr_case(
+            "osf_storage_totals.counts_each_file_once",
+            f"metacheck:::.osf_storage_totals({totals_r})",
+            f"{dl}._osf_storage_totals({totals_py})",
+        )
+    )
+    cases.append(
+        _expr_case(
+            "osf_storage_totals.no_columns",
+            'metacheck:::.osf_storage_totals(data.frame(repo_name = "a"))',
+            f"{dl}._osf_storage_totals({pd_}.DataFrame({{'repo_name': ['a']}}))",
+        )
+    )
+    urls = [
+        "https://raw.githubusercontent.com/Lakens/open_peer_review/master/peerj/10.txt",
+        "https://raw.githubusercontent.com/o/r/main/data%20raw/a%20b.csv",
+        "https://raw.githubusercontent.com/o/r/feature%2Fx/a%23b/c%3Fd%25e%2Bf.csv",
+        "http://RAW.githubusercontent.com/O/R/v1.0/x.R",
+        "https://raw.githubusercontent.com/o/r/main",
+        "https://osf.io/download/abcde/",
+        "https://github.com/o/r/blob/main/a.R",
+    ]
+    cases.append(
+        _expr_case(
+            "github_raw_parts.addresses",
+            f"metacheck:::.github_raw_parts(c({', '.join(chr(34) + u + chr(34) for u in urls)}, NA))",
+            f"{dl}._github_raw_parts({urls!r} + [None])",
+        )
+    )
+    return cases
+
+
+def _r_chr(v: list[str]) -> str:
+    return (
+        "c("
+        + ", ".join(
+            '"' + x.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n") + '"' for x in v
+        )
+        + ")"
+    )
+
+
+def _r_num(v: list[Any]) -> str:
+    return "c(" + ", ".join("NA_real_" if x is None else repr(x) for x in v) + ")"
+
+
 def main() -> None:
     text = TARGET.read_text(encoding="utf-8")
     head = text.split(MARKER)[0].rstrip() + "\n\n"
     cases = zip_cases() + download_cases()
+    cases += _osf_archive_cases()
+    cases += _budget_cases()
     body = yaml.dump(cases, Dumper=_Dumper, allow_unicode=True, sort_keys=False, width=100)
     TARGET.write_text(
         head + MARKER + " by tests/repo_download/gen_parity_cases.py -- do not edit below\n" + body,

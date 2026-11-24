@@ -631,7 +631,8 @@ def test_the_tables_of_a_real_run_colour_by_status(tmp_path: Path) -> None:
     html = ui_package.coloured(result.checklist).to_html()
     assert ui.LIGHT_COLOURS["Green"][0] in html
     assert ui.LIGHT_COLOURS["Yellow"][0] in html  # the README has none of its sections
-    assert ui_package.coloured(result.checks).to_html().count("background-color") >= 3
+    # one rule per colour: a deposit without a codebook is yellow now, not red (#695, point 2)
+    assert ui_package.coloured(result.checks).to_html().count("background-color") >= 2
 
 
 # -- the page -----------------------------------------------------------------------------

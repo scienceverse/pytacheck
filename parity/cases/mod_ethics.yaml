@@ -207,6 +207,15 @@
         - "The study was deemed exempt."
         - "The Declaration of Helsinki."
         - "The Helsinki Declaration."
+        - "The Bioethics Committee was consulted."
+        - "The Ethik-Kommission was consulted."
+        - "The Swedish Ethical Review Authority was consulted."
+        - "The Human Subjects Protection Office was consulted."
+        - "The Office for Human Subjects Protection was consulted."
+        - "Ethical review was waived."
+        - "This did not require ethical approval."
+        - "No further ethics review was needed."
+        - "This falls within the scope of the ethical review."
         - "We used the recognition heuristic (REC/basic) to forecast the rank order."
         - "Ethical decision-making was measured."
         - "All authors approved the final version."
@@ -399,6 +408,153 @@
       "$expr":
         "r": "source(file.path(root, \"tests/mod_ethics/helpers.R\")); ec_papers(c(\"none\", \"live\", \"both\"), list(c(\"No human subjects were involved in this study.\"), c(\"Participants were recruited online.\"), c(\"Participants were recruited online.\", \"We did not involve human participants.\")))"
         "py": "__import__('tests.mod_ethics.parity_support', fromlist=['x']).ec_papers(['none', 'live', 'both'], [['No human subjects were involved in this study.'], ['Participants were recruited online.'], ['Participants were recruited online.', 'We did not involve human participants.']])"
+- "id": "ethics_check.source.own_no_statement"
+  "module": "ethics_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ethics/helpers.R\")); ds_paper(abstract = character(0), body = c(\"Participants were recruited online and gave informed consent.\"), header = \"Participants\", title = \"Test Paper\")"
+        "py": "__import__('tests.mod_ethics.parity_support', fromlist=['x']).ds_paper([], ['Participants were recruited online and gave informed consent.'], 'Participants', title='Test Paper')"
+- "id": "ethics_check.source.own_with_statement"
+  "module": "ethics_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ethics/helpers.R\")); ds_paper(abstract = character(0), body = c(\"Participants were recruited online and gave informed consent.\", \"This study was approved by the institutional review board.\"), header = \"Participants\", title = \"Test Paper\")"
+        "py": "__import__('tests.mod_ethics.parity_support', fromlist=['x']).ds_paper([], ['Participants were recruited online and gave informed consent.', 'This study was approved by the institutional review board.'], 'Participants', title='Test Paper')"
+- "id": "ethics_check.source.one_sign_in_method"
+  "module": "ethics_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ethics/helpers.R\")); ds_paper(abstract = character(0), body = c(\"Participants were recruited online.\"), header = \"Participants\", title = \"Test Paper\")"
+        "py": "__import__('tests.mod_ethics.parity_support', fromlist=['x']).ds_paper([], ['Participants were recruited online.'], 'Participants', title='Test Paper')"
+- "id": "ethics_check.source.one_sign_elsewhere"
+  "module": "ethics_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ethics/helpers.R\")); ds_paper(abstract = character(0), body = c(\"Participants were recruited online.\"), header = \"Discussion\", title = \"Test Paper\")"
+        "py": "__import__('tests.mod_ethics.parity_support', fromlist=['x']).ds_paper([], ['Participants were recruited online.'], 'Discussion', title='Test Paper')"
+- "id": "ethics_check.source.negation_is_no_statement"
+  "module": "ethics_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ethics/helpers.R\")); ds_paper(abstract = character(0), body = c(\"Participants were recruited online.\", \"No participants were excluded.\"), header = \"Participants\", title = \"Test Paper\")"
+        "py": "__import__('tests.mod_ethics.parity_support', fromlist=['x']).ds_paper([], ['Participants were recruited online.', 'No participants were excluded.'], 'Participants', title='Test Paper')"
+- "id": "ethics_check.source.others_study"
+  "module": "ethics_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ethics/helpers.R\")); ds_paper(abstract = character(0), body = c(\"For instance, in a study by Mazar and Zhong (2010, study 3) participants were recruited online and gave informed consent.\"), header = \"Introduction\", title = \"Test Paper\")"
+        "py": "__import__('tests.mod_ethics.parity_support', fromlist=['x']).ds_paper([], ['For instance, in a study by Mazar and Zhong (2010, study 3) participants were recruited online and gave informed consent.'], 'Introduction', title='Test Paper')"
+- "id": "ethics_check.source.year_is_no_citation"
+  "module": "ethics_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ethics/helpers.R\")); ds_paper(abstract = character(0), body = c(\"In 2021, participants were recruited online and gave informed consent.\"), header = \"Introduction\", title = \"Test Paper\")"
+        "py": "__import__('tests.mod_ethics.parity_support', fromlist=['x']).ds_paper([], ['In 2021, participants were recruited online and gave informed consent.'], 'Introduction', title='Test Paper')"
+- "id": "ethics_check.source.review"
+  "module": "ethics_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ethics/helpers.R\")); ds_paper(abstract = c(\"We conducted a systematic review and meta-analysis of 35 studies.\"), body = c(\"Databases were searched in May 2024.\", \"The 21 included studies enrolled a total of 7,035 participants who gave informed consent.\"), header = \"Method\", title = \"Test Paper\")"
+        "py": "__import__('tests.mod_ethics.parity_support', fromlist=['x']).ds_paper(['We conducted a systematic review and meta-analysis of 35 studies.'], ['Databases were searched in May 2024.', 'The 21 included studies enrolled a total of 7,035 participants who gave informed consent.'], 'Method', title='Test Paper')"
+- "id": "ethics_check.source.commentary"
+  "module": "ethics_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ethics/helpers.R\")); ds_paper(abstract = c(\"In this commentary, we argue that preregistration is useful.\"), body = c(\"Participants were recruited online in the original study (Smith, 2019).\"), header = \"Method\", title = \"Test Paper\")"
+        "py": "__import__('tests.mod_ethics.parity_support', fromlist=['x']).ds_paper(['In this commentary, we argue that preregistration is useful.'], ['Participants were recruited online in the original study (Smith, 2019).'], 'Method', title='Test Paper')"
+- "id": "ethics_check.source.no_data_statements"
+  "module": "ethics_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ethics/helpers.R\")); ds_paper(abstract = character(0), body = c(\"No human subjects were involved in this study.\", \"We analysed country-level mortality data.\", \"Aggregate data were taken from Eurostat.\"), header = \"Method\", title = \"Test Paper\")"
+        "py": "__import__('tests.mod_ethics.parity_support', fromlist=['x']).ds_paper([], ['No human subjects were involved in this study.', 'We analysed country-level mortality data.', 'Aggregate data were taken from Eurostat.'], 'Method', title='Test Paper')"
+- "id": "ethics_check.source.theory"
+  "module": "ethics_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "This paper presents a theoretical model of decision-making."
+- "id": "ethics_check.source.open_resource.uk"
+  "module": "ethics_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ethics/helpers.R\")); ds_paper(abstract = c(\"We analysed data from the UK Biobank .\"), body = c(\"Data were obtained from the UK Biobank resource.\", \"Participants had a mean age of 56 years.\"), header = \"Method\", title = \"Test Paper\")"
+        "py": "__import__('tests.mod_ethics.parity_support', fromlist=['x']).ds_paper(['We analysed data from the UK Biobank .'], ['Data were obtained from the UK Biobank resource.', 'Participants had a mean age of 56 years.'], 'Method', title='Test Paper')"
+- "id": "ethics_check.source.open_resource.british"
+  "module": "ethics_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ethics/helpers.R\")); ds_paper(abstract = c(\"We analysed data from the British Cohort Study .\"), body = c(\"Data were obtained from the British Cohort Study resource.\", \"Participants had a mean age of 56 years.\"), header = \"Method\", title = \"Test Paper\")"
+        "py": "__import__('tests.mod_ethics.parity_support', fromlist=['x']).ds_paper(['We analysed data from the British Cohort Study .'], ['Data were obtained from the British Cohort Study resource.', 'Participants had a mean age of 56 years.'], 'Method', title='Test Paper')"
+- "id": "ethics_check.source.existing_records"
+  "module": "ethics_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ethics/helpers.R\")); ds_paper(abstract = c(\"This retrospective cohort study used electronic health records.\"), body = c(\"We retrospectively reviewed the records of 412 patients treated at the university hospital.\", \"Consent was waived because the data were anonymised.\"), header = \"Method\", title = \"Test Paper\")"
+        "py": "__import__('tests.mod_ethics.parity_support', fromlist=['x']).ds_paper(['This retrospective cohort study used electronic health records.'], ['We retrospectively reviewed the records of 412 patients treated at the university hospital.', 'Consent was waived because the data were anonymised.'], 'Method', title='Test Paper')"
+- "id": "ethics_check.source.existing_unclear"
+  "module": "ethics_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ethics/helpers.R\")); ds_paper(abstract = c(\"This is a secondary analysis of existing data.\"), body = c(\"We used data from the Healthy Minds Study.\", \"The analytic sample comprised 2,004 students.\"), header = \"Method\", title = \"Test Paper\")"
+        "py": "__import__('tests.mod_ethics.parity_support', fromlist=['x']).ds_paper(['This is a secondary analysis of existing data.'], ['We used data from the Healthy Minds Study.', 'The analytic sample comprised 2,004 students.'], 'Method', title='Test Paper')"
+- "id": "ethics_check.source.protocol"
+  "module": "ethics_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ethics/helpers.R\")); ds_paper(abstract = character(0), body = c(\"Participants will be recruited online and will be asked to give informed consent.\"), header = \"Method\", title = \"Test Paper\")"
+        "py": "__import__('tests.mod_ethics.parity_support', fromlist=['x']).ds_paper([], ['Participants will be recruited online and will be asked to give informed consent.'], 'Method', title='Test Paper')"
+- "id": "ethics_check.source.uncertain"
+  "module": "ethics_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ethics/helpers.R\")); ds_paper(abstract = character(0), body = c(\"We tested the model on new data.\"), header = \"Method\", title = \"Test Paper\")"
+        "py": "__import__('tests.mod_ethics.parity_support', fromlist=['x']).ds_paper([], ['We tested the model on new data.'], 'Method', title='Test Paper')"
+- "id": "ethics_check.source.no_text"
+  "module": "ethics_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paper('empty')"
+        "py": "pc.paper('empty')"
+- "id": "ethics_check.source.paperlist"
+  "module": "ethics_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ethics/helpers.R\")); paperlist(ds_paper(body = c(\"Participants were recruited and gave informed consent.\", \"This study was approved by the ethics committee.\"), header = \"Participants\", id = \"a\"), ec_paper(\"This paper presents a theoretical model of decision-making.\", \"b\"))"
+        "py": "pc.PaperList([__import__('tests.mod_ethics.parity_support', fromlist=['x']).ds_paper([], ['Participants were recruited and gave informed consent.', 'This study was approved by the ethics committee.'], 'Participants', id='a'), __import__('tests.mod_ethics.parity_support', fromlist=['x']).ec_paper(['This paper presents a theoretical model of decision-making.'], 'b')])"
+- "id": "ethics_check.statements.more_names"
+  "module": "ethics_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ethics/helpers.R\")); ec_papers(c(\"s0\", \"s1\", \"s2\", \"s3\", \"s4\", \"s5\", \"s6\", \"s7\", \"s8\", \"s9\"), list(c(\"This study was evaluated and approved by the ETH Zurich Ethics Commission as proposal EK-2023-N-258.\"), c(\"The empirical study was approved by the Bioethics Commission of the university.\"), c(\"It was approved by the Regional Committees for Medical and Health Research Ethics (2017/2205).\"), c(\"All procedures were approved by the University of Nebraska-Lincoln Internal Review Board.\"), c(\"The Swedish Ethical Review Authority approved the study protocol.\"), c(\"The data were collected under a protocol approved by the Office for Human Subjects Protection at Florida State University.\"), c(\"This secondary analysis did not require further ethical review.\"), c(\"As such, this work was exempt from formal human research ethics review.\"), c(\"This study was approved by the XXX University ethics committee.\"), c(\"The study received ethical approval from the institutional review board (EK 227052019). [INSERT TABLE 1 HERE]\")))"
+        "py": "__import__('tests.mod_ethics.parity_support', fromlist=['x']).ec_papers(['s0', 's1', 's2', 's3', 's4', 's5', 's6', 's7', 's8', 's9'], [['This study was evaluated and approved by the ETH Zurich Ethics Commission as proposal EK-2023-N-258.'], ['The empirical study was approved by the Bioethics Commission of the university.'], ['It was approved by the Regional Committees for Medical and Health Research Ethics (2017/2205).'], ['All procedures were approved by the University of Nebraska-Lincoln Internal Review Board.'], ['The Swedish Ethical Review Authority approved the study protocol.'], ['The data were collected under a protocol approved by the Office for Human Subjects Protection at Florida State University.'], ['This secondary analysis did not require further ethical review.'], ['As such, this work was exempt from formal human research ethics review.'], ['This study was approved by the XXX University ethics committee.'], ['The study received ethical approval from the institutional review board (EK 227052019). [INSERT TABLE 1 HERE]']])"
+- "id": "ethics_check.statements.not_statements"
+  "module": "ethics_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ethics/helpers.R\")); ec_papers(c(\"n1\", \"n2\"), list(c(\"B was the IEC 62471 blue-light hazard function.\"), c(\"RT was recorded in milliseconds. [Add ethics approval, recruitment, and stimulus details here.]\")))"
+        "py": "__import__('tests.mod_ethics.parity_support', fromlist=['x']).ec_papers(['n1', 'n2'], [['B was the IEC 62471 blue-light hazard function.'], ['RT was recorded in milliseconds. [Add ethics approval, recruitment, and stimulus details here.]']])"
 - "id": "ethics_check.duplicate_ids"
   "module": "ethics_check"
   "args":

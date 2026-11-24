@@ -445,6 +445,39 @@ def cases() -> list[dict[str, Any]]:
                 },
             }
         )
+    # a Git LFS pointer and a zip inside a zip (#700), a zip cut off before its central directory
+    # (#703), and a repository over max_files_per_repo (#702)
+    for cid, d, r_arg, py_arg in (
+        (
+            "data_check.local.lfs_nested",
+            "lfs_nested",
+            ", copy = 'lfs_nested'",
+            ", copy='lfs_nested'",
+        ),
+        ("data_check.local.unopened", "unopened", ", copy = 'unopened'", ", copy='unopened'"),
+        (
+            "data_check.local.count_refused",
+            "many",
+            ", max_files_per_repo = 3",
+            ", max_files_per_repo=3",
+        ),
+        ("data_check.local.count_ok", "many", "", ""),
+    ):
+        out.append(
+            {
+                "id": cid,
+                "r": "base::identity",
+                "py": "tests.mod_data_check.helpers.identity",
+                "args": {
+                    "x": {
+                        "$expr": {
+                            "r": f"local({{{R_HELPERS}; dc_run_local({d!r}{r_arg})}})",
+                            "py": f"{PY_HELPERS}.dc_run_local({d!r}{py_arg})",
+                        }
+                    }
+                },
+            }
+        )
     rp = "'tests/mod_data_check/fixtures/repos/"
     fx = f"{PY_HELPERS}.REPOS / "
     out += [

@@ -1,5 +1,6 @@
 {
-"download_repo_files.archive_members": {"r": "765e7987c6fb0003", "py": "eacfeff0db2f9862", "diff": ["failed", "file_location[]"]},
+"download_repo_files.archive_members": {"r": "00b85ab378149569", "py": "8a12779dd99eae3e", "diff": ["failed", "file_location[]"]},
+"download_repo_files.archive_members_one_budget": {"r": "0d9b9c4b8f2e8892", "py": "8aba917d626f042d", "diff": ["failed", "file_location[]"]},
 "file_category.partial_match": {"r": "5b65fe2174f43035", "py": "raises:ValueError", "diff": ["<R value, Python error>"]},
 "zip_fetch_members.all": {"r": "19596620302999a2", "py": "27a197da628247e2", "diff": ["error[]", "ok[]", "path[]"]},
 "zip_fetch_members.deflated": {"r": "4773fbab08884444", "py": "38c9eb1d44ab4d7e", "diff": ["error[]", "ok[]", "path[]"]},

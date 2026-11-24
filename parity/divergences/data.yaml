@@ -42,12 +42,6 @@
   ref: U62
   reason: a file listing without repo_url cannot match a gated repository, so its files fall through to the other skip reasons; R fails on `if (NULL %in% gated_urls)`
 
-# U63: text that is not valid UTF-8
-"datacheck_files/data_code_refs.latin1":
-  kind: r_bug_fixed
-  ref: U63
-  reason: a Latin-1 script's data-file references are found (its lines are read as Latin-1); R's gregexpr() matches nothing on invalid UTF-8 (or fails)
-
 # U217: the repository's UTF-16 table, read as data
 "mod_data_check_review/review.text":
   kind: r_bug_fixed

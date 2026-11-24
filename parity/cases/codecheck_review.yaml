@@ -2664,6 +2664,48 @@
     "code_text":
       "$chr":
       - "@app.route(\"/users/<int:user_id>/reset\")"
+- "id": "code_abs_path.review.sync_route_blueprint"
+  "r": "code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
+  "args":
+    "code_text":
+      "$chr":
+      - "@admin_bp.route(\"/api/v1/auth/login\", methods=[\"POST\"])"
+- "id": "code_abs_path.review.sync_route_client_get"
+  "r": "code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
+  "args":
+    "code_text":
+      "$chr":
+      - "r = client.get(\"/api/health\")"
+- "id": "code_abs_path.review.sync_route_httr_get"
+  "r": "code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
+  "args":
+    "code_text":
+      "$chr":
+      - "d <- httr::GET(\"/api/x\")"
+- "id": "code_abs_path.review.sync_url_name_prefix"
+  "r": "code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
+  "args":
+    "code_text":
+      "$chr":
+      - "API_PREFIX = \"/api/v1\""
+- "id": "code_abs_path.review.sync_folder_prefix_stays"
+  "r": "code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
+  "args":
+    "code_text":
+      "$chr":
+      - "data_prefix = \"/home/me/data\""
+- "id": "code_abs_path.review.sync_fs_path_stays"
+  "r": "code_abs_path"
+  "py": "metacheck.codecheck.core.code_abs_path"
+  "args":
+    "code_text":
+      "$chr":
+      - "p <- fs::path(\"/Users/me/data\")"
 - "id": "code_abs_path.review.sync_query"
   "r": "code_abs_path"
   "py": "metacheck.codecheck.core.code_abs_path"
@@ -2899,6 +2941,58 @@
         - "r"
         "file_name":
         - "raw.csv"
+- "id": "code_missing_files.review.web_address"
+  "r": "metacheck:::.code_missing_files"
+  "py": "metacheck.codecheck.core._code_missing_files"
+  "args":
+    "code_files":
+      "$df":
+        "paper_id":
+        - "p"
+        "repo_url":
+        - "r"
+        "file_name":
+        - "a.R"
+        "loaded_refs":
+        - "http://journal.sjdm.org/16/1234/study1.sav\x1Fgone.csv\x1Fhttps://x.org/d/web.csv"
+        "files_written":
+        - ""
+    "all_files":
+      "$df":
+        "repo_url":
+        - "r"
+        "file_name":
+        - "raw.csv"
+- "id": "code_missing_files.review.windows_drive"
+  "r": "metacheck:::.code_missing_files"
+  "py": "metacheck.codecheck.core._code_missing_files"
+  "args":
+    "code_files":
+      "$df":
+        "paper_id":
+        - "p"
+        "repo_url":
+        - "r"
+        "file_name":
+        - "a.R"
+        "loaded_refs":
+        - "C://folder/x.csv\x1Fhttps://site/y.csv"
+        "files_written":
+        - ""
+    "all_files":
+      "$df":
+        "repo_url":
+        - "r"
+        "file_name":
+        - "raw.csv"
+- "id": "is_web_address.review.schemes"
+  "r": "metacheck:::.is_web_address"
+  "py": "metacheck.utils._is_web_address"
+  "args":
+    "x":
+      "$expr":
+        "r": "c('https://site/x.csv', 'ftp://h/x', 's3://bucket/x', 'file:///C:/x.csv', 'url(\"https://site/x.csv\")', 'C://folder/x.csv', 'C:/folder/x.csv', 'data/x.csv', NA)"
+        "py": "['https://site/x.csv', 'ftp://h/x', 's3://bucket/x', 'file:///C:/x.csv', 'url(\"https://site/x.csv\")', 'C://folder/x.csv', 'C:/folder/x.csv', 'data/x.csv', None]"
 - "id": "code_missing_files.review.sync_no_refs_column"
   "r": "metacheck:::.code_missing_files"
   "py": "metacheck.codecheck.core._code_missing_files"
@@ -2977,3 +3071,184 @@
     "max_file_size": !!int "100"
     "max_download_size": !!int "500"
     "cache": !!bool "false"
+- "id": "is_others_code_path.review.sync_paths"
+  "r": "metacheck:::.is_others_code_path"
+  "py": "metacheck.codecheck.core._is_others_code_path"
+  "args":
+    "path":
+      "$chr":
+      - "extra_ados/outreg2.ado"
+      - "code/extra_ados/a/b.ado"
+      - "Packages\\\\x.R"
+      - "site/jquery.min.js"
+      - "scripts/analysis.R"
+      - "v1/model.R"
+      - "v1/old/model.R"
+      - "code/v2/run.R"
+      - "release-1.0/a.R"
+      - !!null "null"
+- "id": "is_others_code_path.review.sync_release_group"
+  "r": "metacheck:::.is_others_code_path"
+  "py": "metacheck.codecheck.core._is_others_code_path"
+  "args":
+    "path":
+      "$chr":
+      - "v1/model.R"
+      - "v1/helpers.R"
+      - "v2/model.R"
+      - "analysis.R"
+      - "v1/model.R"
+    "is_code":
+      "$lgl":
+      - !!bool "true"
+      - !!bool "true"
+      - !!bool "true"
+      - !!bool "true"
+      - !!bool "true"
+    "group":
+      "$chr":
+      - "a"
+      - "a"
+      - "a"
+      - "a"
+      - "b"
+- "id": "is_others_code_path.review.sync_release_data_only"
+  "r": "metacheck:::.is_others_code_path"
+  "py": "metacheck.codecheck.core._is_others_code_path"
+  "args":
+    "path":
+      "$chr":
+      - "v1/data.csv"
+      - "v2/data.csv"
+      - "analysis.R"
+    "is_code":
+      "$lgl":
+      - !!bool "false"
+      - !!bool "false"
+      - !!bool "true"
+- "id": "in_others_code_folder.review.sync_files"
+  "r": "metacheck:::.in_others_code_folder"
+  "py": "metacheck.codecheck.core._in_others_code_folder"
+  "args":
+    "files":
+      "$df":
+        "repo_url":
+        - "r"
+        - "r"
+        - "r"
+        - "r"
+        "file_name":
+        - "outreg2.ado"
+        - "run.do"
+        - "x.R"
+        - "y.R"
+        "file_path":
+        - "extra_ados/outreg2.ado"
+        - "run.do"
+        - "v1/x.R"
+        - "y.R"
+        "language":
+        - "Stata"
+        - "Stata"
+        - "R"
+        - "R"
+- "id": "code_fetches_unnamed.review.sync_osf_download"
+  "r": "metacheck:::.code_fetches_unnamed"
+  "py": "metacheck.codecheck.core._code_fetches_unnamed"
+  "args":
+    "code_text":
+      "$chr":
+      - "osf_retrieve_node(\"x\") %>% osf_ls_files(pattern = \"a.Rda\") %>% osf_download()"
+    "lang": "R"
+- "id": "code_fetches_unnamed.review.sync_unzip"
+  "r": "metacheck:::.code_fetches_unnamed"
+  "py": "metacheck.codecheck.core._code_fetches_unnamed"
+  "args":
+    "code_text":
+      "$chr":
+      - "unzip(\"data.zip\")"
+    "lang": "R"
+- "id": "code_fetches_unnamed.review.sync_extractall"
+  "r": "metacheck:::.code_fetches_unnamed"
+  "py": "metacheck.codecheck.core._code_fetches_unnamed"
+  "args":
+    "code_text":
+      "$chr":
+      - "zipfile.ZipFile(p).extractall(\"data\")"
+    "lang": "R"
+- "id": "code_fetches_unnamed.review.sync_plain_read"
+  "r": "metacheck:::.code_fetches_unnamed"
+  "py": "metacheck.codecheck.core._code_fetches_unnamed"
+  "args":
+    "code_text":
+      "$chr":
+      - "x <- read.csv(\"a.csv\")"
+    "lang": "R"
+- "id": "code_fetches_unnamed.review.sync_download_file"
+  "r": "metacheck:::.code_fetches_unnamed"
+  "py": "metacheck.codecheck.core._code_fetches_unnamed"
+  "args":
+    "code_text":
+      "$chr":
+      - "download.file(url, \"a.zip\")"
+    "lang": "R"
+- "id": "code_fetches_unnamed.review.sync_untar"
+  "r": "metacheck:::.code_fetches_unnamed"
+  "py": "metacheck.codecheck.core._code_fetches_unnamed"
+  "args":
+    "code_text":
+      "$chr":
+      - "untar(\"a.tar.gz\", exdir = \"d\")"
+    "lang": "R"
+- "id": "code_fetches_unnamed.review.sync_urlretrieve"
+  "r": "metacheck:::.code_fetches_unnamed"
+  "py": "metacheck.codecheck.core._code_fetches_unnamed"
+  "args":
+    "code_text":
+      "$chr":
+      - "urllib.request.urlretrieve(u, 'a.csv')"
+    "lang": "R"
+- "id": "code_fetches_unnamed.review.sync_comment_only"
+  "r": "metacheck:::.code_fetches_unnamed"
+  "py": "metacheck.codecheck.core._code_fetches_unnamed"
+  "args":
+    "code_text":
+      "$chr":
+      - "# unzip('data.zip')"
+    "lang": "R"
+- "id": "code_missing_files.review.sync_fetched"
+  "r": "metacheck:::.code_missing_files"
+  "py": "metacheck.codecheck.core._code_missing_files"
+  "args":
+    "code_files":
+      "$df":
+        "paper_id":
+        - "p"
+        - "p"
+        - "p"
+        "repo_url":
+        - "r"
+        - "r"
+        - "r"
+        "file_name":
+        - "0_fetch.R"
+        - "1_fit.R"
+        - "2_plot.R"
+        "loaded_refs":
+        - ""
+        - "VIA.Rda\x1Fpresent.csv"
+        - "gone.csv"
+        "files_written":
+        - ""
+        - ""
+        - ""
+        "fetches_unnamed":
+        - !!bool "true"
+        - !!bool "false"
+        - !!bool "false"
+    "all_files":
+      "$df":
+        "repo_url":
+        - "r"
+        "file_name":
+        - "present.csv"

@@ -22,6 +22,8 @@
       "stat_output",
       "match_table",
       "modifications",
+      "artifacts",
+      "environment",
       "checklist_section"
     ],
     "v": [
@@ -244,7 +246,7 @@
           "The scripts were ordered by their data dependencies (a script writing a file another reads runs first), `source()` calls, and numeric filename prefixes.",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Order = 1L, File = \"missing_input.R\", \"Runs after\" = \"—\", \n    Basis = \"none\"), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### File paths",
-          "Every data path in the code works in the repository as deposited.",
+          "The data paths in the code to files the repository holds work as deposited, but 1 path names a file the repository does not hold: `not_in_repo.csv`.",
           "#### Missing inputs",
           "1 input file the code reads is not available. Files withheld only because of their size are distinguished from files absent from the repository — the former are a size-cap issue, not a reproducibility failure.",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"not_in_repo.csv\", Status = \"absent\", Reason = \"referenced file is not present in the repository\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
@@ -278,12 +280,20 @@
           "repro_scripts_n",
           "repro_not_analysis_n",
           "repro_not_downloaded_n",
+          "repro_ran_n",
+          "repro_code_error_n",
+          "repro_dependency_n",
+          "repro_time_n",
+          "repro_not_checkable_n",
           "repro_fail_file",
           "repro_fail_package",
           "repro_fail_undefined",
           "repro_fail_syntax",
           "repro_fail_environment",
           "repro_fail_settings",
+          "repro_fail_platform",
+          "repro_fail_how_to_run",
+          "repro_fail_from_report",
           "repro_fail_internet",
           "repro_fail_download",
           "repro_fail_interactive",
@@ -429,12 +439,68 @@
             "v": [
               0
             ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
           }
         ]
       },
       {
         "t": "dbl",
         "v": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
           0,
           0,
           0,
@@ -465,12 +531,20 @@
           "repro_scripts_n",
           "repro_not_analysis_n",
           "repro_not_downloaded_n",
+          "repro_ran_n",
+          "repro_code_error_n",
+          "repro_dependency_n",
+          "repro_time_n",
+          "repro_not_checkable_n",
           "repro_fail_file",
           "repro_fail_package",
           "repro_fail_undefined",
           "repro_fail_syntax",
           "repro_fail_environment",
           "repro_fail_settings",
+          "repro_fail_platform",
+          "repro_fail_how_to_run",
+          "repro_fail_from_report",
           "repro_fail_internet",
           "repro_fail_download",
           "repro_fail_interactive",
@@ -525,9 +599,15 @@
       },
       {
         "t": "null"
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "null"
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

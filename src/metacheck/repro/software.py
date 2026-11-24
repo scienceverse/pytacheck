@@ -461,6 +461,27 @@ def _repro_py_imported(
     return out
 
 
+def _repro_py_with_imports(
+    scripts: Sequence[str],
+    code_text_list: Mapping[str, Sequence[str | None]],
+    paths: Sequence[str | None] | None = None,
+) -> list[str]:
+    """Port of R/reproducibility_check.R::.repro_py_with_imports().
+
+    The files *scripts* and the local modules they import, and the modules those import,
+    by file name (see :func:`_repro_py_imported`): whose packages a run of these scripts
+    needs (#593).
+    """
+    imp_by = _repro_py_imported(code_text_list, paths)
+    out = list(scripts)
+    while True:
+        more = _unique(m for m, by in imp_by.items() if any(x in out for x in by) and m not in out)
+        if not more:
+            break
+        out += more
+    return out
+
+
 # ---------------------------------------------------------------------------
 # the deposit's files
 # ---------------------------------------------------------------------------

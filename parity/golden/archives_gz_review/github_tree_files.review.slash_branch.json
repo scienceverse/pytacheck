@@ -11,7 +11,8 @@
       "files",
       "default_branch",
       "license",
-      "info"
+      "info",
+      "links"
     ],
     "v": [
       {
@@ -76,7 +77,7 @@
             "v": [
               "https://raw.githubusercontent.com/rv/tree4/feat/x/Makefile",
               "https://raw.githubusercontent.com/rv/tree4/feat/x/.gitignore",
-              "https://raw.githubusercontent.com/rv/tree4/feat/x/src/x.c++"
+              "https://raw.githubusercontent.com/rv/tree4/feat/x/src/x.c%2B%2B"
             ]
           },
           {
@@ -192,9 +193,12 @@
             ]
           }
         ]
+      },
+      {
+        "t": "null"
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

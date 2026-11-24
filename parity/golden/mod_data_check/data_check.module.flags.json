@@ -21,6 +21,7 @@
       "structure",
       "previews",
       "gated_repos",
+      "count_refused",
       "manifest_path",
       "group_no_evidence",
       "na_replace",
@@ -664,7 +665,7 @@
           "We examined 12 columns across 1 data file.",
           "#### Issues Identified",
           "10 file/column combinations have at least one issue.\n\n**About the personal-information flags.** These are pattern matches, not confirmed disclosures, and they are tuned to over-report rather than miss something. Expect false positives:\n\n- **Column names** are matched against identifying words in English and other European languages (`email`, `telefoonnummer`, `geboortedatum`, ...). A column called `phone_number` flags whether or not it holds one, and an empty or already-anonymised column flags on its name alone.\n- **Values** are matched against the shape of an identifier. An IP address pattern also matches a version string or a dotted numeric code; a card-number pattern requires both a real issuer prefix and a checksum, but a long numeric ID can still coincide.\n- **Free text** is flagged when a column holds long, mostly-distinct prose — the shape open-ended answers take. Most such columns contain no names at all.\n\nA flag means *look at this column*. Where the data is already de-identified (an `ip` column reading `Anonymized`, a `name` column the authors emptied), no action is needed.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"messy.csv\", \"messy.csv\", \"messy.csv\", \n\"messy.csv\", \"messy.csv\", \"messy.csv\", \"messy.csv\", \"messy.csv\", \n\"messy.csv\", \"messy.csv\"), Column = c(\"Gender\", \"a b\", \"a_b\", \n\"comments\", \"email\", \"empty_col\", \"filter_$\", \"latitude\", \"longitude\", \n\"score_txt\"), Issues = c(\"<span title='Categories differing only by case: Female/female; male/Male'>🔤 Case issues — Categories differing only by case: Female/female<\/span><br><span title='1 value with leading/trailing whitespace: \\\"Male \\\"'>↔️ Whitespace — 1 value with leading/trailing whitespace: \\\"Male \\\"<\/span>\", \n\"<span title='Column name becomes \\\"a_b\\\" when special characters are replaced, the same as \\\"a_b\\\": tools that sanitize names (R&#39;s make.names(), SPSS/SAS/Stata import, codebook section links) cannot tell these columns apart.'>👥 Colliding column names — Column name becomes \\\"a_b\\\" when special characters are replaced, the...<\/span>\", \n\"<span title='Column name becomes \\\"a_b\\\" when special characters are replaced, the same as \\\"a b\\\": tools that sanitize names (R&#39;s make.names(), SPSS/SAS/Stata import, codebook section links) cannot tell these columns apart.'>👥 Colliding column names — Column name becomes \\\"a_b\\\" when special characters are replaced, the...<\/span>\", \n\"<span title='Free-text column (median 73 characters, 100% distinct, 83% written in the first person) may contain names or other personal detail. Review before sharing.'>🔒 Personally Identifying Information — Free-text column (median 73 characters, 100% distinct, 83% written ...<\/span>\", \n\"<span title='Values look like personal information: email (12 values, 100%). Review before sharing. Column name suggests personal information (matched: email). Review before sharing.'>🔒 Personally Identifying Information — Values look like personal information: email (12 values, 100%); Column name suggests personal information (matched: email)<\/span>\", \n\"<span title='Column is empty: all 12 values are missing.'>⬜ Empty column — Column is empty: all 12 values are missing<\/span>\", \n\"<span title='SPSS \\\"Select Cases\\\" filter variable: 10 of 12 rows are selected (value 1). The reported analyses likely used only the selected rows; re-apply this filter to reproduce them.'>🧮 SPSS filter variable — SPSS \\\"Select Cases\\\" filter variable: 10 of 12 rows are selected (va...<\/span>\", \n\"<span title='Column name suggests geographic coordinates. Review before sharing.'>🌍 Geographic coordinates — Column name suggests geographic coordinates<\/span><br><span title='Column name suggests personal information (matched: latitude). Review before sharing.'>🔒 Personally Identifying Information — Column name suggests personal information (matched: latitude)<\/span>\", \n\"<span title='Column name suggests geographic coordinates. Review before sharing.'>🌍 Geographic coordinates — Column name suggests geographic coordinates<\/span><br><span title='Column name suggests personal information (matched: longitude). Review before sharing.'>🔒 Personally Identifying Information — Column name suggests personal information (matched: longitude)<\/span>\", \n\"<span title='Column is 92% numeric but 1 value cannot be parsed: \\\"n/a\\\"'>#️⃣ Numeric as text — Column is 92% numeric but 1 value cannot be parsed: \\\"n/a\\\"<\/span>\"\n)), row.names = c(NA, -10L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 20, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"messy.csv\", \"messy.csv\", \"messy.csv\", \n\"messy.csv\", \"messy.csv\", \"messy.csv\", \"messy.csv\", \"messy.csv\", \n\"messy.csv\", \"messy.csv\"), Column = c(\"Gender\", \"a b\", \"a_b\", \n\"comments\", \"email\", \"empty_col\", \"filter_$\", \"latitude\", \"longitude\", \n\"score_txt\"), Issues = c(\"<span title='Categories differing only by case: Female/female; male/Male'>🔤 Case issues — Categories differing only by case: Female/female<\/span><br><span title='1 value with leading/trailing whitespace: \\\"Male \\\"'>↔️ Whitespace — 1 value with leading/trailing whitespace: \\\"Male \\\"<\/span>\", \n\"<span title='Column name becomes \\\"a_b\\\" when special characters are replaced, the same as \\\"a_b\\\": tools that sanitize names (R&#39;s make.names(), SPSS/SAS/Stata import, codebook section links) cannot tell these columns apart.'>👥 Colliding column names — Column name becomes \\\"a_b\\\" when special characte…\", \n\"<span title='Column name becomes \\\"a_b\\\" when special characters are replaced, the same as \\\"a b\\\": tools that sanitize names (R&#39;s make.names(), SPSS/SAS/Stata import, codebook section links) cannot tell these columns apart.'>👥 Colliding column names — Column name becomes \\\"a_b\\\" when special characte…\", \n\"<span title='Free-text column (median 73 characters, 100% distinct, 83% written in the first person) may contain names or other personal detail. Review before sharing.'>🔒 Personally Identifying Information — Free-text column (median 73 characters, 100% distinct, 83% written ...<\/span>\", \n\"<span title='Values look like personal information: email (12 values, 100%). Review before sharing. Column name suggests personal information (matched: email). Review before sharing.'>🔒 Personally Identifying Information — Values look like personal information: email (12 values, 100%); Column name s…\", \n\"<span title='Column is empty: all 12 values are missing.'>⬜ Empty column — Column is empty: all 12 values are missing<\/span>\", \n\"<span title='SPSS \\\"Select Cases\\\" filter variable: 10 of 12 rows are selected (value 1). The reported analyses likely used only the selected rows; re-apply this filter to reproduce them.'>🧮 SPSS filter variable — SPSS \\\"Select Cases\\\" filter variable: 10 of 12 rows are selected (va...<\/span>\", \n\"<span title='Column name suggests geographic coordinates. Review before sharing.'>🌍 Geographic coordinates — Column name suggests geographic coordinates<\/span>\", \n\"<span title='Column name suggests geographic coordinates. Review before sharing.'>🌍 Geographic coordinates — Column name suggests geographic coordinates<\/span>\", \n\"<span title='Column is 92% numeric but 1 value cannot be parsed: \\\"n/a\\\"'>#️⃣ Numeric as text — Column is 92% numeric but 1 value cannot be parsed: \\\"n/a\\\"<\/span>\"\n)), row.names = c(NA, -10L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 20, FALSE)\n```\n\n*Cells longer than 300 characters are cut (…).*\n",
           "#### Careless Responding",
           "No file could be screened for careless responding.",
           "**What this does not cover.** Only 0 of 1 data file could be screened: the rest had no detectable multi-item scale block, or too few respondents. Even in a screened file, these checks only look at multi-item rating scales — the only place where a repeated or flat answer pattern is interpretable. Single questions, open text, demographics and any item outside a detected scale block are never examined. A respondent can therefore answer most of a survey carelessly and still not be flagged here, and finding nothing is not evidence that a dataset is free of careless responding."
@@ -679,7 +680,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We classified 1 file: 1 data.\n-  We found 1 tabular data file and extracted 12 columns from 1 of them.\n-  We grouped the files into 1 study group (ex1). We ran automated data-quality checks on 12 columns; 10 columns have at least one potential issue (3 columns whose name suggests personal information; 2 columns whose names become identical when special characters are removed; 2 columns that look like geographic coordinates; 1 column with inconsistent category casing; 1 column with no observed values (entirely empty); 1 column of free text that may contain personal detail; 1 column with numeric values stored as text; 1 column whose values look like personal information; 1 column holding an SPSS \"Select Cases\" filter (analyses may have used only a subset of rows); 1 column with leading/trailing whitespace). We detected demographic column for Gender."
+          "\n-  We classified 1 file: 1 data.\n-  We found 1 tabular data file and extracted 12 columns from 1 of them.\n-  We grouped the files into 1 study group (ex1). We ran automated data-quality checks on 12 columns; 10 columns have at least one potential issue (2 columns whose names become identical when special characters are removed; 2 columns that look like geographic coordinates; 1 column with inconsistent category casing; 1 column with no observed values (entirely empty); 1 column of free text that may contain personal detail; 1 column with numeric values stored as text; 1 column whose name suggests personal information; 1 column whose values look like personal information; 1 column holding an SPSS \"Select Cases\" filter (analyses may have used only a subset of rows); 1 column with leading/trailing whitespace). We detected demographic column for Gender."
         ]
       },
       {
@@ -694,6 +695,9 @@
           "col_numeric",
           "col_text",
           "key_n",
+          "files_failed",
+          "llm_cols_unanswered",
+          "llm_files_unanswered",
           "flagged_n",
           "spreadsheet_file_n",
           "spreadsheet_flagged_file_n"
@@ -750,6 +754,24 @@
           {
             "t": "int",
             "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
               10
             ]
           },
@@ -769,7 +791,7 @@
       },
       {
         "t": "df",
-        "nrow": 14,
+        "nrow": 12,
         "names": [
           "source_file",
           "column",
@@ -781,8 +803,6 @@
           {
             "t": "chr",
             "v": [
-              "messy.csv",
-              "messy.csv",
               "messy.csv",
               "messy.csv",
               "messy.csv",
@@ -808,8 +828,6 @@
               "email",
               "email",
               "latitude",
-              "latitude",
-              "longitude",
               "longitude",
               "comments",
               "a b",
@@ -819,8 +837,6 @@
           {
             "t": "chr",
             "v": [
-              null,
-              null,
               null,
               null,
               null,
@@ -845,9 +861,7 @@
               "SPSS filter variable",
               "Personal info (values)",
               "Personal info (column name)",
-              "Personal info (column name)",
               "Geographic coordinates",
-              "Personal info (column name)",
               "Geographic coordinates",
               "Free-text (may hold PII)",
               "Colliding column names",
@@ -864,9 +878,7 @@
               "SPSS \"Select Cases\" filter variable: 10 of 12 rows are selected (value 1). The reported analyses likely used only the selected rows; re-apply this filter to reproduce them.",
               "Values look like personal information: email (12 values, 100%). Review before sharing.",
               "Column name suggests personal information (matched: email). Review before sharing.",
-              "Column name suggests personal information (matched: latitude). Review before sharing.",
               "Column name suggests geographic coordinates. Review before sharing.",
-              "Column name suggests personal information (matched: longitude). Review before sharing.",
               "Column name suggests geographic coordinates. Review before sharing.",
               "Free-text column (median 73 characters, 100% distinct, 83% written in the first person) may contain names or other personal detail. Review before sharing.",
               "Column name becomes \"a_b\" when special characters are replaced, the same as \"a_b\": tools that sanitize names (R's make.names(), SPSS/SAS/Stata import, codebook section links) cannot tell these columns apart.",
@@ -1322,6 +1334,29 @@
         "t": "null"
       },
       {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "n_files",
+          "message"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
         "t": "null"
       },
       {
@@ -1434,6 +1469,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

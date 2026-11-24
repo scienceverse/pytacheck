@@ -1,0 +1,94 @@
+{
+  "id": "paper_table.known_host_unbroken",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 7,
+    "names": [
+      "text_id",
+      "section_id",
+      "paragraph_id",
+      "text",
+      "formatted",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "see https://aspredicted.org/BUC_HUQ).",
+          "code at github.com/a/b and osf.io/abc12",
+          "namecensus.com/baby-names",
+          "the co-sf.io thing",
+          "pro-cessmacro.org",
+          "github.com/x/y-z",
+          "Our data are at figshare.com/articles/123."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "see https://aspre-dicted.org/BUC_HUQ).",
+          "code at git-hub.com/a/b and o-sf.io/abc12",
+          "namecensus.com/baby-names",
+          "the co-sf.io thing",
+          "pro-cessmacro.org",
+          "github.com/x/y-z",
+          "Our data are at fig-share.com/articles/123."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.40",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

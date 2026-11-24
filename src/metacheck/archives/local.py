@@ -27,26 +27,33 @@ def _empty() -> pd.DataFrame:
 def _list_files(path: str, recursive: bool) -> list[str]:
     """R ``list.files(path, full.names = TRUE, recursive)`` minus directories.
 
-    Hidden files are skipped (``all.files = FALSE``) and names are sorted as
-    R sorts them.
+    Hidden files are listed only when they do not belong in a repository (``.DS_Store``,
+    ``.Rhistory``, ``.git/``, ``.Rproj.user/``, ... see ``.useless_file_kind()``), after the
+    others, so repo_check can report them; other hidden files stay out, as before. Names are
+    sorted as R sorts them.
     """
     from metacheck._r import r_sorted
+    from metacheck.archives._useless import useless_file_kind
+
+    def hidden_part(rel: str) -> bool:
+        return any(part.startswith(".") for part in rel.split("/"))
 
     if recursive:
         found: list[str] = []
-        for dirpath, dirs, files in os.walk(path):
-            dirs[:] = [d for d in dirs if not d.startswith(".")]
+        for dirpath, _dirs, files in os.walk(path):
             rel = os.path.relpath(dirpath, path)
             found.extend(
-                f if rel == "." else os.path.join(rel, f).replace("\\", "/")
-                for f in files
-                if not f.startswith(".")
+                f if rel == "." else os.path.join(rel, f).replace("\\", "/") for f in files
             )
-        names = r_sorted(found)
+        visible = r_sorted([f for f in found if not hidden_part(f)])
+        hidden = r_sorted([f for f in found if hidden_part(f)])
     else:
-        names = r_sorted([n for n in os.listdir(path) if not n.startswith(".")])
+        listed = os.listdir(path)
+        visible = r_sorted([n for n in listed if not n.startswith(".")])
+        hidden = r_sorted([n for n in listed if n.startswith(".")])
+    hidden = [h for h, k in zip(hidden, useless_file_kind(hidden), strict=True) if k is not None]
     sep = "" if path.endswith("/") else "/"
-    full = [f"{path}{sep}{n}" for n in names]
+    full = [f"{path}{sep}{n}" for n in [*visible, *hidden]]
     return [f for f in full if not os.path.isdir(f)]
 
 

@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 import warnings
 from pathlib import Path
+from typing import Any
 
 import httpx
 import pandas as pd
@@ -381,3 +382,162 @@ def test_no_http_at_import() -> None:
     with warnings.catch_warnings():
         warnings.simplefilter("error")
         assert osf_helpers.__name__ == "metacheck.archives.osf_helpers"
+
+
+# -- #672: a refused OSF request is not "not found"; a file is asked for without contributors
+
+
+def _osf_json(status: int, body: str) -> httpx.Response:
+    return httpx.Response(
+        status, content=body.encode(), headers={"Content-Type": "application/vnd.api+json"}
+    )
+
+
+def test_a_refused_osf_request_is_not_reported_as_not_found_and_a_file_is_asked_for_again() -> None:
+    from metacheck.archives.osf_helpers import _osf_embed_refused, _osf_parse_response
+
+    embed = _osf_json(
+        400,
+        '{"errors":[{"source":{"parameter":"embed"},"detail":"The following fields are not '
+        'embeddable: bibliographic_contributors","status":"400"}]}',
+    )
+    other = _osf_json(400, '{"errors":[{"detail":"Bad filter"}]}')
+    assert _osf_embed_refused(embed) is True
+    assert _osf_embed_refused(other) is False
+    assert _osf_embed_refused(httpx.Response(404)) is False
+    assert _osf_embed_refused(RuntimeError("no answer")) is False
+
+    with pytest.warns(UserWarning, match="refused the request"):
+        r = _osf_parse_response(other, osf_id="abcde")
+    assert r is not None
+    assert r["osf_type"].tolist() == ["error"]
+    assert r["error"].tolist() == ["the OSF refused the request (HTTP 400): Bad filter"]
+    from metacheck.archives.info_cache import _repo_info_ok
+
+    assert _repo_info_ok(r) is False
+
+    # _osf_info() asks for a file again without the contributors
+    asked: list[str] = []
+    file_json = (
+        '{"data":{"id":"64db83e25e739d047b39b61e","type":"files","attributes":{"kind":"file",'
+        '"name":"a.docx","size":10},"links":{"download":"https://osf.io/download/abcde/"},'
+        '"relationships":{}}}'
+    )
+    with respx.mock(assert_all_called=False) as router:
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            asked.append(str(request.url))
+            return embed if "embed=" in str(request.url) else _osf_json(200, file_json)
+
+        router.get(url__regex=r"https://api\.osf\.io/v2/guids/abcde.*").mock(side_effect=handler)
+        info = _osf_info("abcde")
+    assert asked == [
+        "https://api.osf.io/v2/guids/abcde?embed=bibliographic_contributors",
+        "https://api.osf.io/v2/guids/abcde",
+    ]
+    assert info["osf_type"].tolist() == ["files"]
+    assert info["name"].tolist() == ["a.docx"]
+
+
+def _contributor_page(n: int, total: int | None = None) -> dict[str, Any]:
+    """A page of bibliographic contributors as the OSF sends it (names ``Person 1`` ...)."""
+    data = [
+        {
+            "embeds": {
+                "users": {
+                    "data": {
+                        "attributes": {
+                            "full_name": f"Person {k}",
+                            "family_name": f"P{k}",
+                            "social": {"orcid": None},
+                        }
+                    }
+                }
+            }
+        }
+        for k in range(1, n + 1)
+    ]
+    return {"data": data, "links": {"meta": {"total": total if total is not None else n}}}
+
+
+def test_a_record_with_more_contributors_than_the_osf_named_gets_the_full_list(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from metacheck.archives import osf as osf_mod
+    from metacheck.archives.osf_helpers import _osf_complete_contributors
+
+    asked: list[str] = []
+
+    def pages(urls: list[str]) -> list[Any]:
+        asked.extend(urls)
+        out: list[Any] = []
+        for u in urls:
+            if "fail" in u:
+                out.append(osf_mod._osf_error_result("request_failed"))
+            else:
+                page = _contributor_page(11)
+                page["data"][10]["embeds"]["users"]["data"]["attributes"].update(
+                    full_name="Anna van 't Veer", family_name="van 't Veer"
+                )
+                out.append(page)
+        return out
+
+    monkeypatch.setattr(osf_mod, "_osf_get_pages_parallel", pages)
+    ten = "; ".join(f"Person {k}" for k in range(1, 11))
+
+    def row(osf_id: str, kind: str, **cols: Any) -> pd.DataFrame:
+        return pd.DataFrame(
+            {"osf_id": [osf_id], "osf_type": [kind], **{k: [v] for k, v in cols.items()}}
+        )
+
+    rows = [
+        row("xv5rp", "nodes", contributors=ten, n_contributors=11),
+        row("small", "nodes", contributors="A B; C D", n_contributors=2),
+        row("old10", "registrations", contributors=ten),  # cached before the count
+        row("fail1", "nodes", contributors=ten, n_contributors=12),
+        row("f1", "files"),
+    ]
+    out = _osf_complete_contributors(rows)
+    assert sorted(u.split("/")[-3] for u in asked) == ["fail1", "old10", "xv5rp"]
+    assert any("/registrations/old10/bibliographic_contributors/" in u for u in asked)
+    assert "Anna van 't Veer" in out[0]["contributors"].iloc[0]
+    assert "van 't Veer" in out[0]["contributor_families"].iloc[0]
+    assert out[0]["n_contributors"].iloc[0] == 11
+    assert out[2]["n_contributors"].iloc[0] == 11
+    assert out[1] is rows[1]
+    assert out[3] is rows[3]  # a failed request leaves the record as it was
+    assert out[4] is rows[4]
+    # nothing to complete: no request at all
+    asked.clear()
+    same = [rows[1], rows[4]]
+    assert _osf_complete_contributors(same) is same
+    assert asked == []
+
+
+def test_a_whole_listing_gets_the_full_list_of_contributors_for_its_projects_only(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from metacheck.archives import osf as osf_mod
+    from metacheck.archives.osf_helpers import _osf_complete_table
+
+    monkeypatch.setattr(
+        osf_mod, "_osf_get_pages_parallel", lambda urls: [_contributor_page(11) for _ in urls]
+    )
+    ten = "; ".join(f"Person {k}" for k in range(1, 11))
+    tbl = pd.DataFrame(
+        {
+            "osf_id": ["xv5rp", "comp1", "f1"],
+            "osf_type": ["nodes", "nodes", "files"],
+            "contributors": pd.Series([ten, "A B", None], dtype="string"),
+        }
+    )
+    out = _osf_complete_table(tbl)
+    assert out["n_contributors"].tolist()[0] == 11
+    assert out["n_contributors"].isna().tolist() == [False, True, True]
+    assert "Person 11" in out["contributors"].iloc[0]
+    assert "P11" in out["contributor_families"].iloc[0]
+    assert out["contributors"].iloc[1:].tolist() == ["A B", pd.NA]
+    rest = tbl.iloc[1:]
+    assert _osf_complete_table(rest) is rest
+    empty = pd.DataFrame()
+    assert _osf_complete_table(empty) is empty

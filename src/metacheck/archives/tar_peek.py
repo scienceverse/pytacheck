@@ -53,6 +53,22 @@ def _tar_str(r: bytes) -> str:
     return r.decode("utf-8", errors="surrogateescape")
 
 
+_INVALID_UTF8 = re.compile("[\udc80-\udcff]")
+
+
+def _utf8_names(names: Any) -> list[str]:
+    """``.utf8_lines()`` of tar names: bytes that are not valid UTF-8 are read as Latin-1.
+
+    A tar records no character set, and metacheck's text functions stop on a name that is
+    not valid UTF-8 (``.tar_list_file()``: "input string 1 is invalid", metacheck 0.4.4.18).
+    Invalid bytes are the lone surrogates of :func:`_tar_str`.
+    """
+    return [
+        n.encode("utf-8", "surrogateescape").decode("latin-1") if _INVALID_UTF8.search(n) else n
+        for n in names
+    ]
+
+
 def _tar_num(r: bytes) -> float:
     """A numeric header field: octal digits, or base-256 when the first byte's high bit is set.
 
@@ -169,6 +185,16 @@ def _tar_entries(path: str) -> list[tuple[str, float, int]] | None:
     return out
 
 
+def _member_series(members: list[str]) -> pd.Series:
+    """The ``member`` column: names as stored. A name with undecodable bytes (lone surrogates)
+    cannot be held by pandas' string type, so the column is then plain objects."""
+    import pandas as pd
+
+    if any(_INVALID_UTF8.search(m) for m in members):
+        return pd.Series(members, dtype=object)
+    return pd.Series(members, dtype="string")
+
+
 def _tar_list_file(path: str) -> pd.DataFrame | None:
     """Port of ``R/tar-peek.R::.tar_list_file()``: the regular files of a ``.tar`` on disk.
 
@@ -184,11 +210,13 @@ def _tar_list_file(path: str) -> pd.DataFrame | None:
     entries = _tar_entries(path)
     if entries is None:
         return None
+    # a name that is not valid UTF-8 is read as Latin-1; `member` keeps it as stored
+    readable = _utf8_names([e[0] for e in entries])
     return pd.DataFrame(
         {
-            "name": pd.Series([re.sub(r"^(\./)+", "", e[0]) for e in entries], dtype="string"),
+            "name": pd.Series([re.sub(r"^(\./)+", "", n) for n in readable], dtype="string"),
             "size": pd.Series([e[1] for e in entries], dtype="float64"),
-            "member": pd.Series([e[0] for e in entries], dtype="string"),
+            "member": _member_series([e[0] for e in entries]),
         }
     )
 
@@ -270,7 +298,8 @@ def _tar_fetch_members(
     :func:`_tar_peek` downloaded this session; *archive_path* when an earlier run
     left a readable copy there; or one new download of the whole archive to
     *archive_path* (a temporary file when ``None``), when its size is at most
-    *max_whole_bytes*.
+    *max_whole_bytes*. An archive of unknown size is downloaded only up to
+    *max_whole_bytes*, and refused if it is larger (#699).
     """
     import pandas as pd
 
@@ -308,17 +337,31 @@ def _tar_fetch_members(
     try:
         if src is None:
             known = _num(size[0] if isinstance(size, list | tuple) and size else size)
+            too_big = "the archive is larger than the download limits (max_file_size or max_download_size)"
             if known > max_whole_bytes:
-                return fail("the archive is larger than the download budget")
+                return fail(too_big)
             if archive_path is None:
                 fd, archive_path = tempfile.mkstemp(suffix=".tar", dir=dlm._session_tempdir())
                 os.close(fd)
                 own_copy = archive_path
             if os.path.exists(archive_path):
                 os.unlink(archive_path)
-            err = dlm._download_one(
-                url, archive_path, skip_on_api_limit=skip_on_api_limit, expected_bytes=known
-            )
+            # An archive of unknown size is stopped once it passes `max_whole_bytes`, as
+            # download_repo_files() does for a file of unknown size: it was downloaded whole,
+            # whatever its size (#699)
+            if math.isnan(known) and math.isfinite(max_whole_bytes):
+                err, over_cap, _got = dlm._download_capped(
+                    url,
+                    archive_path,
+                    max_bytes=max_whole_bytes,
+                    skip_on_api_limit=skip_on_api_limit,
+                )
+                if over_cap:
+                    return fail(too_big)
+            else:
+                err = dlm._download_one(
+                    url, archive_path, skip_on_api_limit=skip_on_api_limit, expected_bytes=known
+                )
             if err is not None:
                 return fail(err)
             src = archive_path

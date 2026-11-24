@@ -1,0 +1,30 @@
+{
+  "id": "download_failed_text.many_files_grouped",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "report",
+      "summary"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "#### Files that could not be downloaded",
+          "12 files could not be downloaded, so the checks did not see them: `file 1.csv`, `file 2.csv`, `file 3.csv`, `file 4.csv`, `file 5.csv`, `file 6.csv`, `file 7.csv`, `file 8.csv`, `file 9.csv`, `file 10.csv`, and 2 more. The reasons given: HTTP 503 (5); HTTP 404 Not Found. (3); Timeout was reached: [x] (2). Re-running the check fetches only the missing files."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "12 files could not be downloaded, so the checks did not see them."
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.40",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

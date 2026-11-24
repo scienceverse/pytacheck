@@ -92,6 +92,24 @@ FILES: dict[str, dict[str, str | bytes]] = {
         "Makefile": "all:\n",
         "asdoc.sthlp": "help\n",
     },
+    # what a file is for the counts (#648, K8d): the File Classification decides, an empty README
+    # does not count, a single compressed file is no archive, a .7z and a .jar are; the two files
+    # R leaves behind (.Rapp.history, an interrupted save .RDataTmp) are junk
+    "kinds": {
+        "README.md": "# Kinds of files\n",
+        "docs/README": "",
+        "data.nc": "CDF\n",
+        "eeg.set": "SET\n",
+        "run.sh": "echo run\n",
+        "analysis.R": "x <- 1\n",
+        "scan.nii.gz": "gz\n",
+        "logs/run.log.gz": "gz\n",
+        "app.jar": "jar\n",
+        "bundle.7z": b"7z\xbc\xaf\x27\x1c",
+        "model.joblib": "x\n",
+        ".Rapp.history": "ls()\n",
+        ".RDataTmp1": "tmp\n",
+    },
     # a folder checked without a paper: its naming problems are counted (#650)
     "no_paper": {
         "my data.csv": "x,y\n1,2\n",

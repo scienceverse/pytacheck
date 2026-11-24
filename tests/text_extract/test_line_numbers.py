@@ -110,8 +110,9 @@ def test_code_settings_and_row_numbers_are_not_stored_as_statistics() -> None:
     nm = list(r[0]["data"].columns)
     assert {"t", "df", "p-value", "SD", "SE"} <= set(nm)
     assert not ({"scale1", "width", "res", "size"} & set(nm))
-    # a column of row numbers under a default name is not a statistic; a column of other numbers
-    # under that name stays
+    # a column of row numbers under a default name is not a statistic; nor, since metacheck
+    # 0.4.4.8 (#648), is any column without a header (V1, V3) or with a number as its header,
+    # unless that names a statistic
     tb = [
         {
             "analysis": "a",
@@ -121,14 +122,15 @@ def test_code_settings_and_row_numbers_are_not_stored_as_statistics() -> None:
         {
             "analysis": "b",
             "title": None,
-            "data": pd.DataFrame({"V1": ["5", "7"], "t": ["2.1", "3.3"]}),
+            "data": pd.DataFrame({"V1": ["5", "7"], "t": ["2.1", "3.3"], "0.61": ["1", "2"]}),
         },
     ]
     long = stat_results_long(tb)
     assert not ((long["analysis"] == "a") & (long["statistic"] == "V1")).any()
-    assert long.loc[(long["analysis"] == "b") & (long["statistic"] == "V1"), "value"].tolist() == [
-        "5",
-        "7",
+    assert not long["statistic"].isin(["V1", "0.61"]).any()
+    assert long.loc[(long["analysis"] == "b") & (long["statistic"] == "t"), "value"].tolist() == [
+        "2.1",
+        "3.3",
     ]
 
 

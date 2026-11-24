@@ -2813,7 +2813,7 @@
       },
       {
         "t": "df",
-        "nrow": 13,
+        "nrow": 12,
         "names": [
           "File",
           "Column",
@@ -2827,7 +2827,6 @@
               "coding.xlsx",
               "coding.xlsx",
               "legacy.xls",
-              "legacy.xls [quakes]",
               "messy.fods",
               "messy.fods",
               "messy.ods",
@@ -2845,7 +2844,6 @@
               "(whole file)",
               "coding",
               "(whole file)",
-              "lat",
               "Results",
               "note",
               "Results",
@@ -2860,17 +2858,16 @@
             "t": "chr",
             "v": [
               "<span title='The file could not be parsed as a .xlsx workbook.'>⚠️ Unreadable — The file could not be parsed as a <\/span>",
-              "<span title='This file reads as a table but is not a usable dataset (100% of columns are free text, not variables). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.'>📐 Not a rectangular dataset — This file reads as a table but is not a usable dataset (100% of col...<\/span>",
+              "<span title='This file reads as a table but is not a usable dataset (100% of columns are free text, not variables). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.'>📐 Not a rectangular dataset — This file reads as a table but is not a usable dat…",
               "<span title='3 fully empty rows inside the data range.'>⬜ Empty rows — 3 fully empty rows inside the data range<\/span>",
               "<span title='Legacy .xls format: colour, merged cells and empty rows/columns cannot be inspected. Convert to .xlsx or .ods for a full check.'>⚠️ Un-inspectable (.xls) — Legacy <\/span>",
-              "<span title='Column name suggests personal information (matched: lat). Review before sharing.'>🔒 Personally Identifying Information — Column name suggests personal information (matched: lat)<\/span>",
-              "<span title='2 cells use fill colour to encode information; colour is lost on CSV export.'>🎨 Colour coding — 2 cells use fill colour to encode information<\/span><br><span title='1 column is empty or has a blank header.'>⬜ Empty or unnamed columns — 1 column is empty or has a blank header<\/span><br><span title='2 fully empty rows inside the data range.'>⬜ Empty rows — 2 fully empty rows inside the data range<\/span><br><span title='1 merged range (A6:B6) breaks the rectangular grid.'>🔗 Merged cells — 1 merged range (A6:B6) breaks the rectangular grid<\/span>",
+              "<span title='2 cells use fill colour to encode information; colour is lost on CSV export.'>🎨 Colour coding — 2 cells use fill colour to encode information<\/span><br><span title='1 column is empty or has a blank header.'>⬜ Empty or unnamed columns — 1 column is empty or has a blank header<\/span><br><span t…",
               "<span title='Column is empty: all 5 values are missing.'>⬜ Empty column — Column is empty: all 5 values are missing<\/span>",
-              "<span title='2 cells use fill colour to encode information; colour is lost on CSV export.'>🎨 Colour coding — 2 cells use fill colour to encode information<\/span><br><span title='1 column is empty or has a blank header.'>⬜ Empty or unnamed columns — 1 column is empty or has a blank header<\/span><br><span title='2 fully empty rows inside the data range.'>⬜ Empty rows — 2 fully empty rows inside the data range<\/span><br><span title='1 merged range (A6:B6) breaks the rectangular grid.'>🔗 Merged cells — 1 merged range (A6:B6) breaks the rectangular grid<\/span>",
+              "<span title='2 cells use fill colour to encode information; colour is lost on CSV export.'>🎨 Colour coding — 2 cells use fill colour to encode information<\/span><br><span title='1 column is empty or has a blank header.'>⬜ Empty or unnamed columns — 1 column is empty or has a blank header<\/span><br><span t…",
               "<span title='Column is empty: all 5 values are missing.'>⬜ Empty column — Column is empty: all 5 values are missing<\/span>",
-              "<span title='2 cells use fill colour to encode information; colour is lost on CSV export.'>🎨 Colour coding — 2 cells use fill colour to encode information<\/span><br><span title='1 column is empty or has a blank header.'>⬜ Empty or unnamed columns — 1 column is empty or has a blank header<\/span><br><span title='1 merged range (A7:B7) breaks the rectangular grid.'>🔗 Merged cells — 1 merged range (A7:B7) breaks the rectangular grid<\/span>",
+              "<span title='2 cells use fill colour to encode information; colour is lost on CSV export.'>🎨 Colour coding — 2 cells use fill colour to encode information<\/span><br><span title='1 column is empty or has a blank header.'>⬜ Empty or unnamed columns — 1 column is empty or has a blank header<\/span><br><span t…",
               "<span title='Column is empty: all 4 values are missing.'>⬜ Empty column — Column is empty: all 4 values are missing<\/span>",
-              "<span title='The column header is on row 2; above it is a partial label row (Experiment 1 export). Remove the row above the header so the first row of the sheet is the column header — otherwise the file reads with invented column names (…1, …4) and the data mis-types.'>📋 Header not on first row — The column header is on row 2<\/span>",
+              "<span title='The column header is on row 2; above it is a partial label row (Experiment 1 export). Remove the row above the header so the first row of the sheet is the column header — otherwise the file reads with invented column names (…1, …4) and the data mis-types.'>📋 Header not on first row — Th…",
               "<span title='2 columns are empty or have a blank header.'>⬜ Empty or unnamed columns — 2 columns are empty or have a blank header<\/span>"
             ]
           }
@@ -2978,6 +2975,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

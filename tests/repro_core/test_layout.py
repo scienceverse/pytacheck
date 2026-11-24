@@ -316,7 +316,7 @@ def test_fetch_files_asks_for_the_rows_within_the_limits(monkeypatch: pytest.Mon
     assert out["file_location"].tolist() == ["/tmp/a.png", "/x/b.png", "/tmp/c.png"]
     assert asked["names"] == ["a.png", "c.png"]
     assert (asked["max_file_size"], asked["max_download_size"]) == (50, 200)
-    assert asked["repo_file_counts"] == {"r1": 2, "r2": 1}
+    assert asked["repo_listing"]["repo_url"].tolist() == ["r1", "r1", "r2"]
     assert asked["cache"] is True
     assert asked["skip_on_api_limit"] is True
     # the listing is not changed in place
@@ -663,6 +663,14 @@ def test_ref_checkable_keeps_only_complete_literal_names() -> None:
         pd.DataFrame({"ref": ["/X.csv"], "basename": ["x.csv"]}), ["x.csv"]
     ) == [False]
     assert _repro_ref_checkable(d.iloc[0:0]) == []
+    # a file read from a web address (#695)
+    web = pd.DataFrame(
+        {
+            "ref": ["http://journal.sjdm.org/16/1234/study1.sav", "x.csv"],
+            "basename": ["study1.sav", "x.csv"],
+        }
+    )
+    assert _repro_ref_checkable(web) == [False, True]
 
 
 def test_inputs_to_report_keeps_what_a_run_cannot_show() -> None:

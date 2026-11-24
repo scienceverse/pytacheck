@@ -1,5 +1,6 @@
 {
-"ethics_check.fixture_corpus": {"r": "5a8ad59bdcceea00", "py": "b6a7e0e1278b19cb", "diff": ["summary_table.ethics_approved[]", "summary_table.ethics_statements[][]", "table"]},
-"ethics_check.no_text_column_ethics_match": {"r": "ac5146cf65ca52a8", "py": "66724393cddea7a1", "diff": ["<R error, Python value>"]},
-"ethics_check.no_text_column_live_match": {"r": "ac5146cf65ca52a8", "py": "66724393cddea7a1", "diff": ["<R error, Python value>"]}
+"ethics_check.fixture_corpus": {"r": "841df5e6d15aaaed", "py": "a64b38ac37e0528c", "diff": ["summary_table.ethics_approved[]", "summary_table.ethics_statements[][]", "table"]},
+"ethics_check.no_text_column": {"r": "ac5146cf65ca52a8", "py": "337e580e417b7c50", "diff": ["<R error, Python value>"]},
+"ethics_check.no_text_column_ethics_match": {"r": "ac5146cf65ca52a8", "py": "5707a7d0554c032e", "diff": ["<R error, Python value>"]},
+"ethics_check.no_text_column_live_match": {"r": "ac5146cf65ca52a8", "py": "5707a7d0554c032e", "diff": ["<R error, Python value>"]}
 }

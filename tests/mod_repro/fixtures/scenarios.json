@@ -1288,6 +1288,165 @@
     ]
    }
   },
+  "spss_read_by_code": {
+   "code": {
+    "file_name": [
+     "reads_sav.R"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/reads_sav.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "reads_sav.R",
+     "data.sav"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/reads_sav.R",
+     null
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "stata_read_by_code": {
+   "code": {
+    "file_name": [
+     "reads_dta.R"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/reads_dta.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "reads_dta.R",
+     "data.dta"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/reads_dta.R",
+     null
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "sav_not_read_by_code": {
+   "code": {
+    "file_name": [
+     "reads_sav.R"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/reads_sav.R"
+    ],
+    "file_url": [
+     null
+    ],
+    "language": [
+     "R"
+    ],
+    "packages": [
+     ""
+    ],
+    "parse_error": [
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "reads_sav.R",
+     "data.sav",
+     "other.sav"
+    ],
+    "file_location": [
+     "tests/mod_repro/fixtures/scripts/reads_sav.R",
+     null,
+     null
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "no_code_refused": {
+   "code": {
+    "file_name": [],
+    "file_location": [],
+    "file_url": [],
+    "language": [],
+    "packages": [],
+    "parse_error": []
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   },
+   "count_refused": {
+    "repo_url": [
+     "https://github.com/a/b"
+    ],
+    "n_files": [
+     "5000"
+    ],
+    "message": [
+     "Repository https://github.com/a/b holds 5000 files, exceeding the 2000-file cap: skipped entirely (not size-capped, file-count-capped). Raise `max_files_per_repo` to include it."
+    ]
+   }
+  },
   "nonr_only": {
    "code": {
     "file_name": [
@@ -2292,6 +2451,124 @@
      ""
     ],
     "parse_error": [
+     false,
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "exec_groups": {
+   "code": {
+    "file_name": [
+     "ok.R",
+     "errors.R",
+     "keyed.R",
+     "screen.R",
+     "needs_stringr.R"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/ok.R",
+     "upstream/metacheck/tests/testthat/fixtures/repro/errors.R",
+     "tests/mod_repro/fixtures/scripts/keyed.R",
+     "tests/mod_repro/fixtures/scripts/screen.R",
+     "tests/mod_repro/fixtures/scripts/needs_stringr.R"
+    ],
+    "file_url": [
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "language": [
+     "R",
+     "R",
+     "R",
+     "R",
+     "R"
+    ],
+    "packages": [
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    "parse_error": [
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "structure": {
+    "file_name": [
+     "data.csv"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+    ]
+   },
+   "plan": {
+    "file_name": [
+     "data.csv"
+    ],
+    "target_path": [
+     "data.csv"
+    ]
+   }
+  },
+  "exec_groups_py": {
+   "code": {
+    "file_name": [
+     "ok.py",
+     "errors.py",
+     "colab.py",
+     "relative.py"
+    ],
+    "file_location": [
+     "upstream/metacheck/tests/testthat/fixtures/repro/ok.py",
+     "upstream/metacheck/tests/testthat/fixtures/repro/errors.py",
+     "tests/mod_repro/fixtures/scripts/py/colab.py",
+     "tests/mod_repro/fixtures/scripts/py/relative.py"
+    ],
+    "file_url": [
+     null,
+     null,
+     null,
+     null
+    ],
+    "language": [
+     "Python",
+     "Python",
+     "Python",
+     "Python"
+    ],
+    "packages": [
+     "",
+     "",
+     "",
+     ""
+    ],
+    "parse_error": [
+     false,
+     false,
      false,
      false
     ]

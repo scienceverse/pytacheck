@@ -18,6 +18,7 @@
         "names": [
           "Reference",
           "Comments",
+          "Commenters",
           "PubPeer Link"
         ],
         "v": [
@@ -25,24 +26,32 @@
             "t": "chr",
             "v": [
               "Reference 0. https://doi.org/10.9999/pp.emptyusers",
-              "Reference 3. https://doi.org/10.9999/pp.emptyurl",
-              "Reference 4. https://doi.org/10.9999/pp.statcase"
+              "Reference 2. https://doi.org/10.9999/pp.statlist",
+              "Reference 3. https://doi.org/10.9999/pp.emptyurl"
             ]
           },
           {
             "t": "dbl",
             "v": [
               2,
-              1,
+              3,
               1
             ]
           },
           {
             "t": "chr",
             "v": [
+              "",
+              "",
+              "Empty Url"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "<a href='https://pubpeer.com/publications/PP.EMPTYUSERS' target='_blank'>link<\/a>",
-              "<a href='' target='_blank'>link<\/a>",
-              "<a href='https://pubpeer.com/publications/PP.STATCASE' target='_blank'>link<\/a>"
+              "<a href='https://pubpeer.com/publications/PP.STATLIST' target='_blank'>link<\/a>",
+              "<a href='' target='_blank'>link<\/a>"
             ]
           }
         ]
@@ -67,6 +76,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

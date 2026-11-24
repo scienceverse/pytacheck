@@ -1,0 +1,58 @@
+{
+  "id": "github_raw_parts.addresses",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 8,
+    "names": [
+      "repo",
+      "ref",
+      "path"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "Lakens/open_peer_review",
+          "o/r",
+          "o/r",
+          "O/R",
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "master",
+          "main",
+          "feature/x",
+          "v1.0",
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "peerj/10.txt",
+          "data raw/a b.csv",
+          "a#b/c?d%e+f.csv",
+          "x.R",
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.40",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

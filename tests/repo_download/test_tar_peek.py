@@ -6,6 +6,7 @@ by hand for the pax and GNU long-name forms and for a damaged header.
 
 from __future__ import annotations
 
+import io
 import math
 import secrets
 import shutil
@@ -330,7 +331,26 @@ def test_tar_fetch_members_takes_members_from_a_local_tar_the_session_copy_or_on
     # an archive over the download budget is not downloaded
     got = _tar_fetch_members(url, want, str(tmp_path / "d5"), size=size, max_whole_bytes=10)
     assert not got["ok"].any()
-    assert set(got["error"]) == {"the archive is larger than the download budget"}
+    assert set(got["error"]) == {
+        "the archive is larger than the download limits (max_file_size or max_download_size)"
+    }
+    assert len(calls) == 1
+
+    # an archive of unknown size is downloaded only up to what the limits allow (#699), and
+    # refused when it is larger
+    capped: list[float] = []
+
+    def over(url: str, dest: str, max_bytes: float = math.inf, **kw: Any) -> tuple[Any, bool, int]:
+        capped.append(max_bytes)
+        return "over the byte limit", True, int(max_bytes) + 1
+
+    monkeypatch.setattr(dlm, "_download_capped", over)
+    got = _tar_fetch_members(url, want, str(tmp_path / "d6"), max_whole_bytes=1000)
+    assert not got["ok"].any()
+    assert set(got["error"]) == {
+        "the archive is larger than the download limits (max_file_size or max_download_size)"
+    }
+    assert capped == [1000]
     assert len(calls) == 1
 
 
@@ -439,3 +459,35 @@ def test_expand_tar_stops_at_the_size_limit_from_the_headers(tmp_path: Path) -> 
     assert Path(by_name["small.csv"]).read_text() == "a,b\n1,2\n"
     assert pd.isna(by_name["large.csv"])
     assert rows.attrs["oversize"]["file_size"].tolist() == [5000]
+
+
+def test_a_tar_whose_names_are_not_utf8_is_listed_and_unpacked_under_readable_names(
+    tmp_path: Path,
+) -> None:
+    """A tar records no character set; a Latin-1 name stopped metacheck (0.4.4.18)."""
+    from metacheck.archives.zip_peek import _expand_tar
+
+    tf = tmp_path / "latin1.tar"
+    data = b"id,x\n1,2\n"
+    with tarfile.open(tf, "w", encoding="latin-1", format=tarfile.GNU_FORMAT) as t:
+        info = tarfile.TarInfo("Th\u00fcringen.csv")
+        info.size = len(data)
+        t.addfile(info, io.BytesIO(data))
+    listing = _tar_list_file(str(tf))
+    assert listing is not None
+    assert listing["name"].tolist() == ["Th\u00fcringen.csv"]
+    # `member` keeps the name as stored (the Latin-1 byte, as a lone surrogate)
+    assert listing["member"].tolist()[0].encode("utf-8", "surrogateescape") == b"Th\xfcringen.csv"
+    row = pd.DataFrame(
+        {
+            "repo_url": ["r"],
+            "file_name": ["latin1.tar"],
+            "file_path": ["latin1.tar"],
+            "file_location": [str(tf)],
+            "data_type": ["archive"],
+        }
+    )
+    rows = _expand_tar(str(tf), row)
+    assert len(rows) == 1
+    assert "Th\u00fcringen.csv" in rows["file_path"].iloc[0]
+    assert Path(rows["file_location"].iloc[0]).read_text().splitlines() == ["id,x", "1,2"]

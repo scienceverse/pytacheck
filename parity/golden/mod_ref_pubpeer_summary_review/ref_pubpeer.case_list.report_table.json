@@ -18,6 +18,7 @@
         "names": [
           "Reference",
           "Comments",
+          "Commenters",
           "PubPeer Link"
         ],
         "v": [
@@ -35,6 +36,14 @@
               12,
               2,
               1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Alpha, Beta, Gamma",
+              "Jane Doe, John Roe",
+              "Dup Checker"
             ]
           },
           {
@@ -67,6 +76,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

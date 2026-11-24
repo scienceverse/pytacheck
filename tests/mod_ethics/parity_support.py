@@ -38,6 +38,38 @@ def ec_paper(
     return p
 
 
+def ds_paper(
+    abstract: Sequence[str] = (),
+    body: Sequence[str] = (),
+    header: str = "Method",
+    title: str = "Test Paper",
+    id: str = "p1",
+) -> Any:
+    """``ds_paper()``: a small paper with a title, an abstract and one more part."""
+    import pandas as pd
+
+    import metacheck as pc
+
+    p = pc.test_paper([*abstract, *body])
+    p.paper_id = id
+    text_table = p.text.copy()
+    text_table["section_id"] = [0.0] * len(abstract) + [1.0] * len(body)
+    p.text = text_table
+    p.section = pd.DataFrame(
+        {
+            "section_id": pd.Series([0.0, 1.0], dtype="float64"),
+            "header": pd.Series(["Abstract", header], dtype="string"),
+            "parent_section_id": pd.Series([None, None], dtype="Int64"),
+            "section_type": pd.Series(["abstract", "method"], dtype="string"),
+            "classification_score": pd.Series([0.0, 0.0], dtype="float64"),
+        }
+    )
+    info = p.info.copy()
+    info["title"] = pd.Series([title], dtype="string")
+    p.info = info
+    return p
+
+
 def ec_papers(ids: Sequence[str], texts: Sequence[Sequence[str | None]]) -> Any:
     """``ec_papers()``: a paper list of test papers with the given IDs."""
     import metacheck as pc

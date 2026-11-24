@@ -22,6 +22,8 @@
       "stat_output",
       "match_table",
       "modifications",
+      "artifacts",
+      "environment",
       "checklist_section",
       "sandbox"
     ],
@@ -262,7 +264,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We assessed 1 R code file for reproducibility and ran it (each in an isolated subprocess).\n-  0 of 1 script ran without error when executed.\n-  0 installable dependencies detected."
+          "\n-  We assessed 1 R code file for reproducibility and ran it (each in an isolated subprocess).\n-  0 of 1 script ran without error when executed.\n-  Of the others, 1 did not reproduce.\n-  0 installable dependencies detected."
         ]
       },
       {
@@ -280,12 +282,20 @@
           "repro_scripts_n",
           "repro_not_analysis_n",
           "repro_not_downloaded_n",
+          "repro_ran_n",
+          "repro_code_error_n",
+          "repro_dependency_n",
+          "repro_time_n",
+          "repro_not_checkable_n",
           "repro_fail_file",
           "repro_fail_package",
           "repro_fail_undefined",
           "repro_fail_syntax",
           "repro_fail_environment",
           "repro_fail_settings",
+          "repro_fail_platform",
+          "repro_fail_how_to_run",
+          "repro_fail_from_report",
           "repro_fail_internet",
           "repro_fail_download",
           "repro_fail_interactive",
@@ -346,6 +356,54 @@
             "t": "int",
             "v": [
               1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
             ]
           },
           {
@@ -456,6 +514,14 @@
           0,
           0,
           0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
           0
         ],
         "names": [
@@ -467,12 +533,20 @@
           "repro_scripts_n",
           "repro_not_analysis_n",
           "repro_not_downloaded_n",
+          "repro_ran_n",
+          "repro_code_error_n",
+          "repro_dependency_n",
+          "repro_time_n",
+          "repro_not_checkable_n",
           "repro_fail_file",
           "repro_fail_package",
           "repro_fail_undefined",
           "repro_fail_syntax",
           "repro_fail_environment",
           "repro_fail_settings",
+          "repro_fail_platform",
+          "repro_fail_how_to_run",
+          "repro_fail_from_report",
           "repro_fail_internet",
           "repro_fail_download",
           "repro_fail_interactive",
@@ -501,7 +575,11 @@
           "elapsed",
           "script_lines",
           "captures",
-          "reason"
+          "started_at",
+          "ended_at",
+          "exit_status",
+          "reason",
+          "checked"
         ],
         "v": [
           {
@@ -579,7 +657,31 @@
           {
             "t": "chr",
             "v": [
+              "<time>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<time>"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "other"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code_error"
             ]
           }
         ]
@@ -602,7 +704,9 @@
         "names": [
           "file_name",
           "change_type",
-          "detail"
+          "detail",
+          "sha256_before",
+          "sha256_after"
         ],
         "v": [
           {
@@ -622,13 +726,196 @@
             "v": [
               "\"data.csv\" -> \"data.csv\""
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0664e284402419ea6dd0013e16f2ad45b9f0b13ef99a02a11eb1090d6fc58f02"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "stage",
+          "path",
+          "size",
+          "sha256",
+          "mime_type",
+          "source",
+          "status"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "deposit",
+              "before_run",
+              "before_run"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data.csv",
+              "data.csv",
+              "errors.R"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              32,
+              32,
+              67
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "b4d4e4e1bbd394260dd4c214327e8f73c1ba8f8945f735b27e40cf366bc9ad24",
+              "b4d4e4e1bbd394260dd4c214327e8f73c1ba8f8945f735b27e40cf366bc9ad24",
+              "0664e284402419ea6dd0013e16f2ad45b9f0b13ef99a02a11eb1090d6fc58f02"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text/csv",
+              "text/csv",
+              "text/x-r-source"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "metacheck_version",
+          "started_at",
+          "ended_at",
+          "host",
+          "sandbox",
+          "network_isolated",
+          "internet",
+          "timeout_per_script",
+          "total_timeout",
+          "python_local",
+          "docker"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "0.4.4.40"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<time>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<time>"
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "r_version",
+              "platform",
+              "os"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "<host>"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "<host>"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "<host>"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "process"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              60
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              3600
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
           }
         ]
       },
       {
         "t": "chr",
         "v": [
-          "We ran the paper's 1 R script in the order they depend on each other, each in a separate R or Python session, for at most 1 minute per script. We did not install packages the scripts need.\n\n**0 of 1 script ran to the end**: 1 stopped with an error.\n\n| Script | Result | What happened |\n|---|---|---|\n| errors.R | Stopped with an error | <code>Error in eval(e, envir = env) : deliberate failure for testing<\/code> |\n\n### How to make your code run on another computer\n\nWe ran your code on a clean computer, the way a reader or reviewer would. Below is each problem we found, the scripts it affects, and how to fix it. Fix them in the order given: a problem near the top can cause the ones below it.\n\n**Metacheck can't automatically establish what caused the error, or how it should be improved.**\n\n- <code>errors.R<\/code>\n\nThe error message of each script is in the table above.\n\n### Comparison with the paper\n\nWe found no statistical tests in the paper to compare with the output of the code."
+          "We ran the paper's 1 R script in the order they depend on each other, each in a separate R or Python session, for at most 1 minute per script. We did not install packages the scripts need.\n\n**0 of 1 script ran to the end**: 1 did not reproduce.\n\n| Script | Result | What happened |\n|---|---|---|\n| errors.R | Stopped with an error | <code>Error in eval(e, envir = env) : deliberate failure for testing<\/code> |\n\n### How to make your code run on another computer\n\nWe ran your code on a clean computer, the way a reader or reviewer would. Below is each problem we found, the scripts it affects, and how to fix it. Fix them in the order given: a problem near the top can cause the ones below it.\n\n**Metacheck can't automatically establish what caused the error, or how it should be improved.**\n\n- <code>errors.R<\/code>\n\nThe error message of each script is in the table above.\n\n### Comparison with the paper\n\nWe found no statistical tests in the paper to compare with the output of the code."
         ]
       },
       {
@@ -639,6 +926,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

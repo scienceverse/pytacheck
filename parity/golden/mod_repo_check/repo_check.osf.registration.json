@@ -15,6 +15,7 @@
       "summary_text",
       "summary_table",
       "gated_repos",
+      "archive_deposits",
       "partial_repos",
       "naming_issues",
       "repo_metadata",
@@ -23,6 +24,7 @@
       "roster_check",
       "group_no_evidence",
       "useless_files",
+      "symlinks",
       "view_only",
       "na_replace"
     ],
@@ -59,6 +61,7 @@
           "file_type",
           "data_type",
           "doc_role",
+          "file_kind",
           "group",
           "paper_id"
         ],
@@ -110,12 +113,17 @@
           {
             "t": "chr",
             "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
           }
         ]
       },
       {
         "t": "chr",
         "v": [
+          "#### Partly Listed Repositories\n\nThe OSF refused part of the listing of https://osf.io/3cz2e (0 files listed), also when asked again, so what this report says about its files describes only the part that was listed. Run the check again later.",
           "Double-check permissions on repositories with no detectable files.",
           "#### Whose Deposits",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = \"<a href='https://osf.io/8c3kb' target='_blank'>osf.io/8c3kb<\/a>\", \n    \"Cited in\" = \"text\", Whose = \"the authors', for this paper\", \n    Why = \"a link in the main text, not shown to be anyone else's\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
@@ -134,7 +142,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We found 1 empty repository.\n-  We found 0 files in 1 repository.\n-  We found 0 README files and 1 repository without READMEs."
+          "\n-  We listed only part of 1 OSF project, because the OSF refused part of the listing; run the check again.\n-  We found 1 empty repository.\n-  We found 0 files in 1 repository.\n-  We found 0 README files and 1 repository without READMEs."
         ]
       },
       {
@@ -154,6 +162,11 @@
           "repo_own",
           "repo_others",
           "ref_others",
+          "file_share_n",
+          "icpsr_own_n",
+          "cran_own_n",
+          "archive_own_n",
+          "ref_own",
           "repo_view_only",
           "roster_mismatch"
         ],
@@ -243,6 +256,36 @@
             ]
           },
           {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
             "t": "lgl",
             "v": [
               false
@@ -254,11 +297,16 @@
         "t": "df",
         "nrow": 0,
         "names": [
+          "paper_id",
           "repo_url",
           "repo_type",
           "repo_error"
         ],
         "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
           {
             "t": "chr",
             "v": []
@@ -278,8 +326,9 @@
         "nrow": 0,
         "names": [
           "paper_id",
-          "repo_url",
-          "files_listed"
+          "accession",
+          "archive",
+          "repo_url"
         ],
         "v": [
           {
@@ -291,8 +340,48 @@
             "v": []
           },
           {
-            "t": "int",
+            "t": "chr",
             "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "repo_url",
+          "files_listed",
+          "reason"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_8c3kb"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/3cz2e"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "refused by the OSF"
+            ]
           }
         ]
       },
@@ -452,9 +541,13 @@
           "dep_description",
           "dep_creators",
           "dep_orcids",
+          "dep_creator_families",
+          "dep_n_creators",
           "dep_type",
+          "dep_org",
           "dep_related",
           "dep_date",
+          "dep_updated",
           "dep_year",
           "osf_type",
           "osf_category",
@@ -479,7 +572,8 @@
           "citing",
           "citing_sections",
           "cff_dois",
-          "listing_cut"
+          "listing_cut",
+          "listing_short"
         ],
         "v": [
           {
@@ -563,7 +657,31 @@
           {
             "t": "chr",
             "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "2020-12-28"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
             ]
           },
           {
@@ -715,6 +833,12 @@
             "v": [
               false
             ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
           }
         ]
       },
@@ -731,7 +855,8 @@
           "file_size",
           "file_type",
           "data_type",
-          "doc_role"
+          "doc_role",
+          "file_kind"
         ],
         "v": [
           {
@@ -760,6 +885,10 @@
           },
           {
             "t": "dbl",
+            "v": []
+          },
+          {
+            "t": "chr",
             "v": []
           },
           {
@@ -814,6 +943,9 @@
         ]
       },
       {
+        "t": "null"
+      },
+      {
         "t": "df",
         "nrow": 0,
         "names": [
@@ -844,6 +976,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -1,0 +1,16 @@
+{
+  "id": ".case_clash_rename.windows_separator",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "d\\X~2.txt",
+      "d/x.txt",
+      "d/y.txt"
+    ]
+  },
+  "metacheck_version": "0.4.4.40",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

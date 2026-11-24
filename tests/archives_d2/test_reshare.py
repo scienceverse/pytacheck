@@ -67,12 +67,14 @@ def test_info(mock_api: object) -> None:
 
 def test_file_download(mock_api: object, tmp_path: Path) -> None:
     with pytest.warns(UserWarning, match="2 of 3 files from ReShare deposit 854001"):
-        files = reshare_file_download("https://doi.org/10.5255/UKDA-SN-854001", str(tmp_path))
+        files = reshare_file_download(
+            "https://doi.org/10.5255/UKDA-SN-854001", str(tmp_path), max_file_size=10
+        )
     assert list(files.columns) == [
         "folder", "reshare_id", "id", "key", "path", "size", "size_on_disk", "checksum",
         "checksum_ok", "self", "downloaded", "extracted",
     ]  # fmt: skip
-    # guide.pdf (20MB) is over the 10MB default cap: listed, not downloaded (U36)
+    # guide.pdf (20MB) is over the 10 MB cap given: listed, not downloaded (U36)
     assert files["key"].tolist() == ["interviews.csv", "guide.pdf", "notes.txt", "gone.txt"]
     assert files["downloaded"].tolist() == [True, False, False, False]
     assert files["checksum_ok"].iloc[0] == True  # noqa: E712

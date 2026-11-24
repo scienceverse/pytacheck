@@ -308,6 +308,46 @@ SCENARIOS: dict[str, dict[str, Any]] = {
         "structure": table(file_name=["data.dta", "analysis.do"], file_location=[None, None]),
         "plan": PLAN,
     },
+    # -- metacheck 0.4.4.30 to 0.4.4.35 -------------------------------------------
+    # an SPSS or Stata data file the deposit's own R code reads is data for that code, not a
+    # sign that the analysis was left out (#695, point 42)
+    "spss_read_by_code": {
+        "code": code(r("reads_sav.R", S + "reads_sav.R")),
+        "structure": table(
+            file_name=["reads_sav.R", "data.sav"], file_location=[S + "reads_sav.R", None]
+        ),
+        "plan": PLAN,
+    },
+    "stata_read_by_code": {
+        "code": code(r("reads_dta.R", S + "reads_dta.R")),
+        "structure": table(
+            file_name=["reads_dta.R", "data.dta"], file_location=[S + "reads_dta.R", None]
+        ),
+        "plan": PLAN,
+    },
+    "sav_not_read_by_code": {
+        "code": code(r("reads_sav.R", S + "reads_sav.R")),
+        "structure": table(
+            file_name=["reads_sav.R", "data.sav", "other.sav"],
+            file_location=[S + "reads_sav.R", None, None],
+        ),
+        "plan": PLAN,
+    },
+    # no code left, but data_check refused a repository for its number of files (#706)
+    "no_code_refused": {
+        "code": EMPTY_CODE,
+        "structure": DATA,
+        "plan": PLAN,
+        "count_refused": table(
+            repo_url=["https://github.com/a/b"],
+            n_files=["5000"],
+            message=[
+                "Repository https://github.com/a/b holds 5000 files, exceeding the 2000-file "
+                "cap: skipped entirely (not size-capped, file-count-capped). Raise "
+                "`max_files_per_repo` to include it."
+            ],
+        ),
+    },
     "nonr_only": {
         "code": code(
             {"file_name": "model.sas", "file_location": None, "language": "SAS"},
@@ -465,6 +505,29 @@ SCENARIOS: dict[str, dict[str, Any]] = {
         "structure": DATA,
         "plan": PLAN,
     },
+    # 0.4.4.18 (#580, #648): the five groups of "checked", the key a script needs, a call that needs a
+    # screen, a module of another platform, a file of a package run on its own
+    "exec_groups": {
+        "code": code(
+            r("ok.R"),
+            r("errors.R"),
+            r("keyed.R", S + "keyed.R"),
+            r("screen.R", S + "screen.R"),
+            r("needs_stringr.R", S + "needs_stringr.R"),
+        ),
+        "structure": DATA,
+        "plan": PLAN,
+    },
+    "exec_groups_py": {
+        "code": code(
+            r("ok.py", language="Python"),
+            r("errors.py", language="Python"),
+            r("colab.py", S + "py/colab.py", language="Python"),
+            r("relative.py", S + "py/relative.py", language="Python"),
+        ),
+        "structure": DATA,
+        "plan": PLAN,
+    },
     # total_timeout runs out during the first script: it is stopped, the second not started
     "exec_total_timeout": {
         "code": code(r("sleep.R", S + "sleep.R"), r("sleep_b.R", S + "sleep_b.R")),
@@ -473,7 +536,9 @@ SCENARIOS: dict[str, dict[str, Any]] = {
     },
 }
 
-EXEC_IGNORE: list[str] = []
+# What names the machine and the program that ran the code, and so differs by design (D153):
+# the version of the program, and the host's language version.
+EXEC_IGNORE: list[str] = ["environment.metacheck_version", "environment.host"]
 
 # (case id, scenario, R args, Python args, extra case keys)
 CASES: list[tuple[str, str, str, str, dict[str, Any]]] = []
@@ -539,6 +604,7 @@ for name in SCENARIOS:
             f"{EXEC}, {r_extra}",
             f"{EXEC_PY}, {py_extra}",
             mocked=True,
+            compare={"ignore": EXEC_IGNORE},
         )
         continue
     if name == "exec_timeout":
@@ -562,7 +628,16 @@ for name in SCENARIOS:
             compare={"ignore": [*EXEC_IGNORE, "run_results.stdout", "run_results.stderr"]},
         )
         continue
-    add(f"reproducibility_check.{name}", name, EXEC, EXEC_PY + PROCESS_PY)
+    add(
+        f"reproducibility_check.{name}",
+        name,
+        EXEC,
+        EXEC_PY + PROCESS_PY,
+        # the PDFs the scripts draw hold the time they were made: their hashes differ per run
+        compare={
+            "ignore": [*EXEC_IGNORE, *(["artifacts.sha256"] if name == "exec_groups" else [])]
+        },
+    )
 # execution without keeping the sandbox: the throwaway root is removed (element absent)
 add(
     "reproducibility_check.exec_ok_no_keep",

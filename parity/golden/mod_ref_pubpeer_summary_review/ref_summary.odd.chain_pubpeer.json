@@ -90,9 +90,9 @@
             "v": [
               "<a href='https://pubpeer.com/publications/PP.EMPTYUSERS' target='_blank'>Link<\/a>",
               null,
-              null,
+              "<a href='https://pubpeer.com/publications/PP.STATLIST' target='_blank'>Link<\/a>",
               "<a href='' target='_blank'>Link<\/a>",
-              "<a href='https://pubpeer.com/publications/PP.STATCASE' target='_blank'>Link<\/a>"
+              null
             ]
           }
         ]
@@ -101,7 +101,7 @@
         "t": "chr",
         "v": [
           "See the specific reports above for details.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(text = c(\"Reference 0. https://doi.org/10.9999/pp.emptyusers\", \n\"Reference 1. https://doi.org/10.9999/pp.nulltc\", \"Reference 2. https://doi.org/10.9999/pp.statlist\", \n\"Reference 3. https://doi.org/10.9999/pp.emptyurl\", \"Reference 4. https://doi.org/10.9999/pp.statcase\"\n), pubpeer = c(\"<a href='https://pubpeer.com/publications/PP.EMPTYUSERS' target='_blank'>Link<\/a>\", \nNA, NA, \"<a href='' target='_blank'>Link<\/a>\", \"<a href='https://pubpeer.com/publications/PP.STATCASE' target='_blank'>Link<\/a>\"\n)), row.names = c(NA, -5L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.75, NA), 10, FALSE)\n```\n"
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(text = c(\"Reference 0. https://doi.org/10.9999/pp.emptyusers\", \n\"Reference 1. https://doi.org/10.9999/pp.nulltc\", \"Reference 2. https://doi.org/10.9999/pp.statlist\", \n\"Reference 3. https://doi.org/10.9999/pp.emptyurl\", \"Reference 4. https://doi.org/10.9999/pp.statcase\"\n), pubpeer = c(\"<a href='https://pubpeer.com/publications/PP.EMPTYUSERS' target='_blank'>Link<\/a>\", \nNA, \"<a href='https://pubpeer.com/publications/PP.STATLIST' target='_blank'>Link<\/a>\", \n\"<a href='' target='_blank'>Link<\/a>\", NA)), row.names = c(NA, \n-5L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.75, NA), 10, FALSE)\n```\n"
         ]
       },
       {
@@ -133,13 +133,13 @@
           {
             "t": "dbl",
             "v": [
-              4
+              6
             ]
           }
         ]
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

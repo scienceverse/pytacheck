@@ -4260,6 +4260,70 @@
       "$expr":
         "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 410L, headers = list(`Content-Type` = \"application/json\"), body = charToRaw(\"{}\")), osf_id = \"zz\")"
         "py": "lambda: __import__(\"metacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(410, content=b\"{}\"), osf_id=\"zz\")"
+- "id": ".osf_parse_response.status.400.embed"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 400L, headers = list(`Content-Type` = \"application/vnd.api+json\"), body = charToRaw(r\"--({\"errors\":[{\"source\":{\"parameter\":\"embed\"},\"detail\":\"The following fields are not embeddable: bibliographic_contributors\",\"status\":\"400\"}]})--\")), osf_id = \"zz\")"
+        "py": "lambda: __import__(\"metacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(400, content='{\"errors\":[{\"source\":{\"parameter\":\"embed\"},\"detail\":\"The following fields are not embeddable: bibliographic_contributors\",\"status\":\"400\"}]}'.encode(), headers={\"content-type\": \"application/vnd.api+json\"}), osf_id=\"zz\")"
+- "id": ".osf_parse_response.status.400.detail"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 400L, headers = list(`Content-Type` = \"application/vnd.api+json\"), body = charToRaw(r\"--({\"errors\":[{\"detail\":\"Bad filter\"}]})--\")), osf_id = \"zz\")"
+        "py": "lambda: __import__(\"metacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(400, content='{\"errors\":[{\"detail\":\"Bad filter\"}]}'.encode(), headers={\"content-type\": \"application/vnd.api+json\"}), osf_id=\"zz\")"
+- "id": ".osf_parse_response.status.400.reasons_joined"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 400L, headers = list(`Content-Type` = \"application/vnd.api+json\"), body = charToRaw(r\"--({\"errors\":[{\"detail\":\"Bad filter\"},{\"detail\":\"Bad filter\"},{\"detail\":\"Second reason\"},{\"source\":{\"parameter\":\"page\"}}]})--\")), osf_id = \"zz\")"
+        "py": "lambda: __import__(\"metacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(400, content='{\"errors\":[{\"detail\":\"Bad filter\"},{\"detail\":\"Bad filter\"},{\"detail\":\"Second reason\"},{\"source\":{\"parameter\":\"page\"}}]}'.encode(), headers={\"content-type\": \"application/vnd.api+json\"}), osf_id=\"zz\")"
+- "id": ".osf_parse_response.status.400.empty_body"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 400L, headers = list(`Content-Type` = \"application/json\"), body = charToRaw(r\"--({})--\")), osf_id = \"zz\")"
+        "py": "lambda: __import__(\"metacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(400, content='{}'.encode(), headers={\"content-type\": \"application/json\"}), osf_id=\"zz\")"
+- "id": ".osf_parse_response.status.400.not_json"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 400L, headers = list(`Content-Type` = \"text/html\"), body = charToRaw(r\"--(<html>Bad request</html>)--\")), osf_id = \"zz\")"
+        "py": "lambda: __import__(\"metacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(400, content='<html>Bad request</html>'.encode(), headers={\"content-type\": \"text/html\"}), osf_id=\"zz\")"
+- "id": ".osf_parse_response.status.400.no_id"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 400L, headers = list(`Content-Type` = \"application/vnd.api+json\"), body = charToRaw(r\"--({\"errors\":[{\"detail\":\"Bad filter\"}]})--\")), osf_id = NA_character_)"
+        "py": "lambda: __import__(\"metacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(400, content='{\"errors\":[{\"detail\":\"Bad filter\"}]}'.encode(), headers={\"content-type\": \"application/vnd.api+json\"}), osf_id=None)"
+- "id": ".osf_embed_refused.answers"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "vapply(list(httr2::response(status_code = 400L, headers = list(`Content-Type` = \"application/vnd.api+json\"), body = charToRaw(r\"--({\"errors\":[{\"source\":{\"parameter\":\"embed\"},\"detail\":\"The following fields are not embeddable: bibliographic_contributors\",\"status\":\"400\"}]})--\")), httr2::response(status_code = 400L, headers = list(`Content-Type` = \"application/vnd.api+json\"), body = charToRaw(r\"--({\"errors\":[{\"detail\":\"Bad filter\"}]})--\")), httr2::response(status_code = 404L, headers = list(`Content-Type` = \"application/vnd.api+json\"), body = charToRaw(r\"--({\"errors\":[{\"source\":{\"parameter\":\"embed\"},\"detail\":\"The following fields are not embeddable: bibliographic_contributors\",\"status\":\"400\"}]})--\")), httr2::response(status_code = 400L, headers = list(`Content-Type` = \"application/json\"), body = charToRaw(r\"--({})--\")), httr2::response(status_code = 400L, headers = list(`Content-Type` = \"text/html\"), body = charToRaw(r\"--(<html>)--\")), httr2::response(status_code = 400L, headers = list(`Content-Type` = \"application/vnd.api+json\"), body = charToRaw(r\"--({\"errors\":[{\"detail\":\"Bad filter\"},{\"detail\":\"Bad filter\"},{\"detail\":\"Second reason\"},{\"source\":{\"parameter\":\"page\"}}]})--\")), simpleError(\"no answer\"), NULL), metacheck:::.osf_embed_refused, logical(1))"
+        "py": "lambda: [__import__(\"metacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_embed_refused(r) for r in [__import__(\"httpx\").Response(400, content='{\"errors\":[{\"source\":{\"parameter\":\"embed\"},\"detail\":\"The following fields are not embeddable: bibliographic_contributors\",\"status\":\"400\"}]}'.encode(), headers={\"content-type\": \"application/vnd.api+json\"}), __import__(\"httpx\").Response(400, content='{\"errors\":[{\"detail\":\"Bad filter\"}]}'.encode(), headers={\"content-type\": \"application/vnd.api+json\"}), __import__(\"httpx\").Response(404, content='{\"errors\":[{\"source\":{\"parameter\":\"embed\"},\"detail\":\"The following fields are not embeddable: bibliographic_contributors\",\"status\":\"400\"}]}'.encode(), headers={\"content-type\": \"application/vnd.api+json\"}), __import__(\"httpx\").Response(400, content='{}'.encode(), headers={\"content-type\": \"application/json\"}), __import__(\"httpx\").Response(400, content='<html>'.encode(), headers={\"content-type\": \"text/html\"}), __import__(\"httpx\").Response(400, content='{\"errors\":[{\"detail\":\"Bad filter\"},{\"detail\":\"Bad filter\"},{\"detail\":\"Second reason\"},{\"source\":{\"parameter\":\"page\"}}]}'.encode(), headers={\"content-type\": \"application/vnd.api+json\"}), RuntimeError('no answer'), None]]"
+- "id": ".osf_error_detail.answers"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "vapply(list(httr2::response(status_code = 400L, headers = list(`Content-Type` = \"application/vnd.api+json\"), body = charToRaw(r\"--({\"errors\":[{\"source\":{\"parameter\":\"embed\"},\"detail\":\"The following fields are not embeddable: bibliographic_contributors\",\"status\":\"400\"}]})--\")), httr2::response(status_code = 400L, headers = list(`Content-Type` = \"application/vnd.api+json\"), body = charToRaw(r\"--({\"errors\":[{\"detail\":\"Bad filter\"}]})--\")), httr2::response(status_code = 404L, headers = list(`Content-Type` = \"application/vnd.api+json\"), body = charToRaw(r\"--({\"errors\":[{\"source\":{\"parameter\":\"embed\"},\"detail\":\"The following fields are not embeddable: bibliographic_contributors\",\"status\":\"400\"}]})--\")), httr2::response(status_code = 400L, headers = list(`Content-Type` = \"application/json\"), body = charToRaw(r\"--({})--\")), httr2::response(status_code = 400L, headers = list(`Content-Type` = \"text/html\"), body = charToRaw(r\"--(<html>)--\")), httr2::response(status_code = 400L, headers = list(`Content-Type` = \"application/vnd.api+json\"), body = charToRaw(r\"--({\"errors\":[{\"detail\":\"Bad filter\"},{\"detail\":\"Bad filter\"},{\"detail\":\"Second reason\"},{\"source\":{\"parameter\":\"page\"}}]})--\")), simpleError(\"no answer\"), NULL), metacheck:::.osf_error_detail, character(1))"
+        "py": "lambda: [__import__(\"metacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_error_detail(r) for r in [__import__(\"httpx\").Response(400, content='{\"errors\":[{\"source\":{\"parameter\":\"embed\"},\"detail\":\"The following fields are not embeddable: bibliographic_contributors\",\"status\":\"400\"}]}'.encode(), headers={\"content-type\": \"application/vnd.api+json\"}), __import__(\"httpx\").Response(400, content='{\"errors\":[{\"detail\":\"Bad filter\"}]}'.encode(), headers={\"content-type\": \"application/vnd.api+json\"}), __import__(\"httpx\").Response(404, content='{\"errors\":[{\"source\":{\"parameter\":\"embed\"},\"detail\":\"The following fields are not embeddable: bibliographic_contributors\",\"status\":\"400\"}]}'.encode(), headers={\"content-type\": \"application/vnd.api+json\"}), __import__(\"httpx\").Response(400, content='{}'.encode(), headers={\"content-type\": \"application/json\"}), __import__(\"httpx\").Response(400, content='<html>'.encode(), headers={\"content-type\": \"text/html\"}), __import__(\"httpx\").Response(400, content='{\"errors\":[{\"detail\":\"Bad filter\"},{\"detail\":\"Bad filter\"},{\"detail\":\"Second reason\"},{\"source\":{\"parameter\":\"page\"}}]}'.encode(), headers={\"content-type\": \"application/vnd.api+json\"}), RuntimeError('no answer'), None]]"
 - "id": ".osf_parse_response.status.429"
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"

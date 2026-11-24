@@ -21,6 +21,7 @@
       "structure",
       "previews",
       "gated_repos",
+      "count_refused",
       "manifest_path",
       "group_no_evidence",
       "na_replace",
@@ -1587,8 +1588,8 @@
           "This module runs automated data-quality checks (empty columns, SPSS filter variables, category casing, stray whitespace, numbers stored as text, problematic and colliding column names, mixed text encodings, personal information, spreadsheet formatting, and careless responding) on the extracted data files.",
           "We examined 40 columns across 10 data files.",
           "#### Issues Identified",
-          "13 file/column combinations have at least one issue.\n\n**About the personal-information flags.** These are pattern matches, not confirmed disclosures, and they are tuned to over-report rather than miss something. Expect false positives:\n\n- **Column names** are matched against identifying words in English and other European languages (`email`, `telefoonnummer`, `geboortedatum`, ...). A column called `phone_number` flags whether or not it holds one, and an empty or already-anonymised column flags on its name alone.\n- **Values** are matched against the shape of an identifier. An IP address pattern also matches a version string or a dotted numeric code; a card-number pattern requires both a real issuer prefix and a checksum, but a long numeric ID can still coincide.\n- **Free text** is flagged when a column holds long, mostly-distinct prose — the shape open-ended answers take. Most such columns contain no names at all.\n\nA flag means *look at this column*. Where the data is already de-identified (an `ip` column reading `Anonymized`, a `name` column the authors emptied), no action is needed.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"broken.xlsx\", \"coding.xlsx\", \"coding.xlsx\", \n\"legacy.xls\", \"legacy.xls [quakes]\", \"messy.fods\", \"messy.fods\", \n\"messy.ods\", \"messy.ods\", \"messy.xlsx\", \"messy.xlsx\", \"offset.xlsx\", \n\"offset.xlsx\"), Column = c(\"(whole file)\", \"(whole file)\", \"coding\", \n\"(whole file)\", \"lat\", \"Results\", \"note\", \"Results\", \"note\", \n\"Data\", \"empty\", \"(whole file)\", \"Sheet1\"), Issues = c(\"<span title='The file could not be parsed as a .xlsx workbook.'>⚠️ Unreadable — The file could not be parsed as a <\/span>\", \n\"<span title='This file reads as a table but is not a usable dataset (100% of columns are free text, not variables). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.'>📐 Not a rectangular dataset — This file reads as a table but is not a usable dataset (100% of col...<\/span>\", \n\"<span title='3 fully empty rows inside the data range.'>⬜ Empty rows — 3 fully empty rows inside the data range<\/span>\", \n\"<span title='Legacy .xls format: colour, merged cells and empty rows/columns cannot be inspected. Convert to .xlsx or .ods for a full check.'>⚠️ Un-inspectable (.xls) — Legacy <\/span>\", \n\"<span title='Column name suggests personal information (matched: lat). Review before sharing.'>🔒 Personally Identifying Information — Column name suggests personal information (matched: lat)<\/span>\", \n\"<span title='2 cells use fill colour to encode information; colour is lost on CSV export.'>🎨 Colour coding — 2 cells use fill colour to encode information<\/span><br><span title='1 column is empty or has a blank header.'>⬜ Empty or unnamed columns — 1 column is empty or has a blank header<\/span><br><span title='2 fully empty rows inside the data range.'>⬜ Empty rows — 2 fully empty rows inside the data range<\/span><br><span title='1 merged range (A6:B6) breaks the rectangular grid.'>🔗 Merged cells — 1 merged range (A6:B6) breaks the rectangular grid<\/span>\", \n\"<span title='Column is empty: all 5 values are missing.'>⬜ Empty column — Column is empty: all 5 values are missing<\/span>\", \n\"<span title='2 cells use fill colour to encode information; colour is lost on CSV export.'>🎨 Colour coding — 2 cells use fill colour to encode information<\/span><br><span title='1 column is empty or has a blank header.'>⬜ Empty or unnamed columns — 1 column is empty or has a blank header<\/span><br><span title='2 fully empty rows inside the data range.'>⬜ Empty rows — 2 fully empty rows inside the data range<\/span><br><span title='1 merged range (A6:B6) breaks the rectangular grid.'>🔗 Merged cells — 1 merged range (A6:B6) breaks the rectangular grid<\/span>\", \n\"<span title='Column is empty: all 5 values are missing.'>⬜ Empty column — Column is empty: all 5 values are missing<\/span>\", \n\"<span title='2 cells use fill colour to encode information; colour is lost on CSV export.'>🎨 Colour coding — 2 cells use fill colour to encode information<\/span><br><span title='1 column is empty or has a blank header.'>⬜ Empty or unnamed columns — 1 column is empty or has a blank header<\/span><br><span title='1 merged range (A7:B7) breaks the rectangular grid.'>🔗 Merged cells — 1 merged range (A7:B7) breaks the rectangular grid<\/span>\", \n\"<span title='Column is empty: all 4 values are missing.'>⬜ Empty column — Column is empty: all 4 values are missing<\/span>\", \n\"<span title='The column header is on row 2; above it is a partial label row (Experiment 1 export). Remove the row above the header so the first row of the sheet is the column header — otherwise the file reads with invented column names (…1, …4) and the data mis-types.'>📋 Header not on first row — The column header is on row 2<\/span>\", \n\"<span title='2 columns are empty or have a blank header.'>⬜ Empty or unnamed columns — 2 columns are empty or have a blank header<\/span>\"\n)), row.names = c(NA, -13L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 20, FALSE)\n```\n",
+          "12 file/column combinations have at least one issue.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"broken.xlsx\", \"coding.xlsx\", \"coding.xlsx\", \n\"legacy.xls\", \"messy.fods\", \"messy.fods\", \"messy.ods\", \"messy.ods\", \n\"messy.xlsx\", \"messy.xlsx\", \"offset.xlsx\", \"offset.xlsx\"), Column = c(\"(whole file)\", \n\"(whole file)\", \"coding\", \"(whole file)\", \"Results\", \"note\", \n\"Results\", \"note\", \"Data\", \"empty\", \"(whole file)\", \"Sheet1\"), \n    Issues = c(\"<span title='The file could not be parsed as a .xlsx workbook.'>⚠️ Unreadable — The file could not be parsed as a <\/span>\", \n    \"<span title='This file reads as a table but is not a usable dataset (100% of columns are free text, not variables). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.'>📐 Not a rectangular dataset — This file reads as a table but is not a usable dat…\", \n    \"<span title='3 fully empty rows inside the data range.'>⬜ Empty rows — 3 fully empty rows inside the data range<\/span>\", \n    \"<span title='Legacy .xls format: colour, merged cells and empty rows/columns cannot be inspected. Convert to .xlsx or .ods for a full check.'>⚠️ Un-inspectable (.xls) — Legacy <\/span>\", \n    \"<span title='2 cells use fill colour to encode information; colour is lost on CSV export.'>🎨 Colour coding — 2 cells use fill colour to encode information<\/span><br><span title='1 column is empty or has a blank header.'>⬜ Empty or unnamed columns — 1 column is empty or has a blank header<\/span><br><span t…\", \n    \"<span title='Column is empty: all 5 values are missing.'>⬜ Empty column — Column is empty: all 5 values are missing<\/span>\", \n    \"<span title='2 cells use fill colour to encode information; colour is lost on CSV export.'>🎨 Colour coding — 2 cells use fill colour to encode information<\/span><br><span title='1 column is empty or has a blank header.'>⬜ Empty or unnamed columns — 1 column is empty or has a blank header<\/span><br><span t…\", \n    \"<span title='Column is empty: all 5 values are missing.'>⬜ Empty column — Column is empty: all 5 values are missing<\/span>\", \n    \"<span title='2 cells use fill colour to encode information; colour is lost on CSV export.'>🎨 Colour coding — 2 cells use fill colour to encode information<\/span><br><span title='1 column is empty or has a blank header.'>⬜ Empty or unnamed columns — 1 column is empty or has a blank header<\/span><br><span t…\", \n    \"<span title='Column is empty: all 4 values are missing.'>⬜ Empty column — Column is empty: all 4 values are missing<\/span>\", \n    \"<span title='The column header is on row 2; above it is a partial label row (Experiment 1 export). Remove the row above the header so the first row of the sheet is the column header — otherwise the file reads with invented column names (…1, …4) and the data mis-types.'>📋 Header not on first row — Th…\", \n    \"<span title='2 columns are empty or have a blank header.'>⬜ Empty or unnamed columns — 2 columns are empty or have a blank header<\/span>\"\n    )), row.names = c(NA, -12L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 20, FALSE)\n```\n\n*Cells longer than 300 characters are cut (…).*\n",
           "#### Spreadsheet Formatting",
           "We examined 10 spreadsheet files in the repository; 7 have at least one formatting issue.",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"broken.xlsx\", \"coding.xlsx\", \"coding.xlsx\", \n\"legacy.xls\", \"messy.fods\", \"messy.fods\", \"messy.fods\", \"messy.fods\", \n\"messy.ods\", \"messy.ods\", \"messy.ods\", \"messy.ods\", \"messy.xlsx\", \n\"messy.xlsx\", \"messy.xlsx\", \"offset.xlsx\", \"offset.xlsx\"), Sheet = c(NA, \nNA, \"coding\", NA, \"Results\", \"Results\", \"Results\", \"Results\", \n\"Results\", \"Results\", \"Results\", \"Results\", \"Data\", \"Data\", \"Data\", \nNA, \"Sheet1\"), Issue = c(\"Unreadable\", \"Not a rectangular dataset\", \n\"Empty rows\", \"Un-inspectable (.xls)\", \"Colour coding\", \"Merged cells\", \n\"Empty rows\", \"Empty or unnamed columns\", \"Colour coding\", \"Merged cells\", \n\"Empty rows\", \"Empty or unnamed columns\", \"Colour coding\", \"Merged cells\", \n\"Empty or unnamed columns\", \"Header not on first row\", \"Empty or unnamed columns\"\n), Detail = c(\"The file could not be parsed as a .xlsx workbook.\", \n\"This file reads as a table but is not a usable dataset (100% of columns are free text, not variables). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.\", \n\"3 fully empty rows inside the data range.\", \"Legacy .xls format: colour, merged cells and empty rows/columns cannot be inspected. Convert to .xlsx or .ods for a full check.\", \n\"2 cells use fill colour to encode information; colour is lost on CSV export.\", \n\"1 merged range (A6:B6) breaks the rectangular grid.\", \"2 fully empty rows inside the data range.\", \n\"1 column is empty or has a blank header.\", \"2 cells use fill colour to encode information; colour is lost on CSV export.\", \n\"1 merged range (A6:B6) breaks the rectangular grid.\", \"2 fully empty rows inside the data range.\", \n\"1 column is empty or has a blank header.\", \"2 cells use fill colour to encode information; colour is lost on CSV export.\", \n\"1 merged range (A7:B7) breaks the rectangular grid.\", \"1 column is empty or has a blank header.\", \n\"The column header is on row 2; above it is a partial label row (Experiment 1 export). Remove the row above the header so the first row of the sheet is the column header — otherwise the file reads with invented column names (…1, …4) and the data mis-types.\", \n\"2 columns are empty or have a blank header.\")), row.names = c(NA, \n-17L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 20, FALSE)\n```\n",
@@ -1607,7 +1608,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We classified 10 files: 10 data.\n-  We found 10 tabular data files and extracted 40 columns from 8 of them.\n-  We grouped the files into 1 study group (ex1).\n-  1 file read as a table but is not a usable rectangular dataset (coding.xlsx: 100% of columns are free text, not variables). No columns were extracted and they were not sent to the LLM. Share the underlying data as a plain rectangular table (one header row, one column per variable) with a codebook: coding.xlsx. We ran automated data-quality checks on 40 columns; 4 columns have at least one potential issue (3 columns with no observed values (entirely empty); 1 column whose name suggests personal information). 7 of 10 spreadsheet files have at least one formatting issue (colour coding, merged cells, empty rows/columns, or an offset header)."
+          "\n-  We classified 10 files: 10 data.\n-  We found 10 tabular data files and extracted 40 columns from 8 of them.\n-  We grouped the files into 1 study group (ex1).\n-  1 file read as a table but is not a usable rectangular dataset (coding.xlsx: 100% of columns are free text, not variables). No columns were extracted and they were not sent to the LLM. Share the underlying data as a plain rectangular table (one header row, one column per variable) with a codebook: coding.xlsx. We ran automated data-quality checks on 40 columns; 3 columns have at least one potential issue (3 columns with no observed values (entirely empty)). 7 of 10 spreadsheet files have at least one formatting issue (colour coding, merged cells, empty rows/columns, or an offset header)."
         ]
       },
       {
@@ -1622,6 +1623,9 @@
           "col_numeric",
           "col_text",
           "key_n",
+          "files_failed",
+          "llm_cols_unanswered",
+          "llm_files_unanswered",
           "flagged_n",
           "spreadsheet_file_n",
           "spreadsheet_flagged_file_n"
@@ -1678,7 +1682,25 @@
           {
             "t": "int",
             "v": [
-              4
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
             ]
           },
           {
@@ -1697,7 +1719,7 @@
       },
       {
         "t": "df",
-        "nrow": 21,
+        "nrow": 20,
         "names": [
           "source_file",
           "column",
@@ -1709,7 +1731,6 @@
           {
             "t": "chr",
             "v": [
-              "legacy.xls [quakes]",
               "messy.fods",
               "messy.ods",
               "messy.xlsx",
@@ -1735,7 +1756,6 @@
           {
             "t": "chr",
             "v": [
-              "lat",
               "note",
               "note",
               "empty",
@@ -1766,7 +1786,6 @@
               null,
               null,
               null,
-              null,
               "coding",
               null,
               "Results",
@@ -1787,7 +1806,6 @@
           {
             "t": "chr",
             "v": [
-              "Personal info (column name)",
               "Empty column",
               "Empty column",
               "Empty column",
@@ -1813,7 +1831,6 @@
           {
             "t": "chr",
             "v": [
-              "Column name suggests personal information (matched: lat). Review before sharing.",
               "Column is empty: all 5 values are missing.",
               "Column is empty: all 5 values are missing.",
               "Column is empty: all 4 values are missing.",
@@ -1934,6 +1951,7 @@
           "file_path",
           "data_type",
           "doc_role",
+          "file_kind",
           "group",
           "paper_id",
           "data_format",
@@ -2091,6 +2109,21 @@
               null,
               null,
               null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data"
             ]
           },
           {
@@ -8166,6 +8199,7 @@
         "t": "df",
         "nrow": 0,
         "names": [
+          "paper_id",
           "repo_url",
           "repo_type",
           "repo_error"
@@ -8177,6 +8211,33 @@
           },
           {
             "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "n_files",
+          "message"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
             "v": []
           },
           {
@@ -8308,6 +8369,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

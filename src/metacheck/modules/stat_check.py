@@ -4,11 +4,18 @@ from __future__ import annotations
 
 from typing import Any
 
+import numpy as np
 import pandas as pd
 
+from metacheck._r.regex import grepl
 from metacheck.module import module
 from metacheck.papers.model import PaperList
 from metacheck.report import collapse_section, format_ref, scroll_table
+from metacheck.stats.core import (
+    _paper_says_one_sided,
+    _stat_bound_or_variance_fits,
+    _stat_one_sided_fits,
+)
 
 # R: format_ref(Nuijten2017) / format_ref(Nuijten2023), rendered by R's bibentry html style.
 _NUIJTEN_2017 = (
@@ -36,6 +43,10 @@ _RED_REPORT = (
     "We detected possible errors in test statistics. Note that as the accuracy of statcheck has "
     "only been validated for *t*-tests and *F*-tests. As Metacheck only uses validated modules, "
     "we only provide statcheck results for *t* tests and *F*-tests."
+)
+_EQUIVALENCE = (
+    r"\bequivalence\s+(?:tests?|testing|bounds?|margins?|intervals?|ranges?)\b|\bTOST\b"
+    r"|\btwo\s+one[- ]sided\s+tests?\b"
 )
 _LABELS = {
     "raw": "Text",
@@ -69,7 +80,7 @@ def _paper_ids(paper: Any) -> pd.DataFrame:
 
         Statcheck was developed by Michèle Nuijten and Sascha Epskamp.
 
-        Statcheck considers p = 0.000 an error, as you should report p < 0.001. Furthermore, p < 0.03 is an error if the p-value was 0.031, and one should simply report exact p-values (p = 0.031). Statcheck might miss one-sided tests, and falsely assume the p-value is incorrect. For more information, see [StatCheck](https://statcheck.io/).
+        Statcheck considers p = 0.000 an error, as you should report p < 0.001. Furthermore, p < 0.03 is an error if the p-value was 0.031, and one should simply report exact p-values (p = 0.031). When the sentence of a test says it is one-sided ("one-tailed", "one-sided" or "directional"), a p-value that fits a one-sided test counts as consistent (statcheck's `OneTailedTxt` setting; #695). When the paper says anywhere that its tests are one-sided, a p-value that fits a one-sided test in either direction counts as consistent too: half the two-sided p, or 1 minus that half for an effect against the predicted direction. Equivalence tests (TOST) are left out, as their p-values do not test the difference. A statistic written with "<" or ">" is read as a bound, and in a sentence about equal variances an F-test's two-sided p (twice the one-tailed p) counts as consistent. For more information, see [StatCheck](https://statcheck.io/).
 
         This module only checks statistical results reported in the running text of the manuscript. It cannot (yet) process statistics reported only in tables.
 
@@ -87,7 +98,9 @@ def stat_check(paper: Any) -> dict[str, Any]:
     from metacheck.stats.core import stats
 
     # detailed table of results ----
-    stat_table = stats(paper)
+    # a test whose own sentence says it is one-sided is checked as one (metacheck 0.4.4.26,
+    # #695)
+    stat_table = stats(paper, OneTailedTxt=True)
 
     # handle no stats
     if len(stat_table) == 0:
@@ -103,6 +116,40 @@ def stat_check(paper: Any) -> dict[str, Any]:
     # as statcheck is only validated for these tests.
     keep = stat_table["test_type"].isin(["t", "F"]).fillna(False).to_numpy(dtype=bool)
     table = stat_table.loc[keep].reset_index(drop=True)
+
+    # An equivalence test (TOST) reports the p of a test against the equivalence
+    # bounds, not of the difference, so statcheck's p cannot be compared with it
+    # (metacheck #695, point 5)
+    if "text" in table.columns:
+        texts = ["" if pd.isna(t) else str(t) for t in table["text"]]
+    else:
+        texts = [""] * len(table)
+    is_equivalence = grepl(_EQUIVALENCE, texts, ignore_case=True, perl=True)
+    table = table.loc[~np.asarray(is_equivalence, dtype=bool)].reset_index(drop=True)
+    # In a paper that says its tests are one-sided, anywhere in its text, a p that
+    # fits a one-sided test in either direction is consistent (#695, point 5)
+    if len(table):
+        one_sided = _paper_says_one_sided(paper)
+        in_paper = np.array(
+            [
+                (not pd.isna(pid)) and bool(one_sided.get(str(pid), False))
+                for pid in table["paper_id"]
+            ],
+            dtype=bool,
+        )
+        fits = np.array([f is True for f in _stat_one_sided_fits(table)], dtype=bool)
+        is_error = (table["error"] == True).to_numpy(dtype=bool)  # noqa: E712
+        fit = is_error & in_paper & fits
+        table["one_sided_fit"] = pd.array(fit, dtype="boolean")
+        table.loc[fit, ["error", "decision_error"]] = False
+        # a statistic written with "<" or ">" is a bound, and an F-test for equal
+        # variances reports a two-sided p (#695, point 6)
+        is_error = (table["error"] == True).to_numpy(dtype=bool)  # noqa: E712
+        bfit = is_error & np.array(
+            [f is True for f in _stat_bound_or_variance_fits(table)], dtype=bool
+        )
+        table["bound_or_variance_fit"] = pd.array(bfit, dtype="boolean")
+        table.loc[bfit, ["error", "decision_error"]] = False
 
     # no validated stats
     if len(table) == 0:

@@ -376,6 +376,7 @@ def stat_results_long(
 
 
 _ROW_NO_HEADER = "^(V[0-9]+|X[0-9]*|\\.\\.\\.[0-9]+|rownames?|row|)$"
+_NO_NAME_HEADER = "^(V[0-9]+|\\s*[<>]?\\s*-?[0-9][0-9.]*(e[-+]?[0-9]+)?\\s*)$"
 
 
 def _is_row_number_column(header: str, cells: Sequence[Any], n: int) -> bool:
@@ -410,11 +411,37 @@ def _long_rows(
     # A column that is only the row number, under a default name (V1, X, ...1, rownames): a
     # printed data frame or data.table numbers its rows so, and "V1 = 1, 2, 3" was the most
     # common name in the corpus runs' stored output, 1,467 values (#648)
-    stat_cols = [i for i in stat_cols if not _is_row_number_column(headers[i], columns[i], len(df))]
+    is_row_no = [_is_row_number_column(headers[i], columns[i], len(df)) for i in stat_cols]
+    stat_cols = [i for i, rn in zip(stat_cols, is_row_no, strict=True) if not rn]
     if not stat_cols:
         return
 
+    call_fn = _field_found(tb, "call_fn")[1]
+    typ_cache: dict[str, Any] = {}
+
+    def header_typ(h: str) -> Any:
+        if h not in typ_cache:
+            typ_cache[h] = _stato_type_column(h, call_fn)
+        return typ_cache[h]
+
+    # What a column header says it holds: a statistic the vocabulary knows (typed), or nothing.
+    # A header that is itself a number ("0.61", "<2e-16", a value of the row above taken as the
+    # header, as in the HTML of knitr::kable() tables) or no header at all (V3, V7) says
+    # nothing, so an untyped value under it is no result (metacheck 0.4.4.8, #648)
     is_spv = _field_found(tb, "syntax")[0]  # !is.null(tb$syntax): NA counts
+    typed_col = [_typ_get(header_typ(headers[i]), "termSource") != "" for i in stat_cols]
+    no_name = [bool(grepl(_NO_NAME_HEADER, headers[i], ignore_case=True)) for i in stat_cols]
+    # A printed data frame numbers its rows, a result table labels each row with what it is
+    # about; a numbered table of more than 20 rows in which no column names a statistic is a
+    # listing of data (an .spv table has one generic "value" column instead)
+    if not is_spv and any(is_row_no) and len(df) > 20 and not any(typed_col):
+        return
+    stat_cols = [
+        i for i, t, nn in zip(stat_cols, typed_col, no_name, strict=True) if t or not nn or is_spv
+    ]
+    if not stat_cols:
+        return
+
     stats_col: int | None = None
     if is_spv:
         exact = [c for c in label_cols if (trimws(headers[c]) or "").lower() == "statistics"]
@@ -428,15 +455,7 @@ def _long_rows(
     analysis = _field_found(tb, "analysis")[1]
     title = _field_found(tb, "title")[1]
     model_ref = _field_found(tb, "model_ref")[1]
-    call_fn = _field_found(tb, "call_fn")[1]
     stat_slugs = _ave_unique([_paste_chr(_stat_sanitize_id(headers[c])) for c in stat_cols])
-
-    typ_cache: dict[str, Any] = {}
-
-    def header_typ(h: str) -> Any:
-        if h not in typ_cache:
-            typ_cache[h] = _stato_type_column(h, call_fn)
-        return typ_cache[h]
 
     def add(
         test_id: Any, result_id: Any, row_label: str, statistic: Any, typ: Any, value: Any

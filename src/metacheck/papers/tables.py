@@ -2,15 +2,20 @@
 
 from __future__ import annotations
 
+import functools
+import re
 from collections.abc import Sequence
 from typing import Any, cast
 
 import pandas as pd
 
 from metacheck._r.frames import bind_rows
+from metacheck._r.regex import compile_r
 from metacheck.papers.ids import resolve
 from metacheck.papers.model import Paper, PaperList, is_paper_list
 from metacheck.papers.schema import empty_table, records_to_frame, table_names
+
+_TLD_HINT = re.compile(r"\.(?:org|com|io|gov|co)", re.I)
 
 __all__ = ["as_paper_list", "empty_paper_table", "paper_id", "paper_table", "ref_table"]
 
@@ -84,11 +89,96 @@ def paper_table(paper: Any, table: str, cols: Sequence[str] | None = None) -> pd
                 frames.append(x)
         merged = bind_rows(frames) if frames else pd.DataFrame()
 
+    # the names of known sites broken by a line-end hyphen, joined (metacheck #695, point 4)
+    if table == "text" and "text" in merged.columns:
+        merged = _unbreak_known_hosts(merged)
     if cols is not None:
         wanted = [*cols, "paper_id"]
         keep = [c for c in dict.fromkeys(wanted) if c in merged.columns]
         merged = merged.loc[:, keep]
     return merged.reset_index(drop=True)
+
+
+# The sites whose links the checks look for: repositories, registries and DOIs. None of
+# their names holds a hyphen.
+_KNOWN_HOSTS = (
+    "aspredicted.org",
+    "github.com",
+    "gitlab.com",
+    "bitbucket.org",
+    "osf.io",
+    "zenodo.org",
+    "figshare.com",
+    "datadryad.org",
+    "researchbox.org",
+    "dataverse.org",
+    "psycharchives.org",
+    "clinicaltrials.gov",
+    "openicpsr.org",
+    "codeocean.com",
+    "huggingface.co",
+    "kaggle.com",
+    "doi.org",
+)
+
+
+@functools.lru_cache(maxsize=1)
+def _known_host_patterns() -> list[tuple[str, Any]]:
+    """``(host, pattern)`` of R's ``.known_host_unbroken()``: the host with an optional hyphen
+    after each letter of its name."""
+    out = []
+    for h in _KNOWN_HOSTS:
+        name, _, tld = h.partition(".")
+        letters_hy = "-?".join(name)
+        pat = r"(?<![\w-])" + letters_hy + re.escape("." + tld) + r"(?![a-z])"
+        out.append((h, compile_r(pat, ignore_case=True, perl=True)))
+    return out
+
+
+def _known_host_unbroken(x: Sequence[Any]) -> list[Any]:
+    """Port of ``.known_host_unbroken()`` of ``R/paper.R``.
+
+    A known site's name broken by a line-end hyphen in the text of a PDF, joined:
+    "aspre-dicted.org/BUC_HUQ" becomes "aspredicted.org/BUC_HUQ", which prereg_check
+    then finds. These names hold no hyphen, so the repair cannot make a link wrong; other
+    words are left alone, since there a hyphen at a line end can be the word's own
+    ("baby-names"). Missing values stay missing.
+    """
+    out = list(x)
+    maybe = [
+        i
+        for i, t in enumerate(out)
+        if not pd.isna(t) and "-" in str(t) and _TLD_HINT.search(str(t)) is not None
+    ]
+    if not maybe:
+        return out
+    for h, rx in _known_host_patterns():
+        for i in maybe:
+            out[i] = rx.sub(h, str(out[i]))
+    return out
+
+
+def _unbreak_known_hosts(merged: pd.DataFrame) -> pd.DataFrame:
+    """*merged* with ``_known_host_unbroken()`` applied to its ``text`` column (only copied when
+    a sentence changes)."""
+    text = merged["text"]
+    if len(text) == 0:
+        return merged
+    hyphen = text.astype("string").str.contains("-", regex=False).fillna(False).to_numpy(dtype=bool)
+    if not hyphen.any():
+        return merged
+    idx = [i for i in range(len(text)) if hyphen[i]]
+    old = [text.iloc[i] for i in idx]
+    new = _known_host_unbroken(old)
+    changed = [(i, n) for i, o, n in zip(idx, old, new, strict=True) if n != o]
+    if not changed:
+        return merged
+    values = text.tolist()
+    for i, n in changed:
+        values[i] = n
+    merged = merged.copy()
+    merged["text"] = pd.Series(values, index=merged.index, dtype=text.dtype)
+    return merged
 
 
 def _one_table(p: Paper, table: str) -> pd.DataFrame:

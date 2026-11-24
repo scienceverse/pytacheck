@@ -23,7 +23,7 @@ from metacheck.statout.spv import (
     _file_path_sans_ext,
     _html_page,
     _make_unique,
-    _read_lines,
+    _read_utf8_lines,
     _spv_html_escape,
     _spv_table_html,
     _write_lines,
@@ -412,7 +412,7 @@ def import_stata_smcl(path: str | os.PathLike[str]) -> list[dict[str, Any]]:
         raise FileNotFoundError(f"File not found: {path}")
     if not grepl(r"\.smcl$", path, ignore_case=True):
         raise ValueError(f"Not a .smcl file: {path}")
-    rendered = _smcl_render(_read_lines(path))
+    rendered = _smcl_render(_read_utf8_lines(path))
     chunks = _smcl_command_chunks(rendered)
     out: list[dict[str, Any]] = []
     for ch in chunks:
@@ -491,7 +491,7 @@ def _smcl_export_syntax(
     if not os.path.exists(smcl_path):
         raise FileNotFoundError(f"File not found: {smcl_path}")
     try:
-        raw_lines = _read_lines(smcl_path)
+        raw_lines = _read_utf8_lines(smcl_path)
     except OSError:
         raw_lines = []
     if not raw_lines:

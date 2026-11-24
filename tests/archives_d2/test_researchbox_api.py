@@ -679,6 +679,108 @@ def test_rbox_file_download_of_chosen_files(monkeypatch: pytest.MonkeyPatch) -> 
     assert "needs the ResearchBox API" in files.attrs["failed"]["error"].iloc[0]
 
 
+def test_rbox_limit_choice_keeps_the_smallest_files_within_the_limits() -> None:
+    # R (#699): 3 MB is over max_file_size; of the rest, the smallest fit the budget
+    mb = 1024.0**2
+    why = rb._rbox_limit_choice(
+        [1 * mb, 3 * mb, 0.5 * mb, 0.7 * mb, float("nan")], max_file_size=2, max_download_size=1.5
+    )
+    assert why[2] is None and why[3] is None
+    assert "per-file limit (max_file_size)" in why[1]
+    assert "budget for the box was spent" in why[0]
+    assert "size is not listed" in why[4]
+    # no limits: every file with a size
+    assert all(w is None for w in rb._rbox_limit_choice([1 * mb, 3 * mb]))
+
+
+def test_rbox_file_download_with_a_key_downloads_only_the_files_the_limits_allow(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # R (#699)
+    rb._RBOX_LIST_MEMO.clear()
+    big = _box_listing()
+    for row in big:
+        if row["basename"] == "analysis.R":
+            row["size"] = 3 * 1024**2  # over max_file_size
+    api = _FakeApi(_box_zip(toc=False))
+    listings = {"files": big}
+
+    def fake_api(action: str, **kw: Any) -> dict[str, Any]:
+        out = api(action, **kw)
+        if action == "download_files" and str(kw.get("file_ids")) != "all":
+            Path(kw["path"]).write_bytes(
+                _box_zip(toc=False, only=["Data/study1.csv", "Codebook/study1.csv___CODEBOOK.csv"])
+            )
+        if action == "list_files":
+            return {"ok": True, "error": None, "body": listings}
+        return out
+
+    monkeypatch.setattr(rb, "_rbox_api", fake_api)
+    url = "https://researchbox.org/99990"
+    with pytest.warns(UserWarning, match="1 of its 3 files not downloaded"):
+        files = rbox_file_download(url, max_file_size=2, max_download_size=10)
+    # the file list first, then only the files within the limits
+    assert api.asked[:2] == ["list_files", "download_files"]
+    assert str(api.sent["file_ids"]) == "1,2"
+    assert set(files["name"]) == {"Data/study1.csv", "Codebook/study1.csv___CODEBOOK.csv"}
+    refused = files.attrs["limit_refused"]
+    assert refused["name"].tolist() == ["analysis.R"]
+    assert "per-file limit" in refused["reason"].iloc[0]
+
+    # again in the session: the file list is not asked again, the download is reused
+    api.asked.clear()
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        rbox_file_download(url, max_file_size=2, max_download_size=10)
+    assert api.asked == []
+
+    # a box within the limits is downloaded whole, as without limits
+    listings["files"] = _box_listing()
+    url2 = "https://researchbox.org/99991"
+    files = rbox_file_download(url2, max_file_size=2, max_download_size=10)
+    assert str(api.sent["file_ids"]) == "all"
+    assert len(files.attrs["limit_refused"]) == 0
+
+
+def test_rbox_file_download_without_a_key_stops_a_box_over_the_budget(
+    monkeypatch: pytest.MonkeyPatch, no_key: None
+) -> None:
+    # R (#699)
+    from metacheck.archives import download as dlm
+
+    box = _box_zip(toc=False)
+
+    def info_page(rb_url: Any) -> pd.DataFrame:
+        obj = pd.DataFrame({"rb_url": [rb_url], "box_id": ["1"], "reference": ["r"]})
+        obj["files"] = [pd.DataFrame({"name": list(_BOX_FILES), "file_id": ["1", "2", "3"]})]
+        return obj
+
+    state = {"over": True, "limit": None}
+
+    def capped(url: str, dest: str, max_bytes: float = float("inf"), **kw: Any) -> Any:
+        state["limit"] = max_bytes
+        if state["over"]:
+            return "over the byte limit", True, 2_000_000
+        Path(dest).write_bytes(box)
+        return None, False, 0
+
+    monkeypatch.setattr(rb, "_rbox_info_page", info_page)
+    monkeypatch.setattr(dlm, "_download_capped", capped)
+    with pytest.warns(UserWarning, match="larger than the 1 MB download budget"):
+        files = rbox_file_download("https://researchbox.org/99992", max_download_size=1)
+    assert state["limit"] == 1024**2
+    assert len(files) == 0
+    assert (
+        "larger than the 1 MB download budget (max_download_size)"
+        in files.attrs["failed"]["error"].iloc[0]
+    )
+
+    # within the budget: downloaded as before
+    state["over"] = False
+    files = rbox_file_download("https://researchbox.org/99993", max_download_size=1)
+    assert len(files) == 3
+
+
 def test_several_links_to_one_box_download_it_once_with_the_passcode(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

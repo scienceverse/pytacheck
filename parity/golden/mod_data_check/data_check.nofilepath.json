@@ -21,6 +21,7 @@
       "structure",
       "previews",
       "gated_repos",
+      "count_refused",
       "manifest_path",
       "group_no_evidence",
       "na_replace",
@@ -124,10 +125,10 @@
           {
             "t": "chr",
             "v": [
-              null,
-              null,
-              null,
-              null
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1"
             ]
           },
           {
@@ -389,9 +390,9 @@
         "v": [
           "This module classifies repository files and, for tabular data files available locally, extracts each column's type and summary statistics.",
           "#### Data Tree",
-          "Where the files sit within each repository. Each file is followed by how it was classified; junk files, hidden files and empty folders are marked.",
+          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to; junk files, hidden files and empty folders are marked.",
           "**Repository: https://osf.io/abcde**",
-          "::: {style=\"max-height: 40em; overflow: auto;\"}\n```\n├── analysis.R    💻 code\n├── README.md     📄 readme\n├── stimulus.png  📁 materials\n└── study.csv     📊 data\n```\n:::",
+          "::: {style=\"max-height: 40em; overflow: auto;\"}\n```\n├── analysis.R    💻 code      ex1\n├── README.md     📄 readme\n├── stimulus.png  📁 materials ex1\n└── study.csv     📊 data      ex1\n```\n:::",
           "#### Data Files",
           "::: {.panel-tabset}\n\n## study.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = 1:20, age = c(23L, 35L, 41L, 29L, 30L, 22L, \n19L, 55L, 61L, 44L, 38L, 27L, 33L, 25L, 48L, 52L, 36L, 40L, 21L, \n26L), gender = c(\"Male\", \"Female\", \"Male\", \"Female\", \"Male\", \n\"Female\", \"Male\", \"Female\", \"Male\", \"Female\", \"Male\", \"Female\", \n\"Male\", \"Female\", \"Male\", \"Female\", \"Male\", \"Female\", \"Male\", \n\"Female\"), score = c(0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, \n5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10)), row.names = c(NA, \n20L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::",
           "#### Descriptives Overview\n\nWe found 0 columns with at least one missing value.",
@@ -412,7 +413,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We classified 4 files: 1 data, 1 code, 1 documentation, 1 materials.\n-  We found 1 tabular data file and extracted 4 columns from 1 of them. We ran automated data-quality checks on 4 columns and found no issues. We detected demographic columns for Age, Gender."
+          "\n-  We classified 4 files: 1 data, 1 code, 1 documentation, 1 materials.\n-  We found 1 tabular data file and extracted 4 columns from 1 of them.\n-  We grouped the files into 1 study group (ex1), plus 1 collection-level file (README/ro-crate metadata). We ran automated data-quality checks on 4 columns and found no issues. We detected demographic columns for Age, Gender."
         ]
       },
       {
@@ -426,6 +427,9 @@
           "col_numeric",
           "col_text",
           "key_n",
+          "files_failed",
+          "llm_cols_unanswered",
+          "llm_files_unanswered",
           "flagged_n",
           "spreadsheet_file_n",
           "spreadsheet_flagged_file_n"
@@ -471,6 +475,24 @@
             "t": "int",
             "v": [
               0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
             ]
           },
           {
@@ -732,9 +754,9 @@
             "t": "chr",
             "v": [
               null,
-              null,
-              null,
-              null
+              "ex1",
+              "ex1",
+              "ex1"
             ]
           },
           {
@@ -908,12 +930,35 @@
         "t": "null"
       },
       {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "n_files",
+          "message"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
         "t": "null"
       },
       {
         "t": "lgl",
         "v": [
-          false
+          true
         ]
       },
       {
@@ -1020,6 +1065,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

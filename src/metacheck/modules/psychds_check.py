@@ -210,13 +210,17 @@ def _data_check_outputs(
     params: Mapping[str, Any] | None,
     cache: Any,
     skip_on_api_limit: bool,
-) -> tuple[Any, Any, Any]:
-    """``structure``/``table``/``group_no_evidence`` of a chained or fresh ``data_check``."""
+) -> tuple[Any, Any, Any, Any]:
+    """``structure``/``table``/``group_no_evidence``/``count_refused`` of a chained or fresh
+    ``data_check``."""
     from metacheck.module import get_prev_outputs, module_run
 
     structure_df = get_prev_outputs("data_check", "structure")
     columns_df = get_prev_outputs("data_check", "table")
     group_no_evidence = get_prev_outputs("data_check", "group_no_evidence")
+    # repositories data_check refused for their number of files (#706)
+    count_refused = get_prev_outputs("data_check", "count_refused")
+    mo: Any = None
     if structure_df is None:
         # data_check did not run earlier in this chain: run it now, forwarding
         # this call's own cache/skip_on_api_limit settings
@@ -238,7 +242,9 @@ def _data_check_outputs(
         structure_df = mo.get("structure")
         columns_df = mo.table
         group_no_evidence = mo.get("group_no_evidence")
-    return structure_df, columns_df, group_no_evidence
+    if count_refused is None and mo is not None:
+        count_refused = mo.get("count_refused")
+    return structure_df, columns_df, group_no_evidence, count_refused
 
 
 @module(
@@ -324,14 +330,14 @@ def psychds_check(
     from metacheck.module import get_prev_outputs
 
     # 1. Inputs from data_check (+ codebook_check for documentation) ----------
-    structure_df, columns_df, group_no_evidence = _data_check_outputs(
+    structure_df, columns_df, group_no_evidence, count_refused = _data_check_outputs(
         paper, local_path, local_only, model, params, cache, skip_on_api_limit
     )
     no_evidence = _is_true(group_no_evidence)
     labels_df = get_prev_outputs("codebook_check", "table")
 
     if structure_df is None or len(structure_df) == 0:
-        return _empty(_EMPTY_TEXT, _pid(paper, structure_df, columns_df))
+        return _empty(_EMPTY_TEXT, _pid(paper, structure_df, columns_df), count_refused)
 
     # One paper's files are checked by _check_one(); a paper list is checked paper by paper.
     # Checked together, a list got one summary row for the first paper and 0 for the others
@@ -355,7 +361,7 @@ def psychds_check(
     for pid in all_ids:
         own = _subset(structure_df, pid)
         if len(own) == 0:
-            per.append(_empty(_EMPTY_TEXT, pid))
+            per.append(_empty(_EMPTY_TEXT, pid, count_refused))
         else:
             per.append(
                 _check_one(own, _subset(columns_df, pid), _subset(labels_df, pid), no_evidence, pid)
@@ -397,14 +403,18 @@ def psychds_check(
     }
 
 
-def _empty(text: str, pid: str | None) -> dict[str, Any]:
-    """The result of a paper with no repository files to check."""
+def _empty(text: str, pid: str | None, count_refused: Any = None) -> dict[str, Any]:
+    """The result of a paper with no repository files to check (yellow, naming them, when
+    data_check refused a repository for its number of files, #706)."""
+    from metacheck.modules._count_refused import _count_refused_note
+
+    refused_note = _count_refused_note(text, count_refused)
     return {
         "table": pd.DataFrame(),
         "summary_table": _summary([(pid, [0] * 5)]),
         "na_replace": dict(_NA_REPLACE),
-        "traffic_light": "na",
-        "summary_text": text,
+        "traffic_light": refused_note["traffic_light"] if refused_note else "na",
+        "summary_text": refused_note["summary_text"] if refused_note else text,
     }
 
 
@@ -580,6 +590,15 @@ def _assess(structure_df: pd.DataFrame, columns_df: Any, labels_df: Any) -> dict
     file_names_lc = [_tolower(n) for n in names]
     has_dataset_desc = any(f == "dataset_description.json" for f in file_names_lc)
     has_data_files = any(is_data)
+    # The standard's data/ folder: a data file under "data/" at the top of the dataset, which may
+    # sit in one folder (a study's folder, or the folder a zip of the deposit unpacks into). Any
+    # data file anywhere met it, so 56 of 64 Meta-Psychology papers with data files met it with
+    # none under data/ (#695, point 33).
+    in_data_dir = [
+        re.match(r"^(?:[^/]+/)?data/", str(_tolower((c or "").replace("\\", "/")))) is not None
+        for c in plan.current_path
+    ]
+    has_data_dir = any(d and i for d, i in zip(is_data, in_data_dir, strict=True))
     has_readme = any(r == "readme" for r in doc_role)
     has_changes = any(f is not None and re.match(r"^changes(\.|$)", f) for f in file_names_lc)
 
@@ -592,7 +611,7 @@ def _assess(structure_df: pd.DataFrame, columns_df: Any, labels_df: Any) -> dict
     else:
         n_documented = 0
 
-    req_met = [has_dataset_desc, has_data_files, describable]
+    req_met = [has_dataset_desc, has_data_dir, describable]
     rec_met = [has_readme, has_changes, n_documented > 0]
     n_req_missing = sum(not m for m in req_met)
     n_rec_missing = sum(not m for m in rec_met)

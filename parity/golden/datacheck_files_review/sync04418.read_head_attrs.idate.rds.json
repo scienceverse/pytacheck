@@ -1,0 +1,54 @@
+{
+  "id": "sync04418.read_head_attrs.idate.rds",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "names",
+      "attrs",
+      "utf8_repaired"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "id",
+          "day"
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "id",
+          "day"
+        ],
+        "v": [
+          {
+            "t": "null"
+          },
+          {
+            "t": "list",
+            "names": [
+              "class"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Date"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.40",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

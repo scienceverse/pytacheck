@@ -11235,3 +11235,157 @@
       "$chr":
       - "DATA: FILE = a.dat;"
       - "MODEL: y ON x;"
+- "id": "code_lang.trailing_space"
+  "r": "code_lang"
+  "py": "metacheck.codecheck.core.code_lang"
+  "args":
+    "file_name":
+      "$chr":
+      - "trailing_space.R "
+      - "trailing.py  "
+      - "tab.sas\t"
+      - "plain.R"
+- "id": "code_not_text.ok_R"
+  "r": "metacheck:::.code_not_text"
+  "py": "metacheck.codecheck.core._code_not_text"
+  "args":
+    "path": "tests/mod_code/fixtures/not_checked/ok.R"
+- "id": "code_not_text.big_R"
+  "r": "metacheck:::.code_not_text"
+  "py": "metacheck.codecheck.core._code_not_text"
+  "args":
+    "path": "tests/mod_code/fixtures/not_checked/big.R"
+- "id": "code_not_text.rdata_named_R"
+  "r": "metacheck:::.code_not_text"
+  "py": "metacheck.codecheck.core._code_not_text"
+  "args":
+    "path": "tests/mod_code/fixtures/not_checked/rdata_named.R"
+- "id": "code_not_text.png_named_R"
+  "r": "metacheck:::.code_not_text"
+  "py": "metacheck.codecheck.core._code_not_text"
+  "args":
+    "path": "tests/mod_code/fixtures/not_checked/png_named.R"
+- "id": "code_not_text.html_named_py"
+  "r": "metacheck:::.code_not_text"
+  "py": "metacheck.codecheck.core._code_not_text"
+  "args":
+    "path": "tests/mod_code/fixtures/not_checked/html_named.py"
+- "id": "code_not_text.analysis_jl"
+  "r": "metacheck:::.code_not_text"
+  "py": "metacheck.codecheck.core._code_not_text"
+  "args":
+    "path": "tests/mod_code/fixtures/not_checked/analysis.jl"
+- "id": "code_not_text.pointer_R"
+  "r": "metacheck:::.code_not_text"
+  "py": "metacheck.codecheck.core._code_not_text"
+  "args":
+    "path": "tests/mod_code/fixtures/not_checked/pointer.R"
+- "id": "code_not_text.bglmm_R"
+  "r": "metacheck:::.code_not_text"
+  "py": "metacheck.codecheck.core._code_not_text"
+  "args":
+    "path": "tests/mod_code/fixtures/not_checked/bglmm.R"
+- "id": "code_not_text.missing"
+  "r": "metacheck:::.code_not_text"
+  "py": "metacheck.codecheck.core._code_not_text"
+  "args":
+    "path": "tests/mod_code/fixtures/not_checked/does_not_exist.R"
+- "id": "code_loader_functions.ipak"
+  "r": "metacheck:::.code_loader_functions"
+  "py": "metacheck.codecheck.core._code_loader_functions"
+  "args":
+    "code_text":
+      "$chr":
+      - "ipak <- function(pkg){"
+      - "  new.pkg <- pkg[!(pkg %in% installed.packages()[, \"Package\"])]"
+      - "  if (length(new.pkg)) install.packages(new.pkg, dependencies = TRUE)"
+      - "  sapply(pkg, require, character.only = TRUE)"
+      - "}"
+      - "packages <- c(\"Gmisc\", \"epitools\")"
+      - "ipak(packages)"
+      - "ipak(c(\"a\", \"b\"))"
+      - "other <- function(z) z + 1"
+      - "fun2 = function(x) lapply(x, library, character.only = TRUE)"
+      - "loadit <- function(x) library(x, character.only = T)"
+      - "plain <- function(x) {"
+      - "  y <- x + 1"
+      - "  y"
+      - "}"
+- "id": "code_loader_functions.none"
+  "r": "metacheck:::.code_loader_functions"
+  "py": "metacheck.codecheck.core._code_loader_functions"
+  "args":
+    "code_text":
+      "$chr":
+      - "x <- 1"
+      - "f <- function(a) a"
+- "id": "code_loader_functions.no_braces"
+  "r": "metacheck:::.code_loader_functions"
+  "py": "metacheck.codecheck.core._code_loader_functions"
+  "args":
+    "code_text":
+      "$chr":
+      - "inst <- function(p) install.packages(p)"
+      - "z <- 2"
+- "id": "code_library_names.loader_functions"
+  "r": "code_library_names"
+  "py": "metacheck.codecheck.core.code_library_names"
+  "args":
+    "code_text":
+      "$chr":
+      - "ipak <- function(pkg){"
+      - "  new.pkg <- pkg[!(pkg %in% installed.packages()[, \"Package\"])]"
+      - "  if (length(new.pkg)) install.packages(new.pkg, dependencies = TRUE)"
+      - "  sapply(pkg, require, character.only = TRUE)"
+      - "}"
+      - "packages <- c(\"Gmisc\", \"epitools\")"
+      - "ipak(packages)"
+      - "ipak(c(\"a\", \"b\"))"
+      - "other <- function(z) z + 1"
+      - "fun2 = function(x) lapply(x, library, character.only = TRUE)"
+      - "loadit <- function(x) library(x, character.only = T)"
+      - "plain <- function(x) {"
+      - "  y <- x + 1"
+      - "  y"
+      - "}"
+    "lang": "R"
+- "id": "code_library_names.literal_vectors"
+  "r": "code_library_names"
+  "py": "metacheck.codecheck.core.code_library_names"
+  "args":
+    "code_text":
+      "$chr":
+      - "for (p in c(\"fGarch\", \"dplyr\")) library(p, character.only = TRUE)"
+      - "lapply(c(\"x\", \"y\"), library, character.only = TRUE)"
+      - "sapply(c(\"u\", \"v\"), function(p) require(p, character.only = TRUE))"
+      - "for (q in c(\"w\", foo)) library(q, character.only = TRUE)"
+      - "invisible(lapply(c(\"m\", \"n\"), require, character.only = TRUE))"
+    "lang": "R"
+- "id": "code_library_names.prefilter"
+  "r": "code_library_names"
+  "py": "metacheck.codecheck.core.code_library_names"
+  "args":
+    "code_text":
+      "$chr":
+      - "x <- 1"
+      - "library(dplyr)"
+      - "y <- 2"
+      - ""
+      - "require(ggplot2); library(tidyr)"
+      - "stats::sd(1:3)"
+      - "# library(skip)"
+      - "z <- 3"
+    "lang": "R"
+- "id": "code_library_names.prefilter_python"
+  "r": "code_library_names"
+  "py": "metacheck.codecheck.core.code_library_names"
+  "args":
+    "code_text":
+      "$chr":
+      - "x = 1"
+      - "import numpy as np, pandas"
+      - "  from a.b import c"
+      - "y = 2"
+      - "important = 3"
+      - "from . import d"
+    "lang": "Python"

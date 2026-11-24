@@ -21,6 +21,7 @@
       "structure",
       "previews",
       "gated_repos",
+      "count_refused",
       "manifest_path",
       "group_no_evidence",
       "na_replace",
@@ -962,7 +963,7 @@
           "We examined 21 columns across 4 data files.",
           "#### Issues Identified",
           "3 file/column combinations have at least one issue.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"dupnames.csv\", \"types.csv\", \"types.csv\"\n), Column = c(\"x\", \"mixed\", \"txt\"), Issues = c(\"<span title='Column name becomes \\\"x\\\" when special characters are replaced, the same as 1 other identically named column: tools that sanitize names (R&#39;s make.names(), SPSS/SAS/Stata import, codebook section links) cannot tell these columns apart.'>👥 Colliding column names — Column name becomes \\\"x\\\" when special characters are replaced, the s...<\/span>\", \n\"<span title='Column is 80% numeric but 1 value cannot be parsed: \\\"a\\\"'>#️⃣ Numeric as text — Column is 80% numeric but 1 value cannot be parsed: \\\"a\\\"<\/span>\", \n\"<span title='Categories differing only by case: Apple/apple; banana/Banana'>🔤 Case issues — Categories differing only by case: Apple/apple<\/span>\"\n)), row.names = c(NA, -3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 20, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"dupnames.csv\", \"types.csv\", \"types.csv\"\n), Column = c(\"x\", \"mixed\", \"txt\"), Issues = c(\"<span title='Column name becomes \\\"x\\\" when special characters are replaced, the same as 1 other identically named column: tools that sanitize names (R&#39;s make.names(), SPSS/SAS/Stata import, codebook section links) cannot tell these columns apart.'>👥 Colliding column names — Column name becomes \\\"x…\", \n\"<span title='Column is 80% numeric but 1 value cannot be parsed: \\\"a\\\"'>#️⃣ Numeric as text — Column is 80% numeric but 1 value cannot be parsed: \\\"a\\\"<\/span>\", \n\"<span title='Categories differing only by case: Apple/apple; banana/Banana'>🔤 Case issues — Categories differing only by case: Apple/apple<\/span>\"\n)), row.names = c(NA, -3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 20, FALSE)\n```\n\n*Cells longer than 300 characters are cut (…).*\n",
           "#### Careless Responding",
           "No file could be screened for careless responding.",
           "**What this does not cover.** Only 0 of 4 data files could be screened: the rest had no detectable multi-item scale block, or too few respondents. Even in a screened file, these checks only look at multi-item rating scales — the only place where a repeated or flat answer pattern is interpretable. Single questions, open text, demographics and any item outside a detected scale block are never examined. A respondent can therefore answer most of a survey carelessly and still not be flagged here, and finding nothing is not evidence that a dataset is free of careless responding."
@@ -992,6 +993,9 @@
           "col_numeric",
           "col_text",
           "key_n",
+          "files_failed",
+          "llm_cols_unanswered",
+          "llm_files_unanswered",
           "flagged_n",
           "spreadsheet_file_n",
           "spreadsheet_flagged_file_n"
@@ -1037,6 +1041,24 @@
             "t": "int",
             "v": [
               6
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
             ]
           },
           {
@@ -2042,6 +2064,29 @@
         "t": "null"
       },
       {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "n_files",
+          "message"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
         "t": "null"
       },
       {
@@ -2154,6 +2199,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -56,6 +56,8 @@
           "d_implied_indep_equal_n",
           "d_implied_indep_unequal_min",
           "d_implied_indep_unequal_max",
+          "d_implied_paired_gz",
+          "d_implied_indep_equal_n_g",
           "d_implied_n",
           "d_coherence",
           "d_coherence_assumption",
@@ -363,6 +365,40 @@
           {
             "t": "chr",
             "v": [
+              "0.109347789677881",
+              "0.209931134910575",
+              "0.538887743412299",
+              "0.444358552694373",
+              "0.444358552694373",
+              "0.444358552694373",
+              "0.444358552694373",
+              "0.437693593174493",
+              "0.444358552694373",
+              "0.538887743412299",
+              "0.588236437863975",
+              "0.444358552694373"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.217826010984138",
+              "0.410208973241175",
+              "1.056",
+              "0.878073402803149",
+              "0.878073402803149",
+              "0.878073402803149",
+              "0.878073402803149",
+              "0.861600699765121",
+              "0.878073402803149",
+              "1.056",
+              "1.1527032967033",
+              "0.878073402803149"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "n1 = 15, n2 = 111, N = 126",
               null,
               "n = 24",
@@ -415,7 +451,7 @@
             "t": "chr",
             "v": [
               "Match under independent-samples unequal-n range assumption (closest split n1 = 15, n2 = 111, N = 126).",
-              "No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.",
+              "No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range, each also with Hedges' small-sample correction). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.",
               "Match under paired-samples dz assumption.",
               "Match under paired-samples dz assumption.",
               "Match under paired-samples dz assumption.",
@@ -589,7 +625,7 @@
           "All tests had effect sizes, but some effect sizes do not match the reported test statistic.",
           "For t-tests with a reported d, coherence checks yielded 11 matches under assumptions, 1 no match.",
           "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating that effect sizes are often not reported:\n\n* Peng, C.-Y. J., Chen, L.-T., Chiang, H.-M., & Chiang, Y.-C. (2013). The Impact of APA and AERA Guidelines on Effect Size Reporting. Educational Psychology Review, 25(2), 157–209. doi:[10.1007/s10648-013-9218-2](https://doi.org/10.1007/s10648-013-9218-2).\n\nFor educational material on reporting effect sizes:\n\n* [Guide to Effect Sizes and Confidence Intervals](https://matthewbjane.quarto.pub/guide-to-effect-sizes-and-confidence-intervals/)\n\n:::\n",
-          "::: {.callout-tip title=\"All detected and assessed stats\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Sentence = c(\"A was bigger than B, t(124) = 1.23, p 0.013, Hedges' g = 0.34.\", \n\"A was bigger than B, t(20) = 1.00, p 0.32, Hedges' g = 3.00.\", \n\"Bare g, t(23) = 2.73, p 0.013, g = 0.56.\", \"Curly, t(40) = 2.9, Hedges’ g = 0.45.\", \n\"No apostrophe, t(40) = 2.9, Hedges g = 0.45.\", \"Upper, t(40) = 2.9, HEDGES' G = 0.45.\", \n\"Leading dot, t(40) = 2.9, g = .453.\", \"Negative, t(30) = -2.5, g = -0.9.\", \n\"Two g, t(40) = 2.9, g = 0.95; g = 0.45.\", \"Two tests, t(23) = 2.73; t(23) = 2.98, g = 0.56; g = 0.61.\", \n\"Two tests, t(23) = 2.73; t(23) = 2.98, g = 0.56; g = 0.61.\", \n\"g and d, t(40) = 2.9, g = 0.44, d = 0.45.\"), \"Effect Size\" = c(\"Hedges' g = 0.34\", \n\"Hedges' g = 3.00\", \"g = 0.56\", \"Hedges’ g = 0.45\", \"Hedges g = 0.45\", \n\"HEDGES' G = 0.45\", \"g = .453\", \"g = -0.9\", \"g = 0.95; g = 0.45\", \n\"g = 0.56\", \"g = 0.61\", \"g = 0.44; d = 0.45\"), \"Reported Test\" = c(\"t(124) = 1.23\", \n\"t(20) = 1.00\", \"t(23) = 2.73\", \"t(40) = 2.9\", \"t(40) = 2.9\", \n\"t(40) = 2.9\", \"t(40) = 2.9\", \"t(30) = -2.5\", \"t(40) = 2.9\", \n\"t(23) = 2.73\", \"t(23) = 2.98\", \"t(40) = 2.9\"), \"Test Type\" = c(\"t-test\", \n\"t-test\", \"t-test\", \"t-test\", \"t-test\", \"t-test\", \"t-test\", \"t-test\", \n\"t-test\", \"t-test\", \"t-test\", \"t-test\"), \"d Coherence\" = c(\"match_under_assumptions\", \n\"no_match\", \"match_under_assumptions\", \"match_under_assumptions\", \n\"match_under_assumptions\", \"match_under_assumptions\", \"match_under_assumptions\", \n\"match_under_assumptions\", \"match_under_assumptions\", \"match_under_assumptions\", \n\"match_under_assumptions\", \"match_under_assumptions\"), \"d Assumption\" = c(\"independent_unequal_n_range\", \n\"none\", \"paired_dz\", \"paired_dz\", \"paired_dz\", \"paired_dz\", \"paired_dz\", \n\"independent_unequal_n_range\", \"paired_dz\", \"paired_dz\", \"paired_dz\", \n\"paired_dz\"), \"d Coherence Note\" = c(\"Match under independent-samples unequal-n range assumption (closest split n1 = 15, n2 = 111, N = 126).\", \n\"No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.\", \n\"Match under paired-samples dz assumption.\", \"Match under paired-samples dz assumption.\", \n\"Match under paired-samples dz assumption.\", \"Match under paired-samples dz assumption.\", \n\"Match under paired-samples dz assumption.\", \"Match under independent-samples unequal-n range assumption (closest split n1 = 13, n2 = 19, N = 32).\", \n\"Match under paired-samples dz assumption.\", \"Match under paired-samples dz assumption.\", \n\"Match under paired-samples dz assumption.\", \"Match under paired-samples dz assumption.\"\n), \"eta Coherence\" = c(NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_), \n    \"eta Assumption\" = c(NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_, NA_character_, \n    NA_character_), \"eta Coherence Note\" = c(NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_)), row.names = c(NA, -12L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n"
+          "::: {.callout-tip title=\"All detected and assessed stats\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Sentence = c(\"A was bigger than B, t(124) = 1.23, p 0.013, Hedges' g = 0.34.\", \n\"A was bigger than B, t(20) = 1.00, p 0.32, Hedges' g = 3.00.\", \n\"Bare g, t(23) = 2.73, p 0.013, g = 0.56.\", \"Curly, t(40) = 2.9, Hedges’ g = 0.45.\", \n\"No apostrophe, t(40) = 2.9, Hedges g = 0.45.\", \"Upper, t(40) = 2.9, HEDGES' G = 0.45.\", \n\"Leading dot, t(40) = 2.9, g = .453.\", \"Negative, t(30) = -2.5, g = -0.9.\", \n\"Two g, t(40) = 2.9, g = 0.95; g = 0.45.\", \"Two tests, t(23) = 2.73; t(23) = 2.98, g = 0.56; g = 0.61.\", \n\"Two tests, t(23) = 2.73; t(23) = 2.98, g = 0.56; g = 0.61.\", \n\"g and d, t(40) = 2.9, g = 0.44, d = 0.45.\"), \"Effect Size\" = c(\"Hedges' g = 0.34\", \n\"Hedges' g = 3.00\", \"g = 0.56\", \"Hedges’ g = 0.45\", \"Hedges g = 0.45\", \n\"HEDGES' G = 0.45\", \"g = .453\", \"g = -0.9\", \"g = 0.95; g = 0.45\", \n\"g = 0.56\", \"g = 0.61\", \"g = 0.44; d = 0.45\"), \"Reported Test\" = c(\"t(124) = 1.23\", \n\"t(20) = 1.00\", \"t(23) = 2.73\", \"t(40) = 2.9\", \"t(40) = 2.9\", \n\"t(40) = 2.9\", \"t(40) = 2.9\", \"t(30) = -2.5\", \"t(40) = 2.9\", \n\"t(23) = 2.73\", \"t(23) = 2.98\", \"t(40) = 2.9\"), \"Test Type\" = c(\"t-test\", \n\"t-test\", \"t-test\", \"t-test\", \"t-test\", \"t-test\", \"t-test\", \"t-test\", \n\"t-test\", \"t-test\", \"t-test\", \"t-test\"), \"d Coherence\" = c(\"match_under_assumptions\", \n\"no_match\", \"match_under_assumptions\", \"match_under_assumptions\", \n\"match_under_assumptions\", \"match_under_assumptions\", \"match_under_assumptions\", \n\"match_under_assumptions\", \"match_under_assumptions\", \"match_under_assumptions\", \n\"match_under_assumptions\", \"match_under_assumptions\"), \"d Assumption\" = c(\"independent_unequal_n_range\", \n\"none\", \"paired_dz\", \"paired_dz\", \"paired_dz\", \"paired_dz\", \"paired_dz\", \n\"independent_unequal_n_range\", \"paired_dz\", \"paired_dz\", \"paired_dz\", \n\"paired_dz\"), \"d Coherence Note\" = c(\"Match under independent-samples unequal-n range assumption (closest split n1 = 15, n2 = 111, N = 126).\", \n\"No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range, each also with Hedges' small-sample correction). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.\", \n\"Match under paired-samples dz assumption.\", \"Match under paired-samples dz assumption.\", \n\"Match under paired-samples dz assumption.\", \"Match under paired-samples dz assumption.\", \n\"Match under paired-samples dz assumption.\", \"Match under independent-samples unequal-n range assumption (closest split n1 = 13, n2 = 19, N = 32).\", \n\"Match under paired-samples dz assumption.\", \"Match under paired-samples dz assumption.\", \n\"Match under paired-samples dz assumption.\", \"Match under paired-samples dz assumption.\"\n), \"eta Coherence\" = c(NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_), \n    \"eta Assumption\" = c(NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_, NA_character_, \n    NA_character_), \"eta Coherence Note\" = c(NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_, NA_character_, NA_character_, \n    NA_character_, NA_character_)), row.names = c(NA, -12L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n"
         ]
       },
       {
@@ -655,6 +691,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

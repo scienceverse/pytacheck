@@ -56,6 +56,8 @@
           "d_implied_indep_equal_n",
           "d_implied_indep_unequal_min",
           "d_implied_indep_unequal_max",
+          "d_implied_paired_gz",
+          "d_implied_indep_equal_n_g",
           "d_implied_n",
           "d_coherence",
           "d_coherence_assumption",
@@ -210,6 +212,22 @@
           {
             "t": "chr",
             "v": [
+              "0.209931134910575",
+              "0.538887743412299",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.410208973241175",
+              "1.056",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               null,
               "n = 24",
               null
@@ -234,7 +252,7 @@
           {
             "t": "chr",
             "v": [
-              "No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.",
+              "No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range, each also with Hedges' small-sample correction). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.",
               "Match under paired-samples dz assumption.",
               null
             ]
@@ -320,7 +338,7 @@
           "For t-tests with a reported d, coherence checks yielded 1 match under assumptions, 1 no match.",
           "For F-tests with a reported eta-squared effect size, coherence checks yielded 1 no match.",
           "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating that effect sizes are often not reported:\n\n* Peng, C.-Y. J., Chen, L.-T., Chiang, H.-M., & Chiang, Y.-C. (2013). The Impact of APA and AERA Guidelines on Effect Size Reporting. Educational Psychology Review, 25(2), 157–209. doi:[10.1007/s10648-013-9218-2](https://doi.org/10.1007/s10648-013-9218-2).\n\nFor educational material on reporting effect sizes:\n\n* [Guide to Effect Sizes and Confidence Intervals](https://matthewbjane.quarto.pub/guide-to-effect-sizes-and-confidence-intervals/)\n\n:::\n",
-          "::: {.callout-tip title=\"All detected and assessed stats\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Sentence = c(\"A was bigger than B, t(20) = 1.00, p 0.32, d = 3.00.\", \n\"t(23) = 2.73, d = 0.56.\", \"F(1, 13) = 2.34, ηp² = 0.35.\"), \n    \"Effect Size\" = c(\"d = 3.00\", \"d = 0.56\", \"ηp² = 0.35\"), \n    \"Reported Test\" = c(\"t(20) = 1.00\", \"t(23) = 2.73\", \"F(1, 13) = 2.34\"\n    ), \"Test Type\" = c(\"t-test\", \"t-test\", \"F-test\"), \"d Coherence\" = c(\"no_match\", \n    \"match_under_assumptions\", NA), \"d Assumption\" = c(\"none\", \n    \"paired_dz\", NA), \"d Coherence Note\" = c(\"No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.\", \n    \"Match under paired-samples dz assumption.\", NA), \"eta Coherence\" = c(NA, \n    NA, \"no_match\"), \"eta Assumption\" = c(NA, NA, \"partial_eta_squared\"\n    ), \"eta Coherence Note\" = c(NA, NA, \"No match under partial eta-squared formula from F and dfs. Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.\"\n    )), row.names = c(NA, -3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n"
+          "::: {.callout-tip title=\"All detected and assessed stats\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Sentence = c(\"A was bigger than B, t(20) = 1.00, p 0.32, d = 3.00.\", \n\"t(23) = 2.73, d = 0.56.\", \"F(1, 13) = 2.34, ηp² = 0.35.\"), \n    \"Effect Size\" = c(\"d = 3.00\", \"d = 0.56\", \"ηp² = 0.35\"), \n    \"Reported Test\" = c(\"t(20) = 1.00\", \"t(23) = 2.73\", \"F(1, 13) = 2.34\"\n    ), \"Test Type\" = c(\"t-test\", \"t-test\", \"F-test\"), \"d Coherence\" = c(\"no_match\", \n    \"match_under_assumptions\", NA), \"d Assumption\" = c(\"none\", \n    \"paired_dz\", NA), \"d Coherence Note\" = c(\"No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range, each also with Hedges' small-sample correction). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.\", \n    \"Match under paired-samples dz assumption.\", NA), \"eta Coherence\" = c(NA, \n    NA, \"no_match\"), \"eta Assumption\" = c(NA, NA, \"partial_eta_squared\"\n    ), \"eta Coherence Note\" = c(NA, NA, \"No match under partial eta-squared formula from F and dfs. Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.\"\n    )), row.names = c(NA, -3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n"
         ]
       },
       {
@@ -386,6 +404,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -250,13 +250,20 @@ def _paper_of(paper: Any, pid: Any) -> Any:
 
 
 _SAME_PREFIX = re.compile(r"^(?:https?://)?(?:www\.|dx\.)?(?:doi\.org/)?", re.IGNORECASE)
+_OSF_PROJECT = re.compile(
+    r"^(?:10\.17605/)?(osf\.io/[a-z0-9]{5})(?:$|[/?#]).*$", re.IGNORECASE | re.DOTALL
+)
 
 
 def _repo_link_same_key(urls: Sequence[Any]) -> list[str]:
     """Port of ``.repo_link_same_key()``: the form of a link by which two ways of writing one address are found.
 
     Without "https://", "www.", "dx.", "doi.org/" and a closing "/", the website's name in small
-    letters, and a DOI all in small letters (DOIs do not depend on case).
+    letters, and a DOI all in small letters (DOIs do not depend on case). An OSF project is one
+    address however it is written: its DOI ("10.17605/OSF.IO/W4Q6J"), its page
+    ("osf.io/bt2xy/overview"), with a view-only key ("osf.io/qhwds/?view_only=..."), or a file in
+    it ("osf.io/pcjnb/files/qkx9f"), and its five-character identifier does not depend on case.
+    Each such pair was two repositories (metacheck #648, K8c: 23 of 132 preprints).
     """
     out: list[str] = []
     for url in urls:
@@ -264,7 +271,9 @@ def _repo_link_same_key(urls: Sequence[Any]) -> list[str]:
         b = re.sub(r"/+$", "", b)
         host = re.sub(r"/.*$", "", b, flags=re.DOTALL)
         b = host.lower() + b[len(host) :]
-        out.append(b.lower() if re.match(r"10\.\d{4,9}/", b) else b)
+        b = b.lower() if re.match(r"10\.\d{4,9}/", b) else b
+        m = _OSF_PROJECT.match(b)
+        out.append(m.group(1).lower() if m else b)
     return out
 
 
@@ -350,10 +359,18 @@ def _repo_links_tidy(repos: pd.DataFrame, paper: Any) -> pd.DataFrame:
     urls_now = repos["repo_url"].tolist()
     pids_now = repos["paper_id"].tolist()
     types_now = repos["repo_type"].tolist()
+
+    # the form with a view-only key first, as only it opens a private project; then the project's
+    # own address before a file in it
+    def _has(i: int, pattern: str) -> bool:
+        return isinstance(urls_now[i], str) and re.search(pattern, urls_now[i], re.I) is not None
+
     order = sorted(
         range(len(repos)),
         key=lambda i: (
-            not (isinstance(urls_now[i], str) and re.match(r"https?://", urls_now[i], re.I)),
+            not _has(i, r"view_only="),
+            _has(i, r"/files/"),
+            not _has(i, r"^https?://"),
             i,
         ),
     )

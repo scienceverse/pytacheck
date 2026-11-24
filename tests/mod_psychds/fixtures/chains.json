@@ -680,6 +680,106 @@
    },
    "columns": 0
   },
+  "empty_refused": {
+   "structure": {
+    "file_name": [],
+    "data_type": []
+   },
+   "columns": 0,
+   "count_refused": true
+  },
+  "data_dir_top": {
+   "structure": {
+    "file_name": [
+     "raw.csv"
+    ],
+    "file_path": [
+     "raw.csv"
+    ],
+    "data_type": [
+     "data"
+    ],
+    "doc_role": [
+     null
+    ],
+    "group": [
+     null
+    ],
+    "referenced_by": [
+     []
+    ]
+   },
+   "columns": 1
+  },
+  "data_dir_in": {
+   "structure": {
+    "file_name": [
+     "raw.csv"
+    ],
+    "file_path": [
+     "data/raw.csv"
+    ],
+    "data_type": [
+     "data"
+    ],
+    "doc_role": [
+     null
+    ],
+    "group": [
+     null
+    ],
+    "referenced_by": [
+     []
+    ]
+   },
+   "columns": 1
+  },
+  "data_dir_wrapped": {
+   "structure": {
+    "file_name": [
+     "raw.csv"
+    ],
+    "file_path": [
+     "project-v1/data/raw.csv"
+    ],
+    "data_type": [
+     "data"
+    ],
+    "doc_role": [
+     null
+    ],
+    "group": [
+     null
+    ],
+    "referenced_by": [
+     []
+    ]
+   },
+   "columns": 1
+  },
+  "data_dir_deep": {
+   "structure": {
+    "file_name": [
+     "raw.csv"
+    ],
+    "file_path": [
+     "a/b/data/raw.csv"
+    ],
+    "data_type": [
+     "data"
+    ],
+    "doc_role": [
+     null
+    ],
+    "group": [
+     null
+    ],
+    "referenced_by": [
+     []
+    ]
+   },
+   "columns": 1
+  },
   "psychsci": {
    "paper": "psychsci",
    "structure": {

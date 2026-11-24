@@ -1,0 +1,1160 @@
+{
+  "id": "reproducibility_check.exec_groups_py",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace",
+      "brief",
+      "run_results",
+      "install_results",
+      "recorded_versions",
+      "stat_output",
+      "match_table",
+      "modifications",
+      "artifacts",
+      "environment",
+      "checklist_section",
+      "sandbox"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "reproducibility_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Reproducibility Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "paper_id",
+          "file_name",
+          "file_path",
+          "parses",
+          "run_order",
+          "order_basis",
+          "depends_on",
+          "paths_rewritten",
+          "paths_ambiguous",
+          "setwd_removed",
+          "runnable",
+          "not_runnable_reason",
+          "unresolved_inputs",
+          "outcome",
+          "error_type",
+          "undefined_var",
+          "reads",
+          "writes",
+          "names_corrected",
+          "not_analysis_why",
+          "paper_link",
+          "repo_name",
+          "reason",
+          "error_message",
+          "commands_removed"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1",
+              "p1",
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ok.py",
+              "errors.py",
+              "colab.py",
+              "relative.py"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ok.py",
+              "errors.py",
+              "colab.py",
+              "relative.py"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              2,
+              1,
+              4
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "none",
+              "none",
+              "none",
+              "none"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ran_ok",
+              "errored",
+              "dependency_unavailable",
+              "errored"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "RuntimeError",
+              "dependency_unavailable",
+              "ImportError"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "data.csv"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "data.csv"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "other",
+              "platform",
+              "how_to_run"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "RuntimeError: deliberate failure for testing",
+              "ModuleNotFoundError: No module named 'google.colab'",
+              "ImportError: attempted relative import with no known parent package"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "### Python code",
+          "This module also assesses whether the paper's Python code could be run on its data, and — because `execute = TRUE` — **actually ran it**. We examined 4 Python code files.",
+          "#### Run order",
+          "No ordering signal (no data dependency, `source()`-equivalent, or numeric filename prefix) distinguishes the run order of these files. They may need to run in a specific order that could not be determined automatically — check this before running.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Order = 1:4, File = c(\"colab.py\", \"errors.py\", \n\"ok.py\", \"relative.py\"), \"Runs after\" = c(\"—\", \"—\", \"—\", \n\"—\"), Basis = c(\"none\", \"none\", \"none\", \"none\")), row.names = c(NA, \n-4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### File paths",
+          "Every data path in the code works in the repository as deposited.",
+          "#### Execution",
+          "**The Python code was run.** Each script ran in an isolated subprocess against a throwaway copy of the repository, in the run order above, with a 60-second per-script timeout. Of 4 scripts: 1 ran without error, 2 errored, 0 timed out, 1 could not run because one of its own dependencies is unavailable, 0 did not parse, and 0 are written for Python 2 and not run. Running against current package versions: a break can reflect version drift, which argues for pinning versions (e.g. in a `requirements.txt`).",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"colab.py\", \"errors.py\", \"ok.py\", \"relative.py\"\n), Outcome = c(\"dependency_unavailable\", \"errored\", \"ran_ok\", \n\"errored\"), Detail = c(\"dependency_unavailable\", \"RuntimeError\", \n\"\", \"ImportError\"), \"Time (s)\" = 0), row.names = c(NA, \n-4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
+          "**Dependency-unavailable errors**",
+          "**1 script could not run because its own dependency is unavailable** — the package failed to `pip install`. This is an infrastructure limitation, not a defect in the paper's code, so it does **not** force the traffic light red.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"colab.py\"), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "*Expand a row below to see the output each script produced.*",
+          "::: {.callout-tip title=\"Output — colab.py (dependency_unavailable)\" collapse=\"true\"}\n\n**Messages / errors (stderr):**\n````\nTraceback (most recent call last):\n  File \"<root>/colab.py\", line 1, in <module>\n    from google.colab import drive\nModuleNotFoundError: No module named 'google.colab'\n````\n\n:::\n",
+          "::: {.callout-tip title=\"Output — errors.py (errored)\" collapse=\"true\"}\n\n**Messages / errors (stderr):**\n````\nTraceback (most recent call last):\n  File \"<root>/errors.py\", line 6, in <module>\n    raise RuntimeError(\"deliberate failure for testing\")\nRuntimeError: deliberate failure for testing\n````\n\n:::\n",
+          "::: {.callout-tip title=\"Output — ok.py (ran_ok)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\nmean_a = 2.0\nmean_b = 5.5\n````\n\n:::\n",
+          "::: {.callout-tip title=\"Output — relative.py (errored)\" collapse=\"true\"}\n\n**Messages / errors (stderr):**\n````\nTraceback (most recent call last):\n  File \"<root>/relative.py\", line 1, in <module>\n    from . import helpers\nImportError: attempted relative import with no known parent package\n````\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "red"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We assessed 4 Python code files for reproducibility and ran 3 of them.\n-  1 of 4 Python scripts ran without error when executed.\n-  Of the others, 1 did not reproduce and 2 could not be checked automatically.\n-  1 installable Python dependency detected."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "repro_code_n",
+          "repro_runnable",
+          "repro_missing_inputs",
+          "repro_deps",
+          "repro_ran_ok",
+          "repro_tests_reported",
+          "repro_tests_matched",
+          "repro_scripts_n",
+          "repro_not_analysis_n",
+          "repro_not_downloaded_n",
+          "repro_ran_n",
+          "repro_code_error_n",
+          "repro_dependency_n",
+          "repro_time_n",
+          "repro_not_checkable_n",
+          "repro_fail_file",
+          "repro_fail_package",
+          "repro_fail_undefined",
+          "repro_fail_syntax",
+          "repro_fail_environment",
+          "repro_fail_settings",
+          "repro_fail_platform",
+          "repro_fail_how_to_run",
+          "repro_fail_from_report",
+          "repro_fail_internet",
+          "repro_fail_download",
+          "repro_fail_interactive",
+          "repro_fail_time",
+          "repro_fail_no_message",
+          "repro_fail_other"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "names": [
+          "repro_code_n",
+          "repro_runnable",
+          "repro_missing_inputs",
+          "repro_deps",
+          "repro_ran_ok",
+          "repro_scripts_n",
+          "repro_not_analysis_n",
+          "repro_not_downloaded_n",
+          "repro_ran_n",
+          "repro_code_error_n",
+          "repro_dependency_n",
+          "repro_time_n",
+          "repro_not_checkable_n",
+          "repro_fail_file",
+          "repro_fail_package",
+          "repro_fail_undefined",
+          "repro_fail_syntax",
+          "repro_fail_environment",
+          "repro_fail_settings",
+          "repro_fail_platform",
+          "repro_fail_how_to_run",
+          "repro_fail_from_report",
+          "repro_fail_internet",
+          "repro_fail_download",
+          "repro_fail_interactive",
+          "repro_fail_time",
+          "repro_fail_no_message",
+          "repro_fail_other"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "file_name",
+          "outcome",
+          "error",
+          "error_type",
+          "undefined_var",
+          "stdout",
+          "stderr",
+          "elapsed",
+          "script_lines",
+          "captures",
+          "started_at",
+          "ended_at",
+          "exit_status",
+          "reason",
+          "checked"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "colab.py",
+              "errors.py",
+              "ok.py",
+              "relative.py"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "dependency_unavailable",
+              "errored",
+              "ran_ok",
+              "errored"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ModuleNotFoundError: No module named 'google.colab'",
+              "RuntimeError: deliberate failure for testing",
+              "",
+              "ImportError: attempted relative import with no known parent package"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "dependency_unavailable",
+              "RuntimeError",
+              null,
+              "ImportError"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "mean_a = 2.0\nmean_b = 5.5",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Traceback (most recent call last):\n  File \"<root>/colab.py\", line 1, in <module>\n    from google.colab import drive\nModuleNotFoundError: No module named 'google.colab'",
+              "Traceback (most recent call last):\n  File \"<root>/errors.py\", line 6, in <module>\n    raise RuntimeError(\"deliberate failure for testing\")\nRuntimeError: deliberate failure for testing",
+              "",
+              "Traceback (most recent call last):\n  File \"<root>/relative.py\", line 1, in <module>\n    from . import helpers\nImportError: attempted relative import with no known parent package"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "from google.colab import drive",
+                  "",
+                  "drive.mount(\"/content/drive\")"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "import csv",
+                  "",
+                  "with open(\"data.csv\", newline=\"\") as f:",
+                  "    rows = list(csv.DictReader(f))",
+                  "",
+                  "raise RuntimeError(\"deliberate failure for testing\")"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "import csv",
+                  "",
+                  "with open(\"data.csv\", newline=\"\") as f:",
+                  "    rows = list(csv.DictReader(f))",
+                  "",
+                  "group_a = [float(r[\"x\"]) for r in rows if r[\"g\"] == \"a\"]",
+                  "group_b = [float(r[\"x\"]) for r in rows if r[\"g\"] == \"b\"]",
+                  "",
+                  "mean_a = sum(group_a) / len(group_a)",
+                  "mean_b = sum(group_b) / len(group_b)",
+                  "print(\"mean_a =\", mean_a)",
+                  "print(\"mean_b =\", mean_b)"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "from . import helpers",
+                  "",
+                  "print(helpers)"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<time>",
+              "<time>",
+              "<time>",
+              "<time>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<time>",
+              "<time>",
+              "<time>",
+              "<time>"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              0,
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "platform",
+              "other",
+              null,
+              "how_to_run"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "not_checkable",
+              "code_error",
+              "ran",
+              "not_checkable"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "file_name",
+          "change_type",
+          "detail",
+          "sha256_before",
+          "sha256_after"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "ok.py",
+              "errors.py"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "path_rewrite",
+              "path_rewrite"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "\"data.csv\" -> \"data.csv\"",
+              "\"data.csv\" -> \"data.csv\""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "c6bddd1637cba3b2a59b10de84580c45e47b644ab33316c764cd3b0382e530b6",
+              "cb168129d47f7de7a4e3af416ef3045c0c74e941721faa17cc5df7cad95514ac"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 6,
+        "names": [
+          "stage",
+          "path",
+          "size",
+          "sha256",
+          "mime_type",
+          "source",
+          "status"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "deposit",
+              "before_run",
+              "before_run",
+              "before_run",
+              "before_run",
+              "before_run"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data.csv",
+              "colab.py",
+              "data.csv",
+              "errors.py",
+              "ok.py",
+              "relative.py"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              32,
+              62,
+              32,
+              141,
+              329,
+              38
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "b4d4e4e1bbd394260dd4c214327e8f73c1ba8f8945f735b27e40cf366bc9ad24",
+              "306d5452f50d78b2e36c5637248dd31bd8075c2c63b55780040edc6735c36634",
+              "b4d4e4e1bbd394260dd4c214327e8f73c1ba8f8945f735b27e40cf366bc9ad24",
+              "cb168129d47f7de7a4e3af416ef3045c0c74e941721faa17cc5df7cad95514ac",
+              "c6bddd1637cba3b2a59b10de84580c45e47b644ab33316c764cd3b0382e530b6",
+              "f5b6be95ab2e52a17e249ad27c924611717d97f0306f2a28aa42233ac5954fdb"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text/csv",
+              "text/x-python",
+              "text/csv",
+              "text/x-python",
+              "text/x-python",
+              "text/x-python"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "metacheck_version",
+          "started_at",
+          "ended_at",
+          "host",
+          "sandbox",
+          "network_isolated",
+          "internet",
+          "timeout_per_script",
+          "total_timeout",
+          "python_local",
+          "docker"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "0.4.4.40"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<time>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<time>"
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "r_version",
+              "platform",
+              "os"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "<host>"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "<host>"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "<host>"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "process"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              60
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              3600
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "executable",
+              "version"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "<python>"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "<python>"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We ran the paper's 4 Python scripts in the order they depend on each other, each in a separate R or Python session, for at most 1 minute per script. We did not install packages the scripts need.\n\n**1 of 4 scripts ran to the end**: 1 did not reproduce, and 2 could not be checked automatically (1 needed Google Colab, 1 needed to be started as part of its package).\n\n| Script | Result | What happened |\n|---|---|---|\n| colab.py | Could not be checked | It needs Google Colab, which our computer is not. This is not an error in the script. |\n| errors.py | Stopped with an error | <code>RuntimeError: deliberate failure for testing<\/code> |\n| ok.py | Ran to the end |  |\n| relative.py | Stopped with an error | <code>ImportError: attempted relative import with no known parent package<\/code> |\n\n### How to make your code run on another computer\n\nWe ran your code on a clean computer, the way a reader or reviewer would. Below is each problem we found, the scripts it affects, and how to fix it. Fix them in the order given: a problem near the top can cause the ones below it.\n\n**A script runs only on one platform.**\n\n- <code>colab.py<\/code> needs Google Colab.\n\nWe could not check these scripts, because the computer we run the code on is not that platform. Say in the README which platform the code needs. Where you can, let the analysis also run without it, for example by reading the data from files in the deposit.\n\n**A script is part of a package of your code, and Python cannot run it on its own.**\n\n- <code>relative.py<\/code>\n\nIt imports other files of its package with <code>from .<\/code>, which works only when it is started as a module, as <code>python -m package.module<\/code> from the folder above the package. Put the command that starts it in the README.\n\n**Metacheck can't automatically establish what caused the error, or how it should be improved.**\n\n- <code>errors.py<\/code>\n\nThe error message of each script is in the table above.\n\n### Comparison with the paper\n\nWe found no statistical tests in the paper to compare with the output of the code."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "<root>"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.40",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

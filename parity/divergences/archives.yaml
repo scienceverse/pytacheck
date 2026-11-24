@@ -28,25 +28,22 @@
   kind: deliberate
   ref: D65
   reason: "a bzip2 member of a remote zip is fetched (metacheck reads stored and deflated members only: 'unsupported compression method (12)')"
-# U245 (R's unzip/untar are stopped by the first member with an odd name)
-"repo_download_review/expand.paths.zip": &u249_rest
-  kind: r_bug_fixed
-  ref: U245
-  reason: "the members after a name with a ../ component are extracted too (metacheck stops unpacking at that name, on its warning, and returns only the members before it)"
-"repo_download_review/expand.climb.zip": *u249_rest
+# U245 (R's untar is stopped by the first member with an odd name; unzip() was too, until 0.4.4.27)
 "repo_download_review/expand.hostile.tar.gz":
   kind: r_bug_fixed
   ref: U245
   reason: "a tar member whose name holds a backslash is extracted (metacheck's untar leaves sub\\win.csv out)"
-# D66 (local archives are extracted by zipfile)
+# U257 (a zip member whose name holds a backslash is written under folders and then not found)
+"repo_download_review/expand.paths.zip": &u257_rest
+  kind: r_bug_fixed
+  ref: U257
+  reason: "the member sub\\win.csv is listed under its stored name (metacheck 0.4.4.27 writes it as sub/win.csv on Linux and macOS, but .move_extracted() looks for sub\\win.csv, so it is neither moved nor listed nor named)"
+"repo_download_review/expand.climb.zip": *u257_rest
+# D154 (local archives are extracted by zipfile: bzip2 and lzma members work)
 "repo_download_review/expand.lzma.zip":
   kind: deliberate
-  ref: D66
-  reason: "an lzma member is extracted like any other (R's unzip stops at it, 'zip file is corrupt', and drops the rest of the archive)"
-"repo_download_review/expand.crc.zip":
-  kind: deliberate
-  ref: D66
-  reason: "the members of an archive whose records disagree (CRC, sizes) are still extracted, CRCs unchecked as in R (R's unzip stops at the first member whose local header disagrees with the central directory and drops the rest)"
+  ref: D154
+  reason: "an lzma member is extracted like any other (metacheck 0.4.4.27 names it as one it cannot unpack, 'it is compressed with LZMA', and unpacks the others)"
 # D67 (a zip that came whole with its listing needs no request per member)
 "repo_download/zip_fetch_members.all": &d67_in_hand
   kind: deliberate
@@ -56,17 +53,14 @@
 "repo_download/zip_fetch_members.zip64": *d67_in_hand
 "repo_download/zip_fetch_members.deflated": *d67_in_hand
 "repo_download/download_repo_files.archive_members": *d67_in_hand
+"repo_download/download_repo_files.archive_members_one_budget": *d67_in_hand
 "repo_download_review/fetch.range_ignored": *d67_in_hand
 # D68 (a file is not requested from a host known to be rate-limited, when asked to skip)
 "repo_download_review/download.rate_limit_skip":
   kind: deliberate
   ref: D68
   reason: "the second file, asked for after the host's limit is known, is not requested: its error says 'known rate-limited host, skip_on_api_limit' (R sends it and reports 'HTTP 429 Too Many Requests.')"
-# U76
-"repo_download_review/expand.cp437.zip":
-  kind: r_bug_fixed
-  ref: U76
-  reason: "zip member names that are not UTF-8 are read as CP437, and names with undecodable bytes are classified and checked (metacheck errors or classifies them as nothing)"
+# U76 (metacheck 0.4.4.18 reads zip names in CP437 as well, so expand.cp437.zip matches now)
 "repo_download_review/invalid.is_readable_archive":
   kind: r_bug_fixed
   ref: U76
@@ -85,12 +79,11 @@
   reason: "PA_license is the licence (dc.rights.license, else dc.rights.uri), not dc.rights' access status ('restrictedAccess'), which moves to the new PA_rights; a bitstream link from the REST root gets /rest in front (metacheck 0.3.3)"
 
 # metacheck 0.4.4.2 (figshare_info's ORCID iDs, .zenodo_info's host)
+# (figshare_info.review.empty_fields and .project_mixed_ids matched R from 0.4.4.35: an answer without title, DOI or files is an empty_response in both)
 "archives_d1_review/figshare_info.review.string_license_error": &u254_figshare_authors
   kind: r_bug_fixed
   ref: U254
   reason: "a record whose authors field is a plain string stops figshare_info() with '$ operator is invalid for atomic vectors'; pytacheck reads it as a record without authors"
-"archives_d1_review/figshare_info.review.empty_fields": *u254_figshare_authors
-"archives_d1_review/figshare_info.review.project_mixed_ids": *u254_figshare_authors
 "archives_gz_review/.zenodo_info.review.vector": &d148_zenodo_vector
   kind: deliberate
   ref: D146

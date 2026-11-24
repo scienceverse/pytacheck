@@ -1,0 +1,537 @@
+{
+  "id": "stat_effect_size.hedges_variants",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "stat_effect_size"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Effect Sizes in t-tests and F-tests"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 7,
+        "names": [
+          "paper_id",
+          "text_id",
+          "test",
+          "test_text",
+          "es",
+          "section_id",
+          "paragraph_id",
+          "text",
+          "d_reported",
+          "d_reported_text",
+          "t_value",
+          "df",
+          "d_implied_paired_dz",
+          "d_implied_paired_drm_r05",
+          "d_implied_indep_equal_n",
+          "d_implied_indep_unequal_min",
+          "d_implied_indep_unequal_max",
+          "d_implied_paired_gz",
+          "d_implied_indep_equal_n_g",
+          "d_implied_n",
+          "d_coherence",
+          "d_coherence_assumption",
+          "d_coherence_note",
+          "f_reported",
+          "f_reported_text",
+          "df1",
+          "df2",
+          "eta_implied_partial",
+          "omega_implied_partial",
+          "eta_coherence",
+          "eta_coherence_assumption",
+          "eta_coherence_note"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "6c4258abe0fec3",
+              "6c4258abe0fec3",
+              "6c4258abe0fec3",
+              "6c4258abe0fec3",
+              "6c4258abe0fec3",
+              "6c4258abe0fec3",
+              "6c4258abe0fec3"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "t-test",
+              "t-test",
+              "t-test",
+              "t-test",
+              "t-test",
+              "F-test",
+              "F-test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "t(30) = 2.5",
+              "t(24) = 3.0",
+              "t(1) = 5.0",
+              "t(38) = 2.5",
+              "t(38) = 2.5",
+              "F(1, 40) = 6.5",
+              "F(1, 40) = 6.5"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "g = 0.40",
+              "Hedges' g = 0.59",
+              "g = 1.0",
+              "g_av = 0.2",
+              "g_z = 0.2",
+              "omega squared = .12",
+              "partial omega-squared = .12"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The groups differed, t(30) = 2.5, p = .017, g = 0.40.",
+              "Paired, t(24) = 3.0, p = .006, Hedges' g = 0.59.",
+              "Small df, t(1) = 5.0, p = .12, g = 1.0.",
+              "Subscripted, t(38) = 2.5, p = .017, g_av = 0.2.",
+              "Another, t(38) = 2.5, p = .017, g_z = 0.2.",
+              "Omega, F(1, 40) = 6.5, p = .015, omega squared = .12.",
+              "Partial omega-squared, F(1, 40) = 6.5, p = .015, partial omega squared = .12."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.4",
+              "0.59",
+              "1",
+              "0.2",
+              "0.2",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "g = 0.40",
+              "g = 0.59",
+              "g = 1.0",
+              "g_av = 0.2",
+              "g_z = 0.2",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2.5",
+              "3",
+              "5",
+              "2.5",
+              "2.5",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "30",
+              "24",
+              "1",
+              "38",
+              "38",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.449013255066937",
+              "0.6",
+              "3.53553390593274",
+              "0.400320384512718",
+              "0.400320384512718",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.635000635000952",
+              "0.848528137423857",
+              "5",
+              "0.566138517072298",
+              "0.566138517072298",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.883883476483184",
+              "1.1766968108291",
+              "5.77350269189626",
+              "0.790569415042095",
+              "0.790569415042095",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.883883476483184",
+              "1.1766968108291",
+              null,
+              "0.790569415042095",
+              "0.790569415042095",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1.82574185835055",
+              "2.20794021658196",
+              null,
+              "1.81369062527503",
+              "1.81369062527503",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.437693593174493",
+              "0.581052631578947",
+              null,
+              "0.392366999389949",
+              "0.392366999389949",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.861600699765121",
+              "1.13953796417134",
+              null,
+              "0.774862737922053",
+              "0.774862737922053",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "n = 25",
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "no_match",
+              "match_under_assumptions",
+              "no_match",
+              "indeterminate",
+              "no_match",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "none",
+              "paired_gz",
+              "none",
+              "none",
+              "none",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range, each also with Hedges' small-sample correction). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.",
+              "Match under paired-samples Hedges' g_z (dz with the small-sample correction).",
+              "No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range, each also with Hedges' small-sample correction). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.",
+              "Hedges' g (subscripted) reported; not checked against the tested formulas. g_av depends on the individual condition SDs and the true observed correlation, neither of which t(df) preserves, so a correctly-computed g_av can differ from the implied d_z/d_rm/equal-n/unequal-n values without being an error.",
+              "No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range, each also with Hedges' small-sample correction). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              "6.5",
+              "6.5"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              "F(1, 40) = 6.5",
+              "F(1, 40) = 6.5"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              "1",
+              "1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              "40",
+              "40"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              "0.139784946236559",
+              "0.139784946236559"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              "0.115789473684211",
+              "0.115789473684211"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              "indeterminate",
+              "indeterminate"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              "none",
+              "none"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              "Effect size reported but not verifiable from F and degrees of freedom alone.",
+              "Effect size reported but not verifiable from F and degrees of freedom alone."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "All tests had effect sizes, but some effect sizes do not match the reported test statistic.",
+          "For t-tests with a reported d, coherence checks yielded 1 match under assumptions, 3 no matches, 1 indeterminate case.",
+          "For F-tests with a reported eta-squared effect size, coherence checks yielded 2 indeterminate cases.",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating that effect sizes are often not reported:\n\n* Peng, C.-Y. J., Chen, L.-T., Chiang, H.-M., & Chiang, Y.-C. (2013). The Impact of APA and AERA Guidelines on Effect Size Reporting. Educational Psychology Review, 25(2), 157–209. doi:[10.1007/s10648-013-9218-2](https://doi.org/10.1007/s10648-013-9218-2).\n\nFor educational material on reporting effect sizes:\n\n* [Guide to Effect Sizes and Confidence Intervals](https://matthewbjane.quarto.pub/guide-to-effect-sizes-and-confidence-intervals/)\n\n:::\n",
+          "::: {.callout-tip title=\"All detected and assessed stats\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Sentence = c(\"The groups differed, t(30) = 2.5, p = .017, g = 0.40.\", \n\"Paired, t(24) = 3.0, p = .006, Hedges' g = 0.59.\", \"Small df, t(1) = 5.0, p = .12, g = 1.0.\", \n\"Subscripted, t(38) = 2.5, p = .017, g_av = 0.2.\", \"Another, t(38) = 2.5, p = .017, g_z = 0.2.\", \n\"Omega, F(1, 40) = 6.5, p = .015, omega squared = .12.\", \"Partial omega-squared, F(1, 40) = 6.5, p = .015, partial omega squared = .12.\"\n), \"Effect Size\" = c(\"g = 0.40\", \"Hedges' g = 0.59\", \"g = 1.0\", \n\"g_av = 0.2\", \"g_z = 0.2\", \"omega squared = .12\", \"partial omega-squared = .12\"\n), \"Reported Test\" = c(\"t(30) = 2.5\", \"t(24) = 3.0\", \"t(1) = 5.0\", \n\"t(38) = 2.5\", \"t(38) = 2.5\", \"F(1, 40) = 6.5\", \"F(1, 40) = 6.5\"\n), \"Test Type\" = c(\"t-test\", \"t-test\", \"t-test\", \"t-test\", \"t-test\", \n\"F-test\", \"F-test\"), \"d Coherence\" = c(\"no_match\", \"match_under_assumptions\", \n\"no_match\", \"indeterminate\", \"no_match\", NA, NA), \"d Assumption\" = c(\"none\", \n\"paired_gz\", \"none\", \"none\", \"none\", NA, NA), \"d Coherence Note\" = c(\"No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range, each also with Hedges' small-sample correction). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.\", \n\"Match under paired-samples Hedges' g_z (dz with the small-sample correction).\", \n\"No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range, each also with Hedges' small-sample correction). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.\", \n\"Hedges' g (subscripted) reported; not checked against the tested formulas. g_av depends on the individual condition SDs and the true observed correlation, neither of which t(df) preserves, so a correctly-computed g_av can differ from the implied d_z/d_rm/equal-n/unequal-n values without being an err…\", \n\"No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range, each also with Hedges' small-sample correction). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.\", \nNA, NA), \"eta Coherence\" = c(NA, NA, NA, NA, NA, \"indeterminate\", \n\"indeterminate\"), \"eta Assumption\" = c(NA, NA, NA, NA, NA, \"none\", \n\"none\"), \"eta Coherence Note\" = c(NA, NA, NA, NA, NA, \"Effect size reported but not verifiable from F and degrees of freedom alone.\", \n\"Effect size reported but not verifiable from F and degrees of freedom alone.\"\n)), row.names = c(NA, -7L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n*Cells longer than 300 characters are cut (…).*\n\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "red"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "All effect sizes were reported, but some appear inconsistent with the test statistic. This can be because the effect size is not clearly labeled (e.g., d, instead of d_rm), because the effect sizes is not reported with enough precisions (e.g., 0.3 instead of 0.32), or because the effect size is incorrectly reported."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "ttests_with_es",
+          "ttests_without_es",
+          "Ftests_with_es",
+          "Ftests_without_es"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "6c4258abe0fec3"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.40",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

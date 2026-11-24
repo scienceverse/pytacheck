@@ -1,0 +1,46 @@
+{
+  "id": ".repo_links.broken",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "path",
+      "target",
+      "broken"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "links/to_small.csv",
+          "links/broken.R",
+          "top.R",
+          "links/up.R"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "../data/small.csv",
+          "missing.R",
+          null,
+          "../../x.R"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          true,
+          null,
+          true
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.40",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

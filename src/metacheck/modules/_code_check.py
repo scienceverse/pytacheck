@@ -21,6 +21,7 @@ import pandas as pd
 from metacheck._r.base import as_character, paste, plural, slashed
 from metacheck._r.regex import grepl
 from metacheck._values import is_missing
+from metacheck.codecheck.core import _code_fetch_capped, _code_fetches_unnamed
 
 # R: listed_langs / checked_langs
 LISTED_LANGS = ("R", "Python", "SAS", "SPSS", "Stata", "Mplus", "MATLAB", "JASP")
@@ -47,8 +48,10 @@ ANALYSIS_COLS = (
     "has_docstring",
     "loaded_refs",
     "files_written",
+    "fetches_unnamed",
     "loaded_files_missing",
     "loaded_files_missing_names",
+    "loaded_files_fetched_names",
     "error",
 )
 
@@ -73,8 +76,10 @@ _DTYPES = {
     "has_docstring": "boolean",
     "loaded_refs": "string",
     "files_written": "string",
+    "fetches_unnamed": "boolean",
     "loaded_files_missing": "Int64",
     "loaded_files_missing_names": "string",
+    "loaded_files_fetched_names": "string",
     "error": "string",
 }
 
@@ -115,6 +120,56 @@ def _msg(exc: BaseException) -> str:
 # ---------------------------------------------------------------------------
 # the per-file analysis loop
 # ---------------------------------------------------------------------------
+
+
+def _refuse_unreadable(path: Any, file_name: Any, max_code_size: Any) -> None:
+    """Raise, with the reason as its message, for a file that is not read (#700): one over
+    ``max_code_size`` MB, a Git LFS pointer, or (a notebook aside) a file whose content is no
+    code: binary, compressed, an image, an HTML page. A .jasp is not tested here, as it is
+    not read at all."""
+    from metacheck.codecheck.core import _code_not_text
+    from metacheck.llm.cap_prompt import _cap_size_str
+    from metacheck.report.blocks import _cap_num
+    from metacheck.utils import _lfs_pointer_size
+
+    if path is None or not os.path.isfile(path):
+        return
+    try:
+        nbytes: float = os.path.getsize(path)
+    except OSError:
+        nbytes = math.nan
+    if nbytes > float(max_code_size) * 1024**2:
+        raise ValueError(
+            f"it was not checked, because it is {_cap_size_str(nbytes)}, more than "
+            f"max_code_size ({_cap_num(max_code_size)} MB)"
+        )
+    if not math.isnan(_lfs_pointer_size([path])[0]):
+        raise ValueError(
+            "it was not checked, because it is a Git LFS pointer: the repository holds a "
+            "small text file in place of the file itself, which was not deposited"
+        )
+    name = None if is_missing(file_name) else str(file_name)
+    if not (name is not None and grepl(r"\.ipynb$", name, ignore_case=True)):
+        not_text = _code_not_text(path)
+        if not_text is not None:
+            raise ValueError(f"it was not checked, because {not_text}")
+
+
+def _refuse_jags(lines: Sequence[str | None], file_name: Any, language: Any) -> None:
+    """A JAGS or BUGS model saved with an .R ending is no R code (``model {`` first): it was
+    reported as R that does not parse (metacheck #695 point 29)."""
+    from metacheck.repro.core import _repro_is_jags_model
+
+    name = None if is_missing(file_name) else str(file_name)
+    if language != "R" or name is None:
+        return
+    if grepl(r"\.(rmd|qmd)$", name, ignore_case=True):
+        return
+    if _repro_is_jags_model(list(lines), name):
+        raise ValueError(
+            "it was not checked, because it is a JAGS or BUGS model saved with an .R "
+            "ending, not R code"
+        )
 
 
 def _read_lines(path: Any, file_name: Any, language: Any) -> list[str | None]:
@@ -163,6 +218,10 @@ def _parse_text(lines: list[str | None]) -> list[str]:
 
 def analyse_files(
     checked_files: pd.DataFrame,
+    limit_refused: Sequence[str | None] | None = None,
+    max_file_size: Any = math.inf,
+    skip_on_api_limit: bool = False,
+    max_code_size: Any = 5,
 ) -> tuple[list[dict[str, Any]], dict[Any, list[tuple[Any, list[str | None]]]]]:
     """Run every code check on every file of *checked_files*.
 
@@ -210,6 +269,9 @@ def analyse_files(
     r_text_by_paper: dict[Any, list[tuple[Any, list[str | None]]]] = {}
     to_parse: list[int] = []
     parse_texts: list[list[str]] = []
+    # why a row was left out by a download limit (None for the others): such a file is not
+    # read from the web instead (#699)
+    refused = list(limit_refused) if limit_refused is not None else [None] * n
 
     # 1. read each file (and prepare R's parse() input)
     for i in range(n):
@@ -218,12 +280,37 @@ def analyse_files(
         lines_of.append(None)
         if bar is not None:
             bar.tick(1, {"what": names[i]})
-        path = locs[i] if locs[i] is not None else urls[i]
+        fetched_copy = False
+        path: Any = None
         try:
+            # A file left out by a download limit is not read from the web instead (#699); the
+            # reason becomes its error
+            if refused[i] is not None:
+                raise OSError(refused[i])
+            # access via URL if not local: fetched into a temporary file that stops at
+            # max_file_size (#699)
+            if locs[i] is not None:
+                path = locs[i]
+            elif urls[i] is None:
+                path = None
+            else:
+                path = _code_fetch_capped(
+                    None if urls[i] == "NA" else urls[i],
+                    names[i],
+                    max_file_size=max_file_size,
+                    skip_on_api_limit=skip_on_api_limit,
+                )
+                fetched_copy = path != urls[i]
+            _refuse_unreadable(path, names[i], max_code_size)
             lines = _read_lines(path, names[i], langs[i])
+            _refuse_jags(lines, names[i], langs[i])
         except Exception as exc:
             row["error"] = _msg(exc)
             continue
+        finally:
+            if fetched_copy and path is not None:
+                with contextlib.suppress(OSError):
+                    os.unlink(path)
         if langs[i] == "R":
             # appended, not set by file name: of two same-named R files only the last was
             # kept, and a missing paper id (NA) was never found again, so only the last such
@@ -309,6 +396,8 @@ def analyse_files(
                     str(r) for r in code_file_refs(file_nc, lang, writes_only=True) if r is not None
                 )
             )
+            # downloads or unpacks files it does not name (#648)
+            row["fetches_unnamed"] = _code_fetches_unnamed(file_nc, lang)
         except Exception as exc:
             row["error"] = _msg(exc)
     return rows, r_text_by_paper
@@ -370,6 +459,7 @@ def summary_table(
     max_file_size: float = 100,
     max_download_size: float = 500,
     cache: bool = False,
+    failed_files: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
     """The per-paper ``summary_table`` of ``code_check()``.
 
@@ -445,6 +535,12 @@ def summary_table(
         if c != "code_min_comments":
             out[c] = out[c].astype("int64")
     out["code_min_comments"] = out["code_min_comments"].astype("float64")
+    # code files whose download failed, per paper (metacheck #667)
+    from metacheck.archives.download import _failed_counts
+
+    out["code_files_failed"] = pd.Series(
+        _failed_counts(failed_files, out["paper_id"].tolist()), dtype="int64"
+    )
 
     if "paper_id" in all_files.columns:
         # per paper, the files of an NA paper id (paper = None) as one paper
@@ -528,11 +624,16 @@ def version_pin_report(
 ) -> tuple[str, list[str], pd.DataFrame | None]:
     """The report text, summary lines and table of ``code_check()``'s pinning section.
 
-    R advice for R code, Python advice for Python code: the R part is shown when there is R code,
-    or when there is neither R nor Python code (as before); the Python part when there is Python
-    code.
+    R advice for R code, Python advice for Python code. The R part was also shown for code in
+    neither language, so a deposit of SAS, MATLAB or SPSS code was told to add an renv.lock (#648,
+    K2c); it gets a note on its own software instead.
     """
-    show_r = "R" in code_langs or "Python" not in code_langs
+    show_r = "R" in code_langs
+    other_langs = [
+        lang
+        for lang in dict.fromkeys(x for x in code_langs if not is_missing(x))
+        if lang not in ("R", "Python", "JASP")
+    ]
     report, summary, table = _r_pin_report(version_pin)
     if not show_r:
         report, summary, table = "", [], None
@@ -554,6 +655,14 @@ def version_pin_report(
         else:
             reports.append(_REPORT_NO_PY)
             summary = [*summary, _SUMMARY_NO_PY]
+    if other_langs:
+        lang_txt = " and ".join(str(x) for x in other_langs)
+        reports.append(
+            f"The repository holds {lang_txt} code. State the version of {lang_txt} used in the "
+            "README, and list any add-ons the code needs (for Stata, the user-written commands "
+            "installed with `ssc install`; for MATLAB, the toolboxes), so that readers can run "
+            "the code with the same software."
+        )
     return "\n\n".join(reports), summary, table
 
 

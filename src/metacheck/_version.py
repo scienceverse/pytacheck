@@ -35,6 +35,6 @@ class _Upstream(TypedDict):
 UPSTREAM: _Upstream = {
     "repository": "https://github.com/scienceverse/metacheck",
     "branch": "dev",
-    "commit": "7dda1462e92e5ec731503a9acf538f53b2fda178",
-    "version": "0.4.4.6",
+    "commit": "5cdb9d3159d505da4b681f140b36a22a7093204b",
+    "version": "0.4.4.40",
 }

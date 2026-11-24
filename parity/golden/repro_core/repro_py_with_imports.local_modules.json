@@ -1,0 +1,36 @@
+{
+  "id": "repro_py_with_imports.local_modules",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "calculate_FST.py",
+          "genomics.py",
+          "helper.py"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "other.py"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "helper.py",
+          "calculate_FST.py",
+          "genomics.py"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.40",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

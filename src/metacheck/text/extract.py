@@ -83,6 +83,10 @@ _P_SUBSCRIPTS = (
     "spearman|pearson)(?![\\w])"
 )
 
+# The sides of a test, written after the p, in brackets or not: "p one-sided = .014", "p
+# (two-tailed) = .048" (metacheck 0.4.4.26, #695). Port of ``.p_sides``.
+_P_SIDES = r"(?:\(?\s*(?i:one|two|1|2)[\s-]?(?i:sided|tailed)\s*\)?\s*)"
+
 # Numbers without a decimal point (#642): a whole first number before scientific notation
 # ("p < 1e-10", "p = 5 x 10 -8"), a capital E ("p = 2.4E-08" was read as 2.4), 10 to a power with
 # nothing before it ("p < 10 -15"), and a whole 0 or 1 ("p = 1")
@@ -124,6 +128,7 @@ def _p_pattern(negative: bool = False) -> str:
         f"(?:{_ETA_P_PREFIX}|{_P_SYMBOL_PREFIX})?"
         r"\b[pP]-?(values?|s|['’]s)?"  # ways to write p (or P)
         f"(?:[\\s_-]?{_P_SUBSCRIPTS})?\\s*"  # pFWE, p adj
+        f"{_P_SIDES}?"  # "p one-sided", "p (two-tailed)" (#695)
         f"[{_OPS}]{{1,2}}\\s*"  # 1-2 operators
         f"({number})"  # ns or valid numbers
         f"{sci}"
@@ -155,6 +160,8 @@ _BARE_SUBSCRIPT += f"|{_ETA_P_PREFIX}[pP](?=\\s*[{_OPS}])"
 # a p with a correction or test name after a space, "p adj = .034", is one statistic: the name
 # was "adj" (#642)
 _BARE_SUBSCRIPT += f"|\\b[pP]s?[\\s_-]{_P_SUBSCRIPTS}(?=\\s*[{_OPS}])"
+# and a p with the sides of its test, "p one-sided = .014" (#695)
+_BARE_SUBSCRIPT += f"|\\b[pP]s?\\s*{_P_SIDES}(?=[{_OPS}])"
 _EQ_PATTERN = (
     r"(?:(Hedge.{0,3}|Cronbach.{0,2}|Cohen.{0,2}|\d{1,2}%)\s+)?"  # common prefix
     f"(?:{_BARE_SUBSCRIPT}|"
@@ -647,32 +654,13 @@ def _eq_frame(
 
 
 def _detect_live_data(paper: Any) -> pd.DataFrame:
-    """Sentences indicating live data collection (port of ``.detect_live_data()``).
+    """Sentences indicating live data collection (was ``.detect_live_data()``).
 
     Searches for participant recruitment, informed consent, online
     recruitment platforms, student pools, inclusion/exclusion criteria and
-    animal data collection. Used by the ``ethics_check`` module.
+    animal data collection. metacheck 0.4.4.37 removed it (``ethics_check`` now sorts a
+    paper by where its data came from, ``.data_source()``, D162); pytacheck keeps it as
+    its own helper for the data package (``metacheck.datapackage``), whose documents
+    have no data-source rule.
     """
     return cast(pd.DataFrame, text_search(paper, list(_LIVE_WORDS)))
-
-
-_NONE_WORDS = (
-    r"\bno\s+(identifiable\s+)?(human|animal)\s+(research\s+)?(subjects?|participants?|volunteers?)"
-    r"\s+(were|was|are|is)\s+(involved|used)",
-    r"\b(did|does|do)\s+not\s+(involve|include)\s+(any\s+)?(human|animal)\s+(subjects?|participants?)",
-    r"\bno\s+(animals|humans)\s+(nor|or|and)\s+(human\s+)?(participants?|subjects?)\s+were\s+involved",
-    r"\bnot\s+as\s+(research\s+)?(subjects?|participants?)\b",
-)
-
-
-def _detect_no_participants(paper: Any) -> pd.DataFrame:
-    """Sentences stating that no participants took part (port of ``.detect_no_participants()``).
-
-    "no human subjects were involved", "did not involve human participants", "no animals
-    nor human participants were involved", or people taking part "not as subjects". Such
-    a statement overrides :func:`_detect_live_data` in the ``ethics_check`` module. A
-    negation near a participant phrase is not enough ("No participants were excluded"
-    reports a study with participants), so each pattern names human or animal subjects,
-    or "not as subjects".
-    """
-    return cast(pd.DataFrame, text_search(paper, list(_NONE_WORDS), perl=True))

@@ -75,6 +75,7 @@
 ".url_hrefs" = "metacheck.archives:_paper_urls"
 ".github_crawl" = "metacheck.archives.github:github_tree_files"
 ".field_or_value" = "metacheck._values:field_or_value"
+".repo_links" = "metacheck.archives.github:_repo_links"
 [helpers]
 "httr2::req_perform (req_error(is_error = FALSE), no retry)" = "metacheck.archives.github:_perform"
 "httr2::resp_body_json" = "metacheck.archives.github:_body_json"

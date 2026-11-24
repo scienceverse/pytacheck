@@ -1,0 +1,128 @@
+{
+  "id": "report_tables.not_checked",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 8,
+        "names": [
+          "File Name",
+          "% Comments",
+          "Missing Files",
+          "Absolute Paths",
+          "Code Between Libraries"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "bglmm.R",
+              "big.R",
+              "html_named.py",
+              "ok.R",
+              "png_named.R",
+              "pointer.R",
+              "pointer_nosize.R",
+              "rdata_named.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              "0%",
+              "",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              0,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              0,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 8,
+        "names": [
+          "File",
+          "Reason"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "bglmm.R",
+              "big.R",
+              "html_named.py",
+              "png_named.R",
+              "pointer.R",
+              "pointer_nosize.R",
+              "rdata_named.R",
+              "analysis.jl"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "it was not checked, because it is a JAGS or BUGS model saved with an .R ending, not R code",
+              "it was not checked, because it is 201.0 B, more than max_code_size (0.0 MB)",
+              "it was not checked, because it is an HTML page, not code",
+              "it was not checked, because it is a PNG image, not code",
+              "it was not checked, because it is a Git LFS pointer: the repository holds a small text file in place of the file itself, which was not deposited",
+              "it was not checked, because it is a Git LFS pointer: the repository holds a small text file in place of the file itself, which was not deposited",
+              "it was not checked, because it is a compressed file (such as saved R data), not code",
+              "Julia code is recognised, but not checked"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.40",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

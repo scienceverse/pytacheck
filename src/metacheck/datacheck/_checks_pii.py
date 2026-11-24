@@ -12,9 +12,17 @@ import statistics
 from typing import Any
 
 from metacheck._r.base import plural
-from metacheck._r.regex import grepl, gsub, strsplit
+from metacheck._r.regex import gregexpr_all, grepl, gsub, strsplit
 from metacheck._values import as_float
-from metacheck.datacheck._kinds import NUMERIC, WS, as_text, column, kind, trimmed_counts
+from metacheck.datacheck._kinds import (
+    DATETIME,
+    NUMERIC,
+    WS,
+    as_text,
+    column,
+    kind,
+    trimmed_counts,
+)
 
 __all__ = [
     "_DEMOGRAPHIC_NAME_REGEX",
@@ -23,8 +31,11 @@ __all__ = [
     "_PII_VALUE_PATTERNS",
     "_demographic_values_ok",
     "_pii_card_ok",
+    "_pii_ip_ok",
     "_pii_luhn_ok",
     "_pii_split_name",
+    "_pii_token_shape",
+    "_pii_values_have_shape",
     "_utf8_name",
     "data_check_demographic",
     "data_check_pii_freetext",
@@ -40,10 +51,11 @@ _PII_VALUE_PATTERNS: dict[str, dict[str, str]] = {
         "regex": r"(?i)\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b",
         "kind": "specific",
     },
-    # IPv4 with each octet 0-255.
+    # IPv4 with each octet 0-255; see _pii_ip_ok() for what is not one.
     "ip_address": {
         "regex": (r"\b(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)\b"),
         "kind": "specific",
+        "validate": "_pii_ip_ok",
     },
     # US SSN: 3-2-4 with separators, excluding obvious non-SSNs.
     "ssn": {
@@ -189,7 +201,37 @@ def _pii_card_ok(s: str) -> bool:
     return _pii_luhn_ok(s)
 
 
-_VALIDATORS = {"_pii_card_ok": _pii_card_ok}
+_IP_RX = r"(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)"
+
+
+def _pii_ip_ok(value: str) -> bool:
+    """Whether a value holds an IP address and not four numbers with dots that are something else.
+
+    Port of ``.pii_ip_ok()`` (metacheck 0.4.4.8, #648: 3 of 132 preprints): a time after a
+    date (``"06.04.2026 15.34.46.182"``), a program's version (``"Chrome 131.0.0.0"``,
+    ``"Chrome/84.0.4147.89"`` in a browser's user agent), or part of a longer run of numbers
+    with dots (``"1.2.3.4.5"``) is no IP address.
+    """
+    found = gregexpr_all(r"\b" + _IP_RX + r"\b", value, perl=True)
+    for start, length in found:
+        before = value[: start - 1]
+        after = value[start - 1 + length :]
+        if grepl(r"[0-9]\.$", before) or grepl(r"^\.[0-9]", after):
+            continue
+        if grepl(r"[0-9]{1,4}[./-][0-9]{1,2}[./-][0-9]{2,4}[ T]+$", before):
+            continue
+        if grepl(
+            r"(?i)(?:chrome|chromium|firefox|safari|edge?|opera|opr|version|ver|mozilla|applewebkit"
+            r"|gecko|msie|crios|fxios|android|windows nt|os|build|v)[ /]?$",
+            before,
+            perl=True,
+        ):
+            continue
+        return True
+    return False
+
+
+_VALIDATORS = {"_pii_card_ok": _pii_card_ok, "_pii_ip_ok": _pii_ip_ok}
 
 
 def data_check_pii_values(x: Any, broad_min_frac: float = 0.30) -> dict[str, Any]:
@@ -279,12 +321,21 @@ def _pii_split_name(x: Any) -> list[str | None]:
     return list(dict.fromkeys(t for t in p if t is None or t != ""))
 
 
-def data_check_pii_name(col_name: Any) -> dict[str, Any]:
+def data_check_pii_name(col_name: Any, x: Any = None) -> dict[str, Any]:
     """Flag a column whose name suggests personal information.
 
     Port of ``R/data_check_helpers.R::data_check_pii_name()``: word-based
     matching (separators and camelCase), plus adjacent-word joins and the
     separator-free name, against a multilingual token list.
+
+    Some words name a kind of value with a shape of its own. When the column's
+    values *x* are given, such a word counts only when a value has that shape: a
+    phone number for "phone", "mobile" or "fax"; an IP address for "ip"; a MAC address
+    for "mac"; a date or a year of birth for "dob" and the like. Coordinates ("lat",
+    "gps", "geolocation") are left to :func:`data_check_pii_geo`, which checks their values.
+    Without that, "phone" holding the kind of device, "hosp_ward_IP" (inpatient),
+    "SiPhy_29way_logOdds" (read as "ip"), "HLA-DOB" (a gene) and "GEO_LOCATION_VILLAGE"
+    (village names) were flagged in 19 of 132 preprints (metacheck 0.4.4.8, #648 K6).
     """
     none: dict[str, Any] = {"problem": False, "message": "", "values": None}
     if col_name is None:
@@ -312,6 +363,15 @@ def data_check_pii_name(col_name: Any) -> dict[str, Any]:
     matched = list(dict.fromkeys(c for c in cand if c in _PII_NAME_TOKENS))
     if not matched:
         return none
+    if x is not None:
+        shape = _pii_token_shape(matched)  # type: ignore[arg-type]
+        matched = [
+            t
+            for t, sh in zip(matched, shape, strict=True)
+            if sh is None or _pii_values_have_shape(x, sh)
+        ]
+        if not matched:
+            return none
     return {
         "problem": True,
         "message": (
@@ -320,6 +380,92 @@ def data_check_pii_name(col_name: Any) -> dict[str, Any]:
         ),
         "values": matched,
     }
+
+
+def _pii_token_shape(token: list[str]) -> list[str | None]:
+    """The kind of value a word of ``_PII_NAME_TOKENS`` names, when it has a shape of its own.
+
+    Port of ``.pii_token_shape()``: "phone", "ip", "mac", "birth" or "geo"; ``None`` for a word
+    whose values have no shape (a name, an address).
+    """
+    out: list[str | None] = [None] * len(token)
+    for i, t in enumerate(token):
+        if grepl(r"phone|mobil|tele|fax|gsm|rufnummer|handy|puhelin|movil|portable|cell", t):
+            out[i] = "phone"
+        if t in ("ip", "ipaddress"):
+            out[i] = "ip"
+        if t == "mac":
+            out[i] = "mac"
+        if grepl(r"dob|yob|birth|geboorte|geburts|naissance|nacimiento|nascita", t):
+            out[i] = "birth"
+        if t in (
+            "latitude", "longitude", "lat", "lon", "lng", "geolocation", "gps",
+            "breitengrad", "laengengrad", "ortsangabe",
+        ):  # fmt: skip
+            out[i] = "geo"
+    return out
+
+
+_MONTH_RX = "(?:jan|feb|m[a\u00e4]r|mrt|apr|ma[iy]|mei|jun|jul|aug|sep|o[ck]t|nov|de[cz])"
+_PHONE_RX = r"^\+?[0-9 ().-]{7,}$"
+
+
+def _pii_values_have_shape(x: Any, shape: str) -> bool:
+    """Whether any value of *x* has the shape of *shape* (``.pii_values_have_shape()``).
+
+    Coordinates are left to :func:`data_check_pii_geo`, so "geo" is ``False`` here.
+    """
+    if shape == "geo":
+        return False
+    if kind(x) == DATETIME:
+        return shape == "birth"
+    v = [t.strip(WS) for t in as_text(x) if t is not None]
+    v = [t for t in v if t != ""]
+    if not v:
+        return False
+    if shape == "phone":
+        # 7 to 15 digits, written with only spaces, brackets, dots, dashes or "+"
+        return any(
+            hit and 7 <= len(_digits(t)) <= 15
+            for t, hit in zip(v, grepl(_PHONE_RX, v), strict=True)
+        )
+    if shape == "ip":
+        return any(grepl(r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$", v)) or any(
+            grepl(r"^[0-9a-f]{0,4}(?::[0-9a-f]{0,4}){2,7}$", v, ignore_case=True)
+        )
+    if shape == "mac":
+        return any(grepl(r"^(?:[0-9a-f]{2}[:-]){5}[0-9a-f]{2}$", v, ignore_case=True))
+    if shape == "birth":
+        # a date, however it is written: in numbers ("15/03/1985"), with a year a person
+        # now alive was born in ("15-Mar-1985", "March 15, 1985", "1985"), with a month's
+        # name ("15 Mar 85"), or as eight digits ("19850315"); not a number with decimals
+        # ("1985.34")
+        month_name = (
+            "(?i)(?:[0-9][ ./-]*\\b"
+            + _MONTH_RX
+            + "|\\b"
+            + _MONTH_RX
+            + "[a-z\u00e9\u00fb]*\\.?[ ,./-]*[0-9])"
+        )
+        return (
+            any(grepl(r"^[0-9]{1,4}[-/.][0-9]{1,2}[-/.][0-9]{1,4}$", v))
+            or any(
+                grepl(
+                    r"(?<![0-9.,])(?:19[0-9]{2}|20[0-2][0-9]|2030)(?![0-9]|[.,][0-9])",
+                    v,
+                    perl=True,
+                )
+            )
+            or any(grepl(month_name, v, perl=True))
+            or any(
+                grepl(
+                    r"^(?:(?:19|20)[0-9]{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12][0-9]|3[01])|"
+                    r"(?:0[1-9]|[12][0-9]|3[01])(?:0[1-9]|1[0-2])(?:19|20)[0-9]{2})$",
+                    v,
+                )
+            )
+        )
+    return False
 
 
 _LAT_WORDS = ("lat", "latitude", "breitengrad")

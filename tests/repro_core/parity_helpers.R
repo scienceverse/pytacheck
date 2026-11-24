@@ -67,6 +67,8 @@ rc_run_scripts <- function(scripts, order = NULL, extra = NULL, lib = FALSE, ...
   }
   out <- repro_run_scripts(run_tbl, order = order %||% names, lib_dir = lib_dir, ...)
   out$elapsed <- NULL
+  # when each script ran (metacheck 0.4.4.20) varies between runs
+  for (col in c("started_at", "ended_at")) out[[col]][!is.na(out[[col]])] <- "<time>"
   for (col in c("error", "stdout", "stderr")) out[[col]] <- rc_unroot(out[[col]], root)
   out$script_lines <- lapply(out$script_lines, rc_unroot, root = root)
   out
@@ -133,4 +135,65 @@ rc_docker_install_script <- function(install_deps) {
     process = list(new = function(...) stop("docker is not started in this case")),
     .package = "processx")
   captured
+}
+
+# The deposit's own copies of packages and their copy for the Docker install (#588);
+# twin of parity_support.deposit_packages().
+rc_deposit_packages <- function() {
+  root <- file.path(tempfile(), "root")
+  pkg <- file.path(root, "rel.zip/owner-mypkg-1a2b")
+  dir.create(file.path(pkg, "R"), recursive = TRUE)
+  writeLines(c("Package: mypkg", "Version: 1.0.0"), file.path(pkg, "DESCRIPTION"))
+  writeLines("f <- function() 1", file.path(pkg, "R/f.R"))
+  writeLines("x", file.path(pkg, "big_data.csv"))
+  dir.create(file.path(root, "_archive"))
+  for (v in c("0.2.0", "0.10.1", "0.9"))
+    file.create(file.path(root, "_archive", paste0("lay_", v, ".tar.gz")))
+  dir.create(file.path(root, "renv/library/other"), recursive = TRUE)
+  writeLines(c("Package: other", "Version: 2.0", "Built: R 4.3.1; ; 2023-01-01; unix"),
+             file.path(root, "renv/library/other/DESCRIPTION"))
+  found <- metacheck:::.repro_deposit_packages(root, c("mypkg", "lay", "other", "notthere"))
+  box <- file.path(tempfile(), "box")
+  dir.create(box, recursive = TRUE)
+  inside <- metacheck:::.repro_copy_deposit_packages(found, box)
+  list(found = as.list(rc_unroot(found, root)), inside = as.list(inside), files = rc_listing(box),
+       none = length(metacheck:::.repro_deposit_packages(root, "notthere")),
+       no_root = length(metacheck:::.repro_deposit_packages(NULL, "mypkg")))
+}
+
+# One folder several scripts stopped on: made once, each runs again (#590); twin of
+# parity_support.failed_folders().
+rc_failed_folders <- function() {
+  root <- file.path(tempfile(), "root")
+  dir.create(file.path(root, "code"), recursive = TRUE)
+  res <- data.frame(file_name = c("f1.R", "f2.R", "f3.R"), outcome = "errored", stderr = "",
+                    error = "Error in `ggsave()`:\n! Cannot find directory 'Figures/'.")
+  run_tbl <- data.frame(file_name = res$file_name, run_dir = file.path(root, "code"))
+  made <- metacheck:::.repro_make_failed_write_folders(res, run_tbl, root)
+  dir.create(file.path(root, "code", "Other"))
+  res$error <- "Error in `ggsave()`:\n! Cannot find directory 'Other/'."
+  again <- metacheck:::.repro_make_failed_write_folders(res, run_tbl, root)
+  list(made = made, text = metacheck:::.repro_folders_made_text(made), again = nrow(again),
+       folder = dir.exists(file.path(root, "code", "Figures")))
+}
+
+# Of several different files of one name, the one in the folders the path names (#590);
+# twin of parity_support.place_by_tail().
+rc_place_by_tail <- function() {
+  root <- file.path(tempfile(), "root")
+  for (d in c("zip/output/ADMIXTURE/popmap", "zip/output/RAxML", "code"))
+    dir.create(file.path(root, d), recursive = TRUE)
+  writeLines("A", file.path(root, "zip/output/ADMIXTURE/popmap/popmap_Cm.txt"))
+  writeLines("B", file.path(root, "zip/output/RAxML/popmap_Cm.txt"))
+  before <- metacheck:::.repro_sandbox_names(root)
+  res <- data.frame(file_name = "plot.R", outcome = "errored", stderr = "",
+                    error = "cannot open file 'output/ADMIXTURE/popmap/popmap_Cm.txt': No such file or directory")
+  run_tbl <- data.frame(file_name = "plot.R", run_dir = file.path(root, "code"))
+  placed <- metacheck:::.repro_place_from_deposit(res, run_tbl, root, before)
+  copy <- readLines(file.path(root, "code/output/ADMIXTURE/popmap/popmap_Cm.txt"))
+  res$error <- "cannot open file 'other/popmap_Cm.txt': No such file or directory"
+  list(placed = placed, copy = copy,
+       none = nrow(metacheck:::.repro_place_from_deposit(res, run_tbl, root, before)),
+       tail = metacheck:::.repro_path_tail_match("output/RAxML/popmap_HC.txt",
+                c("x/output/RAxML/popmap_HC.txt", "y/popmap_HC.txt")))
 }

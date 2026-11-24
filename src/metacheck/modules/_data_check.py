@@ -360,7 +360,13 @@ def file_tabset(files: Sequence[str], table_fun: Callable[[str], list[Any]]) -> 
     """
     if len(files) == 0:
         return None
-    blocks: list[Any] = ["::: {.panel-tabset}"]
+    # at most `_report_file_tabs()` files get a table, with a note when there are more, so the
+    # report stays small for large deposits (metacheck 0.4.4.19)
+    from metacheck.report.blocks import _report_file_tabs
+
+    files, note = _report_file_tabs(files)
+    blocks: list[Any] = [note] if note is not None else []
+    blocks.append("::: {.panel-tabset}")
     for f in files:
         blocks.append(f"## {f}")
         blocks.extend(table_fun(f))

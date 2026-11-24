@@ -1,0 +1,30 @@
+{
+  "id": "download_failed_text.only_noise_lines",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "report",
+      "summary"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "#### Files that could not be downloaded",
+          "1 file could not be downloaded, so the checks did not see it: `a.csv`. The reason given: Failed to perform HTTP request. (1). Re-running the check fetches only the missing files."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1 file could not be downloaded, so the checks did not see it."
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.40",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -339,8 +339,14 @@ def codebook_file_tabset(tbl: pd.DataFrame) -> list[Any] | None:
     for i, f in enumerate(_vals(tbl, "source_file") or []):
         rows.setdefault(f, []).append(i)
     rest = [j for j, c in enumerate(tbl.columns) if c != "source_file"]
-    blocks: list[Any] = ["::: {.panel-tabset}"]
-    for f, idx in rows.items():
+    # at most `_report_file_tabs()` files, with a note when there are more (metacheck 0.4.4.19)
+    from metacheck.report.blocks import _report_file_tabs
+
+    shown, note = _report_file_tabs(list(rows))
+    blocks: list[Any] = [note] if note is not None else []
+    blocks.append("::: {.panel-tabset}")
+    for f in shown:
+        idx = rows[f]
         sub_tbl = tbl.iloc[idx, rest].reset_index(drop=True)
         blocks += [f"## {_pstr(f)}", scroll_table(sub_tbl, maxrows=25)]
     blocks.append(":::")
@@ -2855,6 +2861,14 @@ def codebook_match_llm(
             )
         )
         unmatched = [i for i in cbk_paper_idx if cb_norm[i] not in matched_norm]
+        # A codebook variable without a label does not label a column, as in the match by name
+        # (match_column_labels()): 2,403 of the 2,533 columns this step matched in the
+        # Meta-Psychology run got no label and still counted as documented (#695, point 32)
+        unmatched = [
+            i
+            for i in unmatched
+            if cb_labels[i] is not None and str(cb_labels[i]).strip(" \t\r\n") != ""
+        ]
         if not unlabelled_idx or not unmatched:
             continue
         unlab_cols = _unique(col_names[i] for i in unlabelled_idx)

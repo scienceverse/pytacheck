@@ -1,0 +1,115 @@
+# Parity cases for the repository parts of metacheck 0.4.4.30 to 0.4.4.35 (made by
+# tests/repo_download/make_repo35_cases.py): the case-clash names on disk and the symbolic
+# links of a GitHub listing (#700), a record that came back without its fields not being
+# cached (#711), and the AsPredicted links written in the text (#695).
+area: archives_repo35
+cases:
+- args:
+    x:
+      $expr:
+        py: 'lambda m: __import__(''importlib'').import_module(''metacheck.archives.download'')._case_clash_rename(["r"] * 6, [''names/case/Data.csv'', ''names/case/data.csv'', ''names/case/DATA.CSV'', ''a.R'', ''Dir/x'', ''dir/x''])'
+        r: metacheck:::.case_clash_rename(rep("r", 6), c("names/case/Data.csv", "names/case/data.csv", "names/case/DATA.CSV", "a.R", "Dir/x", "dir/x"))
+  id: .case_clash_rename.names
+  py: tests.archives_services.parity_support.run
+  r: identity
+- args:
+    x:
+      $expr:
+        py: 'lambda m: __import__(''importlib'').import_module(''metacheck.archives.download'')._case_clash_rename([''r''], [''names/case/data.csv''], m.pd.DataFrame({''repo_url'': ''r'', ''file_path'': [''names/case/Data.csv'', ''names/case/data.csv'', ''names/case/DATA.CSV'', ''a.R'', ''Dir/x'', ''dir/x''], ''file_name'': [p.split(''/'')[-1] for p in [''names/case/Data.csv'', ''names/case/data.csv'', ''names/case/DATA.CSV'', ''a.R'', ''Dir/x'', ''dir/x'']]}))'
+        r: metacheck:::.case_clash_rename("r", "names/case/data.csv", data.frame(repo_url = "r", file_path = c("names/case/Data.csv", "names/case/data.csv", "names/case/DATA.CSV", "a.R", "Dir/x", "dir/x"), file_name = basename(c("names/case/Data.csv", "names/case/data.csv", "names/case/DATA.CSV", "a.R", "Dir/x", "dir/x"))))
+  id: .case_clash_rename.listing
+  py: tests.archives_services.parity_support.run
+  r: identity
+- args:
+    x:
+      $expr:
+        py: 'lambda m: __import__(''importlib'').import_module(''metacheck.archives.download'')._case_clash_rename([''r'', ''s''], [''a.csv'', ''A.csv''])'
+        r: metacheck:::.case_clash_rename(c("r", "s"), c("a.csv", "A.csv"))
+  id: .case_clash_rename.repos
+  py: tests.archives_services.parity_support.run
+  r: identity
+- args:
+    x:
+      $expr:
+        py: 'lambda m: __import__(''importlib'').import_module(''metacheck.archives.download'')._case_clash_rename([''r''] * 3, [''d\\X.txt'', ''d/x.txt'', ''d/y.txt''])'
+        r: metacheck:::.case_clash_rename(rep("r", 3), c("d\\X.txt", "d/x.txt", "d/y.txt"))
+  id: .case_clash_rename.windows_separator
+  py: tests.archives_services.parity_support.run
+  r: identity
+- args:
+    x:
+      $expr:
+        py: 'lambda m: __import__(''importlib'').import_module(''metacheck.archives.download'')._case_clash_rename([], [])'
+        r: metacheck:::.case_clash_rename(character(0), character(0))
+  id: .case_clash_rename.empty
+  py: tests.archives_services.parity_support.run
+  r: identity
+- args:
+    x:
+      $expr:
+        py: 'lambda m: __import__(''importlib'').import_module(''metacheck.archives.github'')._repo_links([''links/to_small.csv'', ''links/broken.R'', ''top.R'', ''links/up.R''], [''data/small.csv'', ''links'', ''data''], [None] * 4, targets=[''../data/small.csv'', ''missing.R'', None, ''../../x.R''])'
+        r: metacheck:::.repo_links(c("links/to_small.csv", "links/broken.R", "top.R", "links/up.R"), all_paths = c("data/small.csv", "links", "data"), raw_urls = NA, targets = c("../data/small.csv", "missing.R", NA, "../../x.R"))
+  id: .repo_links.broken
+  py: tests.archives_services.parity_support.run
+  r: identity
+- args:
+    x:
+      $expr:
+        py: 'lambda m: __import__(''importlib'').import_module(''metacheck.archives.github'')._repo_links([''a/l1'', ''a/l2'', ''l3''], [''a'', ''a/l1'', ''b/c.R'', ''c.R''], [None] * 3, targets=[''./../b/c.R'', ''/etc/passwd'', ''c.R''])'
+        r: metacheck:::.repo_links(c("a/l1", "a/l2", "l3"), all_paths = c("a", "a/l1", "b/c.R", "c.R"), raw_urls = NA, targets = c("./../b/c.R", "/etc/passwd", "c.R"))
+  id: .repo_links.absolute_and_dot
+  py: tests.archives_services.parity_support.run
+  r: identity
+- args:
+    x:
+      $expr:
+        py: 'lambda m: __import__(''importlib'').import_module(''metacheck.archives.info_cache'')._repo_info_ok(m.pd.DataFrame({''figshare_id'': [''1''], ''title'': [None], ''doi'': [None], ''files'': [[]]}))'
+        r: (function() { blank <- data.frame(figshare_id = "1", title = NA_character_, doi = NA_character_); blank$files <- list(data.frame()); metacheck:::.repo_info_ok(blank) })()
+  id: .repo_info_ok.blank_record
+  py: tests.archives_services.parity_support.run
+  r: identity
+- args:
+    x:
+      $expr:
+        py: 'lambda m: __import__(''importlib'').import_module(''metacheck.archives.info_cache'')._repo_info_ok(m.pd.DataFrame({''figshare_id'': [''1''], ''title'': [None], ''doi'': [None], ''files'': [[]]}).assign(title=''A data set''))'
+        r: (function() { blank <- data.frame(figshare_id = "1", title = NA_character_, doi = NA_character_); blank$files <- list(data.frame()); blank$title <- "A data set"; metacheck:::.repo_info_ok(blank) })()
+  id: .repo_info_ok.record_with_title
+  py: tests.archives_services.parity_support.run
+  r: identity
+- args:
+    x:
+      $expr:
+        py: 'lambda m: __import__(''importlib'').import_module(''metacheck.archives.info_cache'')._repo_info_ok(m.pd.DataFrame({''figshare_id'': [''1''], ''title'': [None], ''doi'': [None], ''files'': [[]]}).assign(files=[m.pd.DataFrame({''name'': [''a.csv'']})]))'
+        r: (function() { blank <- data.frame(figshare_id = "1", title = NA_character_, doi = NA_character_); blank$files <- list(data.frame()); blank$files <- list(data.frame(name = "a.csv")); metacheck:::.repo_info_ok(blank) })()
+  id: .repo_info_ok.record_with_files
+  py: tests.archives_services.parity_support.run
+  r: identity
+- args:
+    x:
+      $expr:
+        py: 'lambda m: __import__(''importlib'').import_module(''metacheck.archives.info_cache'')._repo_info_ok(m.pd.DataFrame({''title'': [''x''], ''error'': [''unfound'']}))'
+        r: metacheck:::.repo_info_ok(data.frame(title = "x", error = "unfound"))
+  id: .repo_info_ok.error_column
+  py: tests.archives_services.parity_support.run
+  r: identity
+- args:
+    x:
+      $expr:
+        py: 'lambda m: __import__(''importlib'').import_module(''metacheck.archives.info_cache'')._repo_info_ok(m.pd.DataFrame({''id'': [1]}))'
+        r: metacheck:::.repo_info_ok(data.frame(id = 1))
+  id: .repo_info_ok.other_frame
+  py: tests.archives_services.parity_support.run
+  r: identity
+- args:
+    paper:
+      $test_paper:
+        text:
+        - See aspredicted.org/abc_de and www.aspredicted.org/ABC_DE/ and more.
+        url:
+        - https://aspredicted.org/abc_de
+  compare:
+    ignore:
+    - paper_id
+  id: aspredicted_links.text_bare_and_marked
+  py: metacheck.archives.aspredicted.aspredicted_links
+  r: aspredicted_links

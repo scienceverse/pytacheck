@@ -244,6 +244,26 @@ CHAINS: dict[str, dict[str, Any]] = {
         "labels": ["labelled", "labelled", "labelled"],
     },
     "empty": {"structure": EMPTY, "columns": 0},
+    # data_check refused a repository for its number of files (#706): yellow, naming it
+    "empty_refused": {"structure": EMPTY, "columns": 0, "count_refused": True},
+    # the data/ item needs a data file under data/ at the top of the dataset, or in one folder
+    # (#695, point 33); dataset_description.json is missing in each
+    "data_dir_top": {
+        "structure": files([("raw.csv", "raw.csv", "data", None, None, [])]),
+        "columns": 1,
+    },
+    "data_dir_in": {
+        "structure": files([("raw.csv", "data/raw.csv", "data", None, None, [])]),
+        "columns": 1,
+    },
+    "data_dir_wrapped": {
+        "structure": files([("raw.csv", "project-v1/data/raw.csv", "data", None, None, [])]),
+        "columns": 1,
+    },
+    "data_dir_deep": {
+        "structure": files([("raw.csv", "a/b/data/raw.csv", "data", None, None, [])]),
+        "columns": 1,
+    },
     "psychsci": {"paper": "psychsci", "structure": GREEN_PARTIAL, "columns": 1},
     "psychsci_empty": {"paper": "psychsci", "structure": EMPTY},
     # bibr export schema 12.x papers (pytacheck's default reader) and a mixed list

@@ -2,7 +2,10 @@
   "id": "report_tables.all_failed",
   "ok": true,
   "error": null,
-  "warnings": [],
+  "warnings": [
+    "cannot open file '/does/not/exist/analysis.R': No such file or directory",
+    "cannot open file '/does/not/exist/helpers.R': No such file or directory"
+  ],
   "value": {
     "t": "list",
     "names": null,
@@ -22,9 +25,33 @@
             ]
           }
         ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "File",
+          "Reason"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "analysis.R",
+              "helpers.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "URL using bad/illegal format or missing URL:<br>URL rejected: No host present",
+              "URL using bad/illegal format or missing URL:<br>URL rejected: No host present"
+            ]
+          }
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

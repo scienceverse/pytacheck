@@ -15,6 +15,7 @@
       "summary_text",
       "summary_table",
       "gated_repos",
+      "archive_deposits",
       "partial_repos",
       "naming_issues",
       "repo_metadata",
@@ -23,6 +24,7 @@
       "roster_check",
       "group_no_evidence",
       "useless_files",
+      "symlinks",
       "view_only",
       "na_replace"
     ],
@@ -57,9 +59,13 @@
           "file_size",
           "file_type",
           "provider",
+          "osf_node",
+          "storage_size",
+          "storage_n",
           "repo_name",
           "data_type",
           "doc_role",
+          "file_kind",
           "group",
           "paper_id"
         ],
@@ -195,6 +201,54 @@
           {
             "t": "chr",
             "v": [
+              "vopri",
+              "vopri",
+              "vopri",
+              "vopri",
+              "vopri",
+              "vopri",
+              "vopri",
+              "vopri",
+              "vopub",
+              "vopub",
+              "vopub"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              7000,
+              7000,
+              7000,
+              7000,
+              7000,
+              7000,
+              7000,
+              7000,
+              7000,
+              7000,
+              7000
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4,
+              4,
+              4,
+              4,
+              4,
+              4,
+              4,
+              4,
+              4,
+              4,
+              4
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "overview?view_only=0123456789abcdef0123456789abcdef",
               "overview?view_only=0123456789abcdef0123456789abcdef",
               "overview?view_only=0123456789abcdef0123456789abcdef",
@@ -243,6 +297,22 @@
           {
             "t": "chr",
             "v": [
+              "code",
+              "code",
+              "code",
+              "code",
+              "data",
+              "data",
+              "archive",
+              "archive",
+              "code",
+              "data",
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "ex1",
               "ex1",
               "ex1",
@@ -280,7 +350,7 @@
           "#### Private repositories checked through a view-only or peer-review link",
           "The OSF project https://osf.io/vopri is private. Metacheck examined the files through the view_only link. As the preprint is public, and the OSF Files are accessible to anyone, consider making the OSF project public.",
           "#### Whose Deposits",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef' target='_blank'>osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef<\/a>\", \n\"<a href='https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef' target='_blank'>osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef<\/a>\", \n\"<a href='https://osf.io/vopri' target='_blank'>osf.io/vopri<\/a>\", \n\"<a href='https://osf.io/vopub/overview?view_only=0123456789abcdef0123456789abcdef' target='_blank'>osf.io/vopub/overview?view_only=0123456789abcdef0123456789abcdef<\/a>\"\n), \"Cited in\" = c(\"text\", \"text\", \"text\", \"text\"), Whose = c(\"the authors', for this paper\", \n\"the authors', for this paper\", \"the authors', for this paper\", \n\"the authors', for this paper\"), Why = c(\"a link in the main text, not shown to be anyone else's\", \n\"a link in the main text, not shown to be anyone else's\", \"a link in the main text, not shown to be anyone else's\", \n\"a link in the main text, not shown to be anyone else's\")), row.names = c(NA, \n-4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef' target='_blank'>osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef<\/a>\", \n\"<a href='https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef' target='_blank'>osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef<\/a>\", \n\"<a href='https://osf.io/vopub/overview?view_only=0123456789abcdef0123456789abcdef' target='_blank'>osf.io/vopub/overview?view_only=0123456789abcdef0123456789abcdef<\/a>\"\n), \"Cited in\" = c(\"text\", \"text\", \"text\"), Whose = c(\"the authors', for this paper\", \n\"the authors', for this paper\", \"the authors', for this paper\"\n), Why = c(\"a link in the main text, not shown to be anyone else's\", \n\"a link in the main text, not shown to be anyone else's\", \"a link in the main text, not shown to be anyone else's\"\n)), row.names = c(NA, -3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Repositories",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef' target='_blank'>osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef<\/a>\", \n\"<a href='https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef' target='_blank'>osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef<\/a>\", \n\"<a href='https://osf.io/vopub/overview?view_only=0123456789abcdef0123456789abcdef' target='_blank'>osf.io/vopub/overview?view_only=0123456789abcdef0123456789abcdef<\/a>\"\n), Platform = c(\"osf\", \"osf\", \"osf\"), \"All Files\" = c(4L, 4L, \n3L), \"Data Files\" = c(1L, 1L, 1L), \"Code Files\" = c(2L, 2L, 1L\n), READMEs = c(0L, 0L, 0L), Archives = c(1L, 1L, 1L)), row.names = c(NA, \n-3L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Files",
@@ -319,6 +389,11 @@
           "repo_own",
           "repo_others",
           "ref_others",
+          "file_share_n",
+          "icpsr_own_n",
+          "cran_own_n",
+          "archive_own_n",
+          "ref_own",
           "repo_view_only",
           "roster_mismatch"
         ],
@@ -407,8 +482,48 @@
             "t": "int",
             "v": [
               1,
-              2,
+              1,
               1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0
             ]
           },
           {
@@ -449,11 +564,44 @@
         "t": "df",
         "nrow": 0,
         "names": [
+          "paper_id",
           "repo_url",
           "repo_type",
           "repo_error"
         ],
         "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "paper_id",
+          "accession",
+          "archive",
+          "repo_url"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
           {
             "t": "chr",
             "v": []
@@ -474,7 +622,8 @@
         "names": [
           "paper_id",
           "repo_url",
-          "files_listed"
+          "files_listed",
+          "reason"
         ],
         "v": [
           {
@@ -487,6 +636,10 @@
           },
           {
             "t": "int",
+            "v": []
+          },
+          {
+            "t": "lgl",
             "v": []
           }
         ]
@@ -664,7 +817,7 @@
       },
       {
         "t": "df",
-        "nrow": 4,
+        "nrow": 3,
         "names": [
           "paper_id",
           "source",
@@ -677,9 +830,13 @@
           "dep_description",
           "dep_creators",
           "dep_orcids",
+          "dep_creator_families",
+          "dep_n_creators",
           "dep_type",
+          "dep_org",
           "dep_related",
           "dep_date",
+          "dep_updated",
           "dep_year",
           "osf_type",
           "osf_category",
@@ -704,7 +861,8 @@
           "citing",
           "citing_sections",
           "cff_dois",
-          "listing_cut"
+          "listing_cut",
+          "listing_short"
         ],
         "v": [
           {
@@ -712,14 +870,12 @@
             "v": [
               "p_vo_a",
               "p_vo_b",
-              "p_vo_b",
               "p_vo_c"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "text",
               "text",
               "text",
               "text"
@@ -730,14 +886,12 @@
             "v": [
               "https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef",
               "https://osf.io/vopri/overview?view_only=0123456789abcdef0123456789abcdef",
-              "https://osf.io/vopri",
               "https://osf.io/vopub/overview?view_only=0123456789abcdef0123456789abcdef"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "osf",
               "osf",
               "osf",
               "osf"
@@ -748,14 +902,12 @@
             "v": [
               "own_this",
               "own_this",
-              "own_this",
               "own_this"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "own",
               "own",
               "own",
               "own"
@@ -766,7 +918,6 @@
             "v": [
               "a link in the main text, not shown to be anyone else's",
               "a link in the main text, not shown to be anyone else's",
-              "a link in the main text, not shown to be anyone else's",
               "a link in the main text, not shown to be anyone else's"
             ]
           },
@@ -775,23 +926,12 @@
             "v": [
               null,
               null,
-              null,
               null
             ]
           },
           {
             "t": "chr",
             "v": [
-              null,
-              null,
-              null,
-              null
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              null,
               null,
               null,
               null
@@ -802,23 +942,12 @@
             "v": [
               null,
               null,
-              null,
               null
             ]
           },
           {
             "t": "chr",
             "v": [
-              null,
-              null,
-              null,
-              null
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              null,
               null,
               null,
               null
@@ -829,23 +958,12 @@
             "v": [
               null,
               null,
-              null,
               null
             ]
           },
           {
             "t": "chr",
             "v": [
-              null,
-              null,
-              null,
-              null
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              null,
               null,
               null,
               null
@@ -856,23 +974,12 @@
             "v": [
               null,
               null,
-              null,
               null
             ]
           },
           {
             "t": "chr",
             "v": [
-              null,
-              null,
-              null,
-              null
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              null,
               null,
               null,
               null
@@ -883,6 +990,13 @@
             "v": [
               null,
               null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
               null,
               null
             ]
@@ -891,6 +1005,61 @@
             "t": "chr",
             "v": [
               null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               null,
               null,
               null
@@ -901,7 +1070,6 @@
             "v": [
               4,
               4,
-              0,
               3
             ]
           },
@@ -910,7 +1078,6 @@
             "v": [
               true,
               true,
-              false,
               true
             ]
           },
@@ -919,7 +1086,6 @@
             "v": [
               true,
               true,
-              false,
               true
             ]
           },
@@ -928,14 +1094,12 @@
             "v": [
               true,
               true,
-              false,
               true
             ]
           },
           {
             "t": "lgl",
             "v": [
-              false,
               false,
               false,
               false
@@ -946,7 +1110,6 @@
             "v": [
               0,
               0,
-              0,
               0
             ]
           },
@@ -955,7 +1118,6 @@
             "v": [
               null,
               null,
-              null,
               null
             ]
           },
@@ -964,23 +1126,12 @@
             "v": [
               null,
               null,
-              null,
               null
             ]
           },
           {
             "t": "lgl",
             "v": [
-              null,
-              null,
-              null,
-              null
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              null,
               null,
               null,
               null
@@ -991,23 +1142,12 @@
             "v": [
               null,
               null,
-              null,
               null
             ]
           },
           {
             "t": "lgl",
             "v": [
-              null,
-              null,
-              null,
-              null
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              null,
               null,
               null,
               null
@@ -1018,6 +1158,13 @@
             "v": [
               null,
               null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
               null,
               null
             ]
@@ -1027,6 +1174,13 @@
             "v": [
               null,
               null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
               null,
               null
             ]
@@ -1036,14 +1190,12 @@
             "v": [
               null,
               null,
-              null,
               null
             ]
           },
           {
             "t": "lgl",
             "v": [
-              null,
               null,
               null,
               null
@@ -1053,6 +1205,13 @@
             "t": "lgl",
             "v": [
               false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
               false,
               false,
               false
@@ -1072,9 +1231,13 @@
           "file_size",
           "file_type",
           "provider",
+          "osf_node",
+          "storage_size",
+          "storage_n",
           "repo_name",
           "data_type",
-          "doc_role"
+          "doc_role",
+          "file_kind"
         ],
         "v": [
           {
@@ -1103,6 +1266,22 @@
           },
           {
             "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "dbl",
+            "v": []
+          },
+          {
+            "t": "int",
             "v": []
           },
           {
@@ -1198,6 +1377,9 @@
         ]
       },
       {
+        "t": "null"
+      },
+      {
         "t": "df",
         "nrow": 1,
         "names": [
@@ -1234,6 +1416,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

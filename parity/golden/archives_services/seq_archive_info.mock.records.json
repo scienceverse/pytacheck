@@ -1,0 +1,148 @@
+{
+  "id": "seq_archive_info.mock.records",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "seq_url",
+      "accession",
+      "repo_type",
+      "title",
+      "creators",
+      "organisation",
+      "publication_date",
+      "description",
+      "resource_type",
+      "related",
+      "error",
+      "study"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE149523",
+          "https://www.ebi.ac.uk/ena/browser/view/PRJNA770129",
+          "https://www.ebi.ac.uk/ena/browser/view/SRR7416431",
+          "https://www.ebi.ac.uk/biostudies/arrayexpress/studies/E-MTAB-6487",
+          "https://www.ebi.ac.uk/ena/browser/view/PRJEB00000"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "GSE149523",
+          "PRJNA770129",
+          "SRR7416431",
+          "E-MTAB-6487",
+          "PRJEB00000"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "geo",
+          "ena",
+          "ena",
+          "arrayexpress",
+          "ena"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "A GEO series",
+          "A study",
+          "A study",
+          "An experiment",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Manish Bais; Jane Doe",
+          null,
+          null,
+          "Luigi Naldini",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Some Institute",
+          "National Institute of Biological Sciences",
+          "National Institute of Biological Sciences",
+          "SR-Tiget",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2024-09-24",
+          "2021-10-05",
+          "2021-10-05",
+          "2019-01-01",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "One. Two.",
+          "What it holds.",
+          "What it holds.",
+          "Some text.",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Dataset",
+          "Dataset",
+          "Dataset",
+          "Dataset",
+          "Dataset"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "IsSupplementTo:10.1371/journal.pbio.1",
+          null,
+          null,
+          "IsSupplementTo:10.1/abc",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          "unfound"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "PRJNA770129",
+          "PRJNA477348",
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.40",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

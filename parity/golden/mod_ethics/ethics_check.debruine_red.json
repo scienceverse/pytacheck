@@ -37,7 +37,7 @@
       },
       {
         "t": "df",
-        "nrow": 10,
+        "nrow": 3,
         "names": [
           "text",
           "text_id",
@@ -49,67 +49,40 @@
           "header",
           "section_type",
           "ethics",
+          "sign",
           "live_data"
         ],
         "v": [
           {
             "t": "chr",
             "v": [
-              "Subjects were shown faces of ostensible playing partners manipulated to resemble either themselves or an unknown person.",
-              "Subjects were P1 for half of the games and P2 for the other half.",
-              "Subjects were presented with dollar values, not variables, and the arrows were not labelled.",
-              "Photographs of the subjects were taken prior to the experiment, on the pretext that they were needed in order to show the subjects' faces to their playing partners at other universities.",
-              "In the remaining four rounds, subjects were assigned the P2 role, but P1 was programmed to make a non-trusting move and terminate the game; these rounds generated no choice data, but were included to provide realism.",
-              "At the end of the session, subjects were paid the appropriate amount from one randomly chosen game, as promised at the beginning of the session.",
-              "The attractiveness ratings by the independent set of 10 judges also showed no difference; the faces that had served as self morphs for the original subjects were actually rated slightly less attractive (M = 4.11 ± 1.17 s.d. on a 10-point scale) than the non-self morphs (M = 4.27 ± 1.13 s.d.), but the difference was not signif icant.",
-              "These control players showed no statistically signif icant differences in either trusting or unself ish behaviour, while experimental subjects were signif icantly more trusting of self than non-self morphs ( p Ͻ 0.005).",
-              "If subjects are shown morphs made from their genetic or adopted siblings, the effect on trust should be completely absent or only present for morphs made from genetic siblings, inasmuch as they resemble the subject.",
-              "These control players showed no statistically signif icant differences in either trusting or unself ish behaviour, while experimental subjects were signif icantly more trusting of self than non-self morphs ( p Ͻ 0.005)."
+              "Photographs (neutral expression and centred) of 24 male and 24 female Caucasian students between the ages of 19 and 25 (mean age 21 years) were standardized for interpupillary distance and cropped to a standard size (320 × 400 pixels).",
+              "The same procedure was used to prepare the images of the 24 research participants ('subjects'), who ranged in age from 18 to 24 (mean age 21 years).",
+              "At the end of the session, subjects were paid the appropriate amount from one randomly chosen game, as promised at the beginning of the session."
             ]
           },
           {
             "t": "int",
             "v": [
-              5,
-              32,
-              35,
-              53,
-              68,
-              73,
-              93,
-              96,
-              124,
-              156
+              50,
+              52,
+              73
             ]
           },
           {
             "t": "int",
             "v": [
-              1,
-              5,
-              5,
               10,
-              13,
-              14,
-              22,
-              22,
-              29,
-              34
+              10,
+              14
             ]
           },
           {
             "t": "int",
             "v": [
-              0,
-              1,
-              1,
               2,
-              3,
-              3,
-              6,
-              6,
-              7,
-              12
+              2,
+              3
             ]
           },
           {
@@ -117,13 +90,6 @@
             "v": [
               null,
               null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
               null
             ]
           },
@@ -132,26 +98,12 @@
             "v": [
               null,
               null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
               null
             ]
           },
           {
             "t": "chr",
             "v": [
-              "debruine-fret",
-              "debruine-fret",
-              "debruine-fret",
-              "debruine-fret",
-              "debruine-fret",
-              "debruine-fret",
-              "debruine-fret",
               "debruine-fret",
               "debruine-fret",
               "debruine-fret"
@@ -160,58 +112,38 @@
           {
             "t": "chr",
             "v": [
-              "Abstract",
-              "1. INTRODUCTION",
-              "1. INTRODUCTION",
               "2. METHODS (a) Preparation of facial stimuli",
-              "(b) The trust game",
-              "(b) The trust game",
-              "3. RESULTS",
-              "3. RESULTS",
-              "4. DISCUSSION",
-              "Figure 5."
+              "2. METHODS (a) Preparation of facial stimuli",
+              "(b) The trust game"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "abstract",
-              "intro",
-              "intro",
               "method",
               "method",
-              "method",
-              "results",
-              "results",
-              "discussion",
-              "figure"
+              "method"
             ]
           },
           {
             "t": "lgl",
             "v": [
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
               null,
               null,
               null
             ]
           },
           {
+            "t": "chr",
+            "v": [
+              "own",
+              "own",
+              "own"
+            ]
+          },
+          {
             "t": "lgl",
             "v": [
-              true,
-              true,
-              true,
-              true,
-              true,
-              true,
-              true,
               true,
               true,
               true
@@ -222,19 +154,19 @@
       {
         "t": "chr",
         "v": [
-          "Based on the following text, we would expect an ethics approval statement, but it was not present:\n\n> Subjects were shown faces of ostensible playing partners manipulated to resemble either themselves or an unknown person.\n\n> Subjects were P1 for half of the games and P2 for the other half.\n\n> Subjects were presented with dollar values, not variables, and the arrows were not labelled.\n\n> Photographs of the subjects were taken prior to the experiment, on the pretext that they were needed in order to show the subjects' faces to their playing partners at other universities.\n\n> In the remaining four rounds, subjects were assigned the P2 role, but P1 was programmed to make a non-trusting move and terminate the game; these rounds generated no choice data, but were included to provide realism.\n\n> At the end of the session, subjects were paid the appropriate amount from one randomly chosen game, as promised at the beginning of the session.\n\n> The attractiveness ratings by the independent set of 10 judges also showed no difference; the faces that had served as self morphs for the original subjects were actually rated slightly less attractive (M = 4.11 ± 1.17 s.d. on a 10-point scale) than the non-self morphs (M = 4.27 ± 1.13 s.d.), but the difference was not signif icant.\n\n> These control players showed no statistically signif icant differences in either trusting or unself ish behaviour, while experimental subjects were signif icantly more trusting of self than non-self morphs ( p Ͻ 0.005).\n\n> If subjects are shown morphs made from their genetic or adopted siblings, the effect on trust should be completely absent or only present for morphs made from genetic siblings, inasmuch as they resemble the subject."
+          "The paper appears to report data that the authors collected from people or animals, but we found no ethics statement. Such data need one: approval by an ethics committee, or a reason why none was needed. We based this on the sentences below. A paper can describe someone else's study in the same words; if these data are not the authors' own, no statement is needed.\n\nWe based this on:\n\n> Photographs (neutral expression and centred) of 24 male and 24 female Caucasian students between the ages of 19 and 25 (mean age 21 years) were standardized for interpupillary distance and cropped to a standard size (320 × 400 pixels).\n\n> The same procedure was used to prepare the images of the 24 research participants ('subjects'), who ranged in age from 18 to 24 (mean age 21 years).\n\n> At the end of the session, subjects were paid the appropriate amount from one randomly chosen game, as promised at the beginning of the session."
         ]
       },
       {
         "t": "chr",
         "v": [
-          "red"
+          "yellow"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "1 of 1 paper appeared to involve live data collection and lacked an ethics approval statement."
+          "1 of 1 paper appeared to report data about people or animals that need an ethics statement, and lacked one."
         ]
       },
       {
@@ -244,9 +176,10 @@
           "paper_id",
           "ethics_approved",
           "ethics_statements",
+          "data_source",
           "needs_ethics",
-          "live_data_statements",
-          "states_no_participants"
+          "data_source_signs",
+          "data_source_statements"
         ],
         "v": [
           {
@@ -274,9 +207,21 @@
             ]
           },
           {
+            "t": "chr",
+            "v": [
+              "own"
+            ]
+          },
+          {
             "t": "lgl",
             "v": [
               true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "payment or a recruitment platform; a sample description"
             ]
           },
           {
@@ -286,23 +231,11 @@
               {
                 "t": "chr",
                 "v": [
-                  "Subjects were shown faces of ostensible playing partners manipulated to resemble either themselves or an unknown person.",
-                  "Subjects were P1 for half of the games and P2 for the other half.",
-                  "Subjects were presented with dollar values, not variables, and the arrows were not labelled.",
-                  "Photographs of the subjects were taken prior to the experiment, on the pretext that they were needed in order to show the subjects' faces to their playing partners at other universities.",
-                  "In the remaining four rounds, subjects were assigned the P2 role, but P1 was programmed to make a non-trusting move and terminate the game; these rounds generated no choice data, but were included to provide realism.",
-                  "At the end of the session, subjects were paid the appropriate amount from one randomly chosen game, as promised at the beginning of the session.",
-                  "The attractiveness ratings by the independent set of 10 judges also showed no difference; the faces that had served as self morphs for the original subjects were actually rated slightly less attractive (M = 4.11 ± 1.17 s.d. on a 10-point scale) than the non-self morphs (M = 4.27 ± 1.13 s.d.), but the difference was not signif icant.",
-                  "These control players showed no statistically signif icant differences in either trusting or unself ish behaviour, while experimental subjects were signif icantly more trusting of self than non-self morphs ( p Ͻ 0.005).",
-                  "If subjects are shown morphs made from their genetic or adopted siblings, the effect on trust should be completely absent or only present for morphs made from genetic siblings, inasmuch as they resemble the subject."
+                  "Photographs (neutral expression and centred) of 24 male and 24 female Caucasian students between the ages of 19 and 25 (mean age 21 years) were standardized for interpupillary distance and cropped to a standard size (320 × 400 pixels).",
+                  "The same procedure was used to prepare the images of the 24 research participants ('subjects'), who ranged in age from 18 to 24 (mean age 21 years).",
+                  "At the end of the session, subjects were paid the appropriate amount from one randomly chosen game, as promised at the beginning of the session."
                 ]
               }
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              false
             ]
           }
         ]
@@ -310,16 +243,9 @@
       {
         "t": "list",
         "names": [
-          "ethics_approved",
-          "states_no_participants"
+          "ethics_approved"
         ],
         "v": [
-          {
-            "t": "lgl",
-            "v": [
-              false
-            ]
-          },
           {
             "t": "lgl",
             "v": [
@@ -330,6 +256,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

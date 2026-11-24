@@ -22,7 +22,7 @@ from metacheck.statout.mplus import (
     export_mplus_html,
     import_mplus_output,
 )
-from metacheck.statout.spv import _read_lines
+from metacheck.statout.spv import _read_lines, _read_utf8_lines
 
 FIX = Path(__file__).resolve().parent / "fixtures" / "text"
 
@@ -140,3 +140,16 @@ def test_export_mplus_html(tmp_path: Path) -> None:
     assert "<h4>" not in html  # table titles are NA or equal the section
     empty = Path(export_mplus_html(FIX / "nosections.out", tmp_path / "e.html")).read_text()
     assert "No result tables could be recovered from this .out file." in empty
+
+
+def test_latin1_lines_are_read_as_latin1(tmp_path: Path) -> None:
+    """metacheck 0.4.4.9: a line that is not valid UTF-8 is read as Latin-1, the rest stays."""
+    p = tmp_path / "latin1.out"
+    p.write_bytes(
+        b"caf\xe9 header\nMplus VERSION 8.4\nINPUT INSTRUCTIONS\n  TITLE: caf\xe9 \xc3\xa9;\n"
+        b"  DATA: FILE = d.dat;\n\nSUMMARY OF ANALYSIS\n\nNumber of groups 1\n"
+    )
+    assert _mplus_is_genuine_output(p)
+    lines = _read_utf8_lines(p)
+    assert lines[0] == "caf\xe9 header"
+    assert "caf\xe9 \xc3\xa9" in str(_mplus_syntax_lines(lines))

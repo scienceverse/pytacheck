@@ -1,0 +1,74 @@
+{
+  "id": "repro_place_from_deposit.folders_the_path_names",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "placed",
+      "copy",
+      "none",
+      "tail"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "script",
+          "file",
+          "from",
+          "to"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "plot.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "popmap_Cm.txt"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "zip/output/ADMIXTURE/popmap/popmap_Cm.txt"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code/output/ADMIXTURE/popmap/popmap_Cm.txt"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "A"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          0
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          3,
+          1
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.40",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

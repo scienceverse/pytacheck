@@ -58,6 +58,8 @@
           "d_implied_indep_equal_n",
           "d_implied_indep_unequal_min",
           "d_implied_indep_unequal_max",
+          "d_implied_paired_gz",
+          "d_implied_indep_equal_n_g",
           "d_implied_n",
           "d_coherence",
           "d_coherence_assumption",
@@ -214,6 +216,22 @@
             "v": [
               null,
               null,
+              "0.735593220338983"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "1.42726049173923"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
               null
             ]
           },
@@ -238,7 +256,7 @@
             "v": [
               "No parseable d effect size found.",
               null,
-              "No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported."
+              "No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range, each also with Hedges' small-sample correction). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported."
             ]
           },
           {
@@ -322,7 +340,7 @@
           "For t-tests with a reported d, coherence checks yielded 1 no match.",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(c(\"The effect was significant, t(20) = 2.5, p = .02.\", \n\"The result was F(1, 30) = 5.1, p = .03.\")), names = \"\", row.names = c(NA, \n-2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
           "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating that effect sizes are often not reported:\n\n* Peng, C.-Y. J., Chen, L.-T., Chiang, H.-M., & Chiang, Y.-C. (2013). The Impact of APA and AERA Guidelines on Effect Size Reporting. Educational Psychology Review, 25(2), 157–209. doi:[10.1007/s10648-013-9218-2](https://doi.org/10.1007/s10648-013-9218-2).\n\nFor educational material on reporting effect sizes:\n\n* [Guide to Effect Sizes and Confidence Intervals](https://matthewbjane.quarto.pub/guide-to-effect-sizes-and-confidence-intervals/)\n\n:::\n",
-          "::: {.callout-tip title=\"All detected and assessed stats\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Sentence = c(\"The effect was significant, t(20) = 2.5, p = .02.\", \n\"The result was F(1, 30) = 5.1, p = .03.\", \"A second paper found t(15) = 3.1, p = .007, d = 0.8.\"\n), \"Effect Size\" = c(NA, NA, \"d = 0.8\"), \"Reported Test\" = c(\"t(20) = 2.5\", \n\"F(1, 30) = 5.1\", \"t(15) = 3.1\"), \"Test Type\" = c(\"t-test\", \"F-test\", \n\"t-test\"), \"d Coherence\" = c(\"indeterminate\", NA, \"no_match\"), \n    \"d Assumption\" = c(\"none\", NA, \"none\"), \"d Coherence Note\" = c(\"No parseable d effect size found.\", \n    NA, \"No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.\"\n    ), \"eta Coherence\" = c(NA, \"indeterminate\", NA), \"eta Assumption\" = c(NA, \n    \"none\", NA), \"eta Coherence Note\" = c(NA, \"No parseable eta-squared effect size found.\", \n    NA)), row.names = c(NA, -3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n"
+          "::: {.callout-tip title=\"All detected and assessed stats\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Sentence = c(\"The effect was significant, t(20) = 2.5, p = .02.\", \n\"The result was F(1, 30) = 5.1, p = .03.\", \"A second paper found t(15) = 3.1, p = .007, d = 0.8.\"\n), \"Effect Size\" = c(NA, NA, \"d = 0.8\"), \"Reported Test\" = c(\"t(20) = 2.5\", \n\"F(1, 30) = 5.1\", \"t(15) = 3.1\"), \"Test Type\" = c(\"t-test\", \"F-test\", \n\"t-test\"), \"d Coherence\" = c(\"indeterminate\", NA, \"no_match\"), \n    \"d Assumption\" = c(\"none\", NA, \"none\"), \"d Coherence Note\" = c(\"No parseable d effect size found.\", \n    NA, \"No match under tested assumptions (paired dz, independent equal-n, independent unequal-n range, each also with Hedges' small-sample correction). Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.\"\n    ), \"eta Coherence\" = c(NA, \"indeterminate\", NA), \"eta Assumption\" = c(NA, \n    \"none\", NA), \"eta Coherence Note\" = c(NA, \"No parseable eta-squared effect size found.\", \n    NA)), row.names = c(NA, -3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n"
         ]
       },
       {
@@ -393,6 +411,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

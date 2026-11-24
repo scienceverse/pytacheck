@@ -1,0 +1,94 @@
+{
+  "id": "sync04418.read_head_attrs.mixed.rds",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "names",
+      "attrs",
+      "utf8_repaired"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "id",
+          "f",
+          "t",
+          "u"
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "id",
+          "f",
+          "t",
+          "u"
+        ],
+        "v": [
+          {
+            "t": "null"
+          },
+          {
+            "t": "list",
+            "names": [
+              "class"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "factor"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "class",
+              "tzone"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "POSIXct",
+                  "POSIXt"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "UTC"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "label"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Length"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.40",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

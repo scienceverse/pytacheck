@@ -75,6 +75,14 @@ def read_head_typed(path: str, n_rows: float | None = None) -> dict[str, Any] | 
     return _typed(F.data_read_head(str(ROOT / path), n_rows=n))
 
 
+def blank_cols_dropped(path: str) -> dict[str, Any]:
+    """The width of a whole file read by ``data_read_head()`` and how many blank trailing columns
+    were left out (``attr(d, "blank_cols_dropped")``, NULL when none)."""
+    d = F.data_read_head(str(ROOT / path), n_rows=math.inf)
+    assert d is not None
+    return {"ncol": d.shape[1], "dropped": d.attrs.get("blank_cols_dropped")}
+
+
 def manifest_scenario(scenario: str) -> Any:
     """Run ``.data_check_write_manifest()`` for a review scenario."""
     with tempfile.TemporaryDirectory() as tmp:

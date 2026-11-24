@@ -130,6 +130,18 @@ def fake_chain(name: str, paper: Any = None, file: str = "chains.json") -> Any:
     gne = spec.get("group_no_evidence")
     if gne == "NA":
         gne = None
+    extras: dict[str, Any] = {"structure": structure(spec), "group_no_evidence": gne}
+    if spec.get("count_refused"):
+        from metacheck.modules._count_refused import _repo_count_message
+
+        repo = "https://doi.org/10.5281/zenodo.3826426"
+        extras["count_refused"] = pd.DataFrame(
+            {
+                "repo_url": [repo],
+                "n_files": pd.Series([369548], dtype="int32"),
+                "message": [_repo_count_message(repo, 369548, 100000)],
+            }
+        )
 
     return ModuleOutput(
         module="data_check",
@@ -142,7 +154,7 @@ def fake_chain(name: str, paper: Any = None, file: str = "chains.json") -> Any:
         summary_table=pd.DataFrame({"paper_id": pd.array(ids, dtype="string")}),
         paper=paper,
         prev_outputs=prev,
-        extras={"structure": structure(spec), "group_no_evidence": gne},
+        extras=extras,
     )
 
 

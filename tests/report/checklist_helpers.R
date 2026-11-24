@@ -241,6 +241,19 @@ rc_files <- function(kind) {
       naming = NULL, useless = NULL
     ),
     no_paths = list(files = data.frame(file_name = "a.csv"), naming = NULL, useless = NULL),
+    # every file inside a junk folder (#703)
+    junk_only = list(files = NULL, naming = NULL,
+                     useless = data.frame(repo_url = "https://osf.io/abcde",
+                                          file_path = c("__MACOSX/._a.csv", "__MACOSX/._b.csv"))),
+    # more lines than the tree draws (.file_tree_max_lines, #702)
+    many = {
+      n <- 2100
+      p <- sprintf("site%03d/plot%02d/day%06d.csv", rep(1:30, length.out = n),
+                   rep(1:20, length.out = n), seq_len(n))
+      list(files = data.frame(repo_url = "https://zenodo.org/records/1", file_name = basename(p),
+                              file_path = p, data_type = "data", doc_role = NA),
+           naming = NULL, useless = NULL)
+    },
     stop("no files ", kind)
   )
 }

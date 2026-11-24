@@ -51,7 +51,8 @@ def test_ref_pubpeer_no_references() -> None:
 def test_ref_pubpeer_no_bib_match() -> None:
     out = module_run(H.demo_no_match(), "ref_pubpeer")
     assert out.traffic_light == "info"
-    assert out.table["total_comments"].sum() == 3
+    # Statcheck's comment is taken out of the count where others commented too (#695, point 14)
+    assert out.table["total_comments"].sum() == 2
 
 
 @pytest.mark.usefixtures("apis")
@@ -65,7 +66,8 @@ def test_ref_pubpeer_no_dois() -> None:
 def test_ref_pubpeer_relevant_references(demo: pc.Paper) -> None:
     out = module_run(demo, "ref_pubpeer")
     assert out.traffic_light == "info"
-    assert out.table["total_comments"].sum() == 3
+    # Statcheck's comment is taken out of the count where others commented too (#695, point 14)
+    assert out.table["total_comments"].sum() == 2
     assert list(out.table.columns) == [
         "paper_id",
         "bib_id",
@@ -78,12 +80,12 @@ def test_ref_pubpeer_relevant_references(demo: pc.Paper) -> None:
     # the Statcheck-only reference (10.1037/0003-066x.54.6.408) is dropped
     assert out.table["doi"].tolist() == ["10.1177/0956797614520714"]
     assert out.summary_text == "You cited 1 reference with comments in PubPeer."
-    assert out.summary_table["pubpeer_comments"].tolist() == [3.0]
+    assert out.summary_table["pubpeer_comments"].tolist() == [2.0]
     assert out.extras["na_replace"] == 0
     text, table = out.report
     assert text.startswith("We checked 5 references with DOIs. You cited 1 reference")
     assert isinstance(table, ReportTable)
-    assert list(table.data.columns) == ["Reference", "Comments", "PubPeer Link"]
+    assert list(table.data.columns) == ["Reference", "Comments", "Commenters", "PubPeer Link"]
     assert table.maxrows == 10
     assert table.data["PubPeer Link"].iloc[0] == (
         "<a href='https://pubpeer.com/publications/3FA648ECECB88454C91804F09E2E56' "
@@ -455,13 +457,15 @@ def test_ref_summary_mixed_accuracy_types_no_longer_an_error() -> None:
 
 def test_ref_pubpeer_edge_feedbacks(mock_pubpeer: None) -> None:
     out = module_run(H.pp_odd(), "ref_pubpeer")
-    # empty users kept, null total_comments / ["Statcheck"] dropped, "statcheck" kept
+    # empty users kept, null total_comments dropped; Statcheck (in any case) is one comment
+    # less and no commenter, so "statcheck" with one comment is dropped and ["Statcheck"] with
+    # four keeps three (#695, point 14)
     assert out.table["doi"].tolist() == [
         "10.9999/pp.emptyusers",
+        "10.9999/pp.statlist",
         "10.9999/pp.emptyurl",
-        "10.9999/pp.statcase",
     ]
-    assert out.table["users"].tolist() == ["", "Empty Url", "statcheck"]
+    assert out.table["users"].tolist() == ["", "", "Empty Url"]
     # U118: a reference without a URL is listed without a link (metacheck: an
     # empty report table ""), with or without a url column
     for paper in (H.pp_nourl_some(), H.pp_nourl_only()):
@@ -489,3 +493,30 @@ def test_empty_paperlist(name: str) -> None:
     assert out.traffic_light == "na"
     assert out.summary_table.columns.tolist() == ["paper_id"]
     assert len(out.summary_table) == 0
+
+
+def test_ref_pubpeer_leaves_statchecks_comment_out_of_the_count(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # test-module-ref.R: "ref_pubpeer leaves Statcheck's comment out of the count (#695, point 14)"
+    import metacheck.db.pubpeer as pub
+    from metacheck.papers.tables import ref_table
+
+    p = pc.demopaper()
+    dois = list(dict.fromkeys(d for d in ref_table(p)["doi"].dropna() if d))[:3]
+    found = pd.DataFrame(
+        {
+            "doi": dois,
+            "total_comments": [1.0, 3.0, 2.0],
+            "url": "https://pubpeer.com/x",
+            "users": ["Statcheck", "Statcheck, A. Reader", "A. Reader, B. Writer"],
+        }
+    )
+    monkeypatch.setattr(pub, "pubpeer_comments", lambda doi, *a, **k: found)
+    mo = module_run(p, "ref_pubpeer")
+    # Statcheck alone: left out; with others: one comment less, and not a commenter
+    assert set(mo.table["doi"]) == set(dois[1:])
+    row = mo.table[mo.table["doi"] == dois[1]].iloc[0]
+    assert row["total_comments"] == 2
+    assert row["users"] == "A. Reader"
+    assert "Commenters" in mo.report[1].data.columns

@@ -133,15 +133,37 @@ def _repo_info_cache_put(host: str, id: Any, value: Any) -> Any:
 def _repo_info_ok(value: Any) -> bool:
     """Port of R/repo-info-cache.R::.repo_info_ok(): is a listing worth caching?
 
-    Only a data frame with no ``error`` column, or an all-missing one.
+    Only a data frame with no ``error`` column, or an all-missing one. A one-row listing
+    without a title, a DOI and any file is not kept either: a platform's answer without the
+    record's fields was saved as an empty repository, and every later run read it so
+    (metacheck #711); a real record has at least one of them.
     """
     import pandas as pd
 
     if value is None or not isinstance(value, pd.DataFrame):
         return False
-    if "error" not in value.columns:
-        return True
-    return bool(value["error"].isna().all())
+    if "error" in value.columns and not bool(value["error"].isna().all()):
+        return False
+    if len(value) == 1 and all(c in value.columns for c in ("title", "doi", "files")):
+
+        def no_text(x: Any) -> bool:
+            if x is None:
+                return True
+            if isinstance(x, list | tuple | pd.Series):
+                x = list(x)
+                return len(x) == 0 or all(is_missing(v) or str(v) == "" for v in x)
+            return is_missing(x) or str(x) == ""
+
+        files = value["files"].iloc[0]
+        if files is None:
+            no_files = True
+        elif hasattr(files, "__len__") and not isinstance(files, str):
+            no_files = len(files) == 0
+        else:
+            no_files = is_missing(files)
+        if no_text(value["title"].iloc[0]) and no_text(value["doi"].iloc[0]) and no_files:
+            return False
+    return True
 
 
 def _repo_info_list_ok(value: Any) -> bool:

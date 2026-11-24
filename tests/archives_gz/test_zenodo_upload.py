@@ -517,7 +517,9 @@ def test_zenodo_zip_members(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> 
             "data" if n.endswith(".csv") else "materials" for n in names
         ],
     )
-    out = zenodo._zenodo_zip_members("https://x/z.zip", str(tmp_path), keep_types="data")
+    out = zenodo._zenodo_zip_members(
+        "https://x/z.zip", str(tmp_path), keep_types="data", max_file_size=10
+    )
     assert fetched == [["d/data.csv"]]  # too big and unknown-size members are skipped
     assert out["ok"].tolist() == [True]
 

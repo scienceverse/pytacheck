@@ -60,6 +60,27 @@ def ec_paper(text: list[str | None], section_type: list[str] | None = None) -> d
     }
 
 
+def ds_paper(
+    abstract: list[str] | None = None,
+    body: list[str] | None = None,
+    header: str = "Method",
+    title: str = "Test Paper",
+) -> dict[str, Any]:
+    """A paper with a title, an abstract and one more part (``ds_paper()`` of both helpers)."""
+    abstract = abstract or []
+    body = body or []
+    return {
+        "$expr": {
+            "r": HELPERS_R
+            + f"ds_paper(abstract = {r_chr(abstract) if abstract else 'character(0)'}, "
+            f"body = {r_chr(body) if body else 'character(0)'}, header = {json.dumps(header)}, "
+            f"title = {json.dumps(title)})",
+            "py": f"{SUPPORT}.ds_paper({py_list(abstract)}, {py_list(body)}, "
+            f"{header!r}, title={title!r})",
+        }
+    }
+
+
 def ec_papers(ids: list[str], texts: list[list[str | None]]) -> dict[str, Any]:
     r_texts = "list(" + ", ".join(r_chr(t) for t in texts) + ")"
     return {
@@ -74,7 +95,7 @@ def read(*paths: str) -> dict[str, Any]:
     return {"$read": list(paths)}
 
 
-# One sentence per ethics pattern (in the module's pattern order), then near misses.
+# A sentence for (nearly) every ethics pattern, then near misses.
 SWEEP = [
     "Consent forms were filed with the Institutional Review Board.",
     "An Independent Ethics Committee oversaw the trial.",
@@ -139,6 +160,16 @@ SWEEP = [
     "The study was deemed exempt.",
     "The Declaration of Helsinki.",
     "The Helsinki Declaration.",
+    # the patterns added in metacheck 0.4.4.37
+    "The Bioethics Committee was consulted.",
+    "The Ethik-Kommission was consulted.",
+    "The Swedish Ethical Review Authority was consulted.",
+    "The Human Subjects Protection Office was consulted.",
+    "The Office for Human Subjects Protection was consulted.",
+    "Ethical review was waived.",
+    "This did not require ethical approval.",
+    "No further ethics review was needed.",
+    "This falls within the scope of the ethical review.",
     # near misses
     "We used the recognition heuristic (REC/basic) to forecast the rank order.",
     "Ethical decision-making was measured.",
@@ -451,6 +482,193 @@ def add_cases() -> None:
                 ["No human subjects were involved in this study."],
                 ["Participants were recruited online."],
                 ["Participants were recruited online.", "We did not involve human participants."],
+            ],
+        ),
+    )
+
+    # where the data came from (metacheck 0.4.4.37, #695 point 18: .data_source())
+    own = "Participants were recruited online and gave informed consent."
+    case("ethics_check.source.own_no_statement", ds_paper(body=[own], header="Participants"))
+    case(
+        "ethics_check.source.own_with_statement",
+        ds_paper(
+            body=[own, "This study was approved by the institutional review board."],
+            header="Participants",
+        ),
+    )
+    case(
+        "ethics_check.source.one_sign_in_method",
+        ds_paper(body=["Participants were recruited online."], header="Participants"),
+    )
+    case(
+        "ethics_check.source.one_sign_elsewhere",
+        ds_paper(body=["Participants were recruited online."], header="Discussion"),
+    )
+    case(
+        "ethics_check.source.negation_is_no_statement",
+        ds_paper(
+            body=["Participants were recruited online.", "No participants were excluded."],
+            header="Participants",
+        ),
+    )
+    case(
+        "ethics_check.source.others_study",
+        ds_paper(
+            body=[
+                "For instance, in a study by Mazar and Zhong (2010, study 3) participants were "
+                "recruited online and gave informed consent."
+            ],
+            header="Introduction",
+        ),
+    )
+    case(
+        "ethics_check.source.year_is_no_citation",
+        ds_paper(
+            body=["In 2021, participants were recruited online and gave informed consent."],
+            header="Introduction",
+        ),
+    )
+    case(
+        "ethics_check.source.review",
+        ds_paper(
+            abstract=["We conducted a systematic review and meta-analysis of 35 studies."],
+            body=[
+                "Databases were searched in May 2024.",
+                "The 21 included studies enrolled a total of 7,035 participants who gave "
+                "informed consent.",
+            ],
+        ),
+    )
+    case(
+        "ethics_check.source.commentary",
+        ds_paper(
+            abstract=["In this commentary, we argue that preregistration is useful."],
+            body=["Participants were recruited online in the original study (Smith, 2019)."],
+        ),
+    )
+    case(
+        "ethics_check.source.no_data_statements",
+        ds_paper(
+            body=[
+                "No human subjects were involved in this study.",
+                "We analysed country-level mortality data.",
+                "Aggregate data were taken from Eurostat.",
+            ]
+        ),
+    )
+    case(
+        "ethics_check.source.theory",
+        test_paper(["This paper presents a theoretical model of decision-making."]),
+    )
+    for src in ("UK Biobank", "British Cohort Study"):
+        case(
+            f"ethics_check.source.open_resource.{src.split()[0].lower()}",
+            ds_paper(
+                abstract=[f"We analysed data from the {src} ."],
+                body=[
+                    f"Data were obtained from the {src} resource.",
+                    "Participants had a mean age of 56 years.",
+                ],
+            ),
+        )
+    case(
+        "ethics_check.source.existing_records",
+        ds_paper(
+            abstract=["This retrospective cohort study used electronic health records."],
+            body=[
+                "We retrospectively reviewed the records of 412 patients treated at the "
+                "university hospital.",
+                "Consent was waived because the data were anonymised.",
+            ],
+        ),
+    )
+    case(
+        "ethics_check.source.existing_unclear",
+        ds_paper(
+            abstract=["This is a secondary analysis of existing data."],
+            body=[
+                "We used data from the Healthy Minds Study.",
+                "The analytic sample comprised 2,004 students.",
+            ],
+        ),
+    )
+    case(
+        "ethics_check.source.protocol",
+        ds_paper(
+            body=[
+                "Participants will be recruited online and will be asked to give informed consent."
+            ]
+        ),
+    )
+    case(
+        "ethics_check.source.uncertain",
+        ds_paper(body=["We tested the model on new data."]),
+    )
+    case(
+        "ethics_check.source.no_text", {"$expr": {"r": "paper('empty')", "py": "pc.paper('empty')"}}
+    )
+    case(
+        "ethics_check.source.paperlist",
+        {
+            "$expr": {
+                "r": HELPERS_R
+                + 'paperlist(ds_paper(body = c("Participants were recruited and gave informed '
+                'consent.", "This study was approved by the ethics committee."), '
+                'header = "Participants", id = "a"), ec_paper('
+                '"This paper presents a theoretical model of decision-making.", "b"))',
+                "py": "pc.PaperList(["
+                f"{SUPPORT}.ds_paper([], ['Participants were recruited and gave informed "
+                "consent.', 'This study was approved by the ethics committee.'], "
+                f"'Participants', id='a'), {SUPPORT}.ec_paper("
+                "['This paper presents a theoretical model of decision-making.'], 'b')])",
+            }
+        },
+    )
+    # more committee names and exemptions count as statements; a technical standard and a
+    # template line do not
+    case(
+        "ethics_check.statements.more_names",
+        ec_papers(
+            [f"s{i}" for i in range(10)],
+            [
+                [
+                    "This study was evaluated and approved by the ETH Zurich Ethics Commission as "
+                    "proposal EK-2023-N-258."
+                ],
+                ["The empirical study was approved by the Bioethics Commission of the university."],
+                [
+                    "It was approved by the Regional Committees for Medical and Health Research "
+                    "Ethics (2017/2205)."
+                ],
+                [
+                    "All procedures were approved by the University of Nebraska-Lincoln Internal "
+                    "Review Board."
+                ],
+                ["The Swedish Ethical Review Authority approved the study protocol."],
+                [
+                    "The data were collected under a protocol approved by the Office for Human "
+                    "Subjects Protection at Florida State University."
+                ],
+                ["This secondary analysis did not require further ethical review."],
+                ["As such, this work was exempt from formal human research ethics review."],
+                ["This study was approved by the XXX University ethics committee."],
+                [
+                    "The study received ethical approval from the institutional review board (EK "
+                    "227052019). [INSERT TABLE 1 HERE]"
+                ],
+            ],
+        ),
+    )
+    case(
+        "ethics_check.statements.not_statements",
+        ec_papers(
+            ["n1", "n2"],
+            [
+                ["B was the IEC 62471 blue-light hazard function."],
+                [
+                    "RT was recorded in milliseconds. [Add ethics approval, recruitment, and "
+                    "stimulus details here.]"
+                ],
             ],
         ),
     )

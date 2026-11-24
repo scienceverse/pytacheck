@@ -12,6 +12,7 @@ files copied to where a script looked for them, and the report sentences on each
 
 from __future__ import annotations
 
+import math
 import os
 import re
 from collections.abc import Mapping, Sequence
@@ -37,7 +38,6 @@ from metacheck.codecheck.core import _json_load
 from metacheck.datacheck.files import _utf8_lines
 from metacheck.report.blocks import scroll_table
 from metacheck.repro.core import (
-    _LFS_HEAD,
     _basename,
     _bs2fs,
     _chr_list,
@@ -52,7 +52,7 @@ from metacheck.repro.core import (
     _paste_lines,
     _portable_path,
     _r_dirname,
-    _read_lines,
+    _read_utf8_lines,
     _repro_md5,
     _repro_neutralise_env_calls,
     _repro_norm_rel,
@@ -64,6 +64,7 @@ from metacheck.repro.core import (
     _write_lines,
 )
 from metacheck.repro.outcomes import _repro_mb, _repro_unopened_files
+from metacheck.utils import _is_web_address, _lfs_pointer_size
 
 # ---------------------------------------------------------------------------
 # small helpers
@@ -341,7 +342,9 @@ def _repro_name_report(corrections: pd.DataFrame, execute: bool = False) -> list
 
 
 def _repro_path_fix_text(
-    rewrite_list: Mapping[str, pd.DataFrame | None], execute: bool = False
+    rewrite_list: Mapping[str, pd.DataFrame | None],
+    execute: bool = False,
+    absent: Sequence[str | None] | None = None,
 ) -> str:
     """Port of ``R/reproducibility_check.R::.repro_path_fix_text()``.
 
@@ -350,7 +353,9 @@ def _repro_path_fix_text(
     path on their computer, a path from another folder, or a file that is elsewhere in
     the repository (see :func:`_repro_keep_working_refs`). One string, since the module
     adds sentences to it. *rewrite_list* holds a ``repro_rewrite_paths()`` result per
-    script, named by script.
+    script, named by script. *absent* holds the names the code reads that the repository
+    does not hold (the module's unresolved references, which leave out names the code
+    builds and files other scripts write).
     """
     fixes: list[tuple[str | None, str | None, str | None]] = []
     for f, d in rewrite_list.items():
@@ -376,6 +381,18 @@ def _repro_path_fix_text(
             and target[i] != ref[i]
         )
     n = len(fixes)
+    # paths to files the deposit does not hold: "every data path works" was said of reports
+    # whose scripts then stopped on missing files (#648, K8f)
+    missing = _unique(a for a in (absent or ()) if a is not None and a != "")
+    if n == 0 and missing:
+        k = len(missing)
+        more = f", and {k - 10} more" if k > 10 else ""
+        listed_absent = ", ".join(f"`{a}`" for a in missing[:10])
+        return (
+            "The data paths in the code to files the repository holds work as deposited, "
+            f"but {k:d} path{plural(k)} name{plural(k, 's', '')} a file the repository does "
+            f"not hold: {listed_absent}{more}."
+        )
     if n == 0:
         return "Every data path in the code works in the repository as deposited."
     shown = fixes[:10]
@@ -482,28 +499,25 @@ def _repro_fetch_files(
     from metacheck.archives import download
 
     mask = [bool(r) for r in rows]
-    counts: dict[str, float] = {}
-    if "repo_url" in structure_df.columns:
-        for u in _chr_list(structure_df["repo_url"]):
-            if u is not None:
-                counts[u] = counts.get(u, 0) + 1
     try:
         # downloaded under the path in the deposit, where the cache keeps it, not where
-        # unpacking its archive puts it in the run (#648)
-        want = structure_df.loc[mask].copy()
-        if "file_path_deposit" in want.columns:
-            deposit = list(want["file_path_deposit"])
-            current = list(want["file_path"]) if "file_path" in want.columns else deposit
-            want["file_path"] = pd.Series(
+        # unpacking its archive puts it in the run (#648). The whole listing, under the same
+        # paths, gives the file counts and the choice of files for the budget (#699).
+        listing = structure_df.copy()
+        if "file_path_deposit" in listing.columns:
+            deposit = list(listing["file_path_deposit"])
+            current = list(listing["file_path"]) if "file_path" in listing.columns else deposit
+            listing["file_path"] = pd.Series(
                 [d if not is_missing(d) else c for d, c in zip(deposit, current, strict=True)],
-                index=want.index,
+                index=listing.index,
                 dtype="string",
             )
+        want = listing.loc[mask]
         dl = download.download_repo_files(
             want,
             max_file_size=max_file_size,
             max_download_size=max_download_size,
-            repo_file_counts=counts,
+            repo_listing=listing,
             cache=cache,
             skip_on_api_limit=skip_on_api_limit,
         )
@@ -766,12 +780,44 @@ def _repro_place_files(
                 and len(set(_repro_md5([f"{root_s}/{q}" for q in cand]))) == 1
             ):
                 cand = cand[:1]
+            # Of several that differ, the one in the folders the path names: the deposit of
+            # 10.1111/1365-2745.14340 has popmap_Cm.txt in two folders, and the script asked
+            # for output/ADMIXTURE/popmap/popmap_Cm.txt (#590). Only when one matches more
+            # folders than every other, and at least one.
+            if len(cand) > 1:
+                depth = _repro_path_tail_match(p, cand)
+                top = max(depth)
+                best = [j for j, d in enumerate(depth) if d == top]
+                if top >= 2 and len(best) == 1:
+                    cand = [cand[best[0]]]
             if len(cand) != 1:
                 continue
             _dir_create(os.path.dirname(dest))
             if _copy_file(f"{root_s}/{cand[0]}", dest):
                 rows.append((s, cast(str, _basename(p)), cand[0], to))
     return _placed_frame(rows)
+
+
+def _repro_path_tail_match(want: str, cand: Sequence[str]) -> list[int]:
+    """Port of ``.repro_path_tail_match()``.
+
+    For each path of *cand*, how many of its last parts (the file name and the folders
+    above it) are the same as the last parts of *want*, without regard to capitals: 3 for
+    ``"x/output/RAxML/popmap_HC.txt"`` against ``"output/RAxML/popmap_HC.txt"``.
+    """
+
+    def parts(x: str) -> list[str]:
+        return [q for q in reversed(x.replace("\\", "/").lower().split("/")) if q and q != "."]
+
+    w = parts(want)
+    out: list[int] = []
+    for cp in cand:
+        c2 = parts(cp)
+        k = 0
+        while k < min(len(w), len(c2)) and w[k] == c2[k]:
+            k += 1
+        out.append(k)
+    return out
 
 
 def _repro_place_written(
@@ -913,6 +959,8 @@ def _repro_make_failed_write_folders(
     t_name = _chr_or_none(run_tbl, "file_name")
     t_dir = _chr_or_none(run_tbl, "run_dir")
     rows: list[tuple[str, str]] = []
+    # folders made here, for this or another script, now or in a pass before
+    made_by_us: list[str] = _unique(f for v in seen.values() for f in v)
     for s in [n for n, o in zip(r_name, r_outcome, strict=True) if o == "errored"]:
         if s is None or s not in r_name or s not in t_name:
             continue
@@ -932,13 +980,20 @@ def _repro_make_failed_write_folders(
             if not to or to == "." or to in list(seen.get(s, [])):
                 continue
             dest = f"{root_s}/{_portable_path(to)}"
+            # A folder made for another script that stopped on it too: this script runs
+            # once more as well. In 10.1111/1365-2664.14445 four figure scripts stopped on
+            # "Figures/", which was made for the first, and the other three were not run
+            # again (#590)
             if os.path.isdir(dest):
+                if to in made_by_us:
+                    rows.append((s, to))
                 continue
             try:
                 os.makedirs(dest, exist_ok=True)
             except OSError:
                 continue
             rows.append((s, to))
+            made_by_us.append(to)
     return _frame(
         {
             "script": ("string", [r[0] for r in rows]),
@@ -957,7 +1012,8 @@ def _repro_folders_made_text(made: pd.DataFrame | None) -> str:
         return ""
     scripts = _chr_list(made["script"])
     n_s = len(_unique(scripts))
-    n = len(made)
+    # one folder made for several scripts counts once (#590)
+    n = len(_unique(_chr_list(made["folder"])))
     listed = "; ".join(
         f"`{f}` for `{s}`" for f, s in zip(_chr_list(made["folder"]), scripts, strict=True)
     )
@@ -1091,19 +1147,17 @@ def _repro_lfs_stopped(
     if results is None or len(results) == 0:
         return {}
     top = os.fspath(root)
-    pointers: list[str] = []
-    for rel in _list_files(top):
-        if grepl(r"/(_rlib|_pylib2?)/", _bs2fs(f"{top}/{rel}")):
-            continue
-        path = f"{top}/{rel}"
-        try:
-            if os.path.getsize(path) >= 1024:
-                continue
-            first = _read_lines(path)[:1]
-        except OSError:
-            continue
-        if first and first[0].startswith(_LFS_HEAD):
-            pointers.append(cast(str, _basename(path)))
+    files = [
+        f"{top}/{rel}"
+        for rel in _list_files(top)
+        if not grepl(r"/(_rlib|_pylib2?)/", _bs2fs(f"{top}/{rel}"))
+    ]
+    # a pointer that states no size (-1) is still a pointer
+    pointers = [
+        cast(str, _basename(f))
+        for f, st in zip(files, _lfs_pointer_size(files), strict=True)
+        if not math.isnan(st)
+    ]
     ptr = _unique(pointers)
     if not ptr:
         return {}
@@ -1167,8 +1221,15 @@ def _repro_ref_checkable(d: pd.DataFrame, built: Sequence[str | None] = ()) -> l
         b = base[i]
         piece = bool(grepl(r"^[._]", b)) or "." not in (b or "")
         placeholder = bool(grepl(r"[%{}$*]|: ", ref[i]))
+        # a file read from a web address is not one the deposit should hold (#695);
+        # a Windows drive written as "C://" is a path, not a web address (#723)
+        web = _is_web_address(ref[i])
         out.append(
-            not is_call[i] and not piece and not placeholder and _tolower(b) not in built_set
+            not is_call[i]
+            and not piece
+            and not placeholder
+            and not web
+            and _tolower(b) not in built_set
         )
     return out
 
@@ -2121,7 +2182,7 @@ def _repro_neutralise_rprofile(root: str | os.PathLike[str]) -> int:
     n = 0
     for path in sorted(paths):
         try:
-            txt: list[str | None] = list(_read_lines(path))
+            txt: list[str | None] = list(_read_utf8_lines(path))
         except OSError:
             continue
         new, k = _repro_neutralise_env_calls(txt)
@@ -2725,7 +2786,9 @@ def _repro_rewrite_preview(dir: str | os.PathLike[str]) -> pd.DataFrame:
                 run_dirs=rp["run_dirs"],
             )
             wt_names = _chr_list(wt["file_name"])
-            rewritten = ["\n".join(_read_lines(cast(str, p))) for p in _chr_list(wt["script_path"])]
+            rewritten = [
+                "\n".join(_read_utf8_lines(cast(str, p))) for p in _chr_list(wt["script_path"])
+            ]
         out.append(
             _frame(
                 {

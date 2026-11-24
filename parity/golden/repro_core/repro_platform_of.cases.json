@@ -1,0 +1,21 @@
+{
+  "id": "repro_platform_of.cases",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "Google Colab",
+      "Kaggle",
+      "Windows",
+      "OpenSAFELY",
+      null,
+      null,
+      null,
+      null
+    ]
+  },
+  "metacheck_version": "0.4.4.40",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

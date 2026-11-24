@@ -69,7 +69,7 @@ def test_paperlist() -> None:
     paper1 = pc.test_paper(["Data are available at https://osf.io/hk4yq/; raw data on request."])
     mo = run(paper1)
     assert mo.summary_table["data_open"].tolist() == [True]
-    assert mo.traffic_light == "red"
+    assert mo.traffic_light == "yellow"
 
 
 def test_only_open_data() -> None:
@@ -131,7 +131,7 @@ def test_no_matches_argument_of_length_zero(psychsci: pc.PaperList) -> None:
     assert len(mo.table) == 0
     assert mo.summary_table["data_open"].tolist() == [False]
     assert mo.summary_table["code_open"].tolist() == [False]
-    assert mo.traffic_light == "red"
+    assert mo.traffic_light == "yellow"
 
 
 # branches -------------------------------------------------------------------
@@ -139,7 +139,7 @@ def test_no_matches_argument_of_length_zero(psychsci: pc.PaperList) -> None:
 
 def test_no_statements_report() -> None:
     mo = run(pc.test_paper(["Nothing here.", "Or here."]))
-    assert mo.traffic_light == "red"
+    assert mo.traffic_light == "yellow"
     assert mo.summary_text == "Neither shared data nor code detected."
     # a single paper gets the "not detected" reports of data and code (metacheck 0.4)
     assert mo.report == [
@@ -188,7 +188,7 @@ def test_on_request_report() -> None:
         "Materials can be shared by request.",
     ]
     mo = run(pc.test_paper(texts))
-    assert mo.traffic_light == "red"
+    assert mo.traffic_light == "yellow"
     assert mo.summary_text == "Shared code detected; some sharing is only on request."
     # U107: one paragraph quotes every on-request sentence (metacheck: one each)
     assert len(mo.report) == 3
@@ -204,7 +204,7 @@ def test_on_request_ignores_case() -> None:
     # flagged too (metacheck's case-sensitive grepl() missed it)
     mo = run(pc.test_paper(["Analysis scripts are available ON REQUEST."]))
     assert mo.table["on_request"].tolist() == [True]
-    assert mo.traffic_light == "red"
+    assert mo.traffic_light == "yellow"
     assert (
         mo.summary_text == "Neither shared data nor code detected; some sharing is only on request."
     )

@@ -123,9 +123,11 @@ def rc_input(name: str, paper: Any = None, absolute: bool = False) -> Any:
     if code is not None:
         if structure is not None:
             prev["data_check"] = {"structure": structure}
-        extras = {}
+        extras: dict[str, Any] = {}
         if spec.get("version_pin") is not None:
             extras["version_pin"] = {"r_versions": list(spec["version_pin"])}
+        if spec.get("count_refused") is not None:
+            extras["count_refused"] = rc_df(spec["count_refused"])
         return ModuleOutput(
             module="code_check",
             title="Code Check",
@@ -144,7 +146,7 @@ def rc_input(name: str, paper: Any = None, absolute: bool = False) -> Any:
         summary_table=summary,
         paper=paper,
         prev_outputs=prev,
-        extras={"structure": structure},
+        extras={"structure": structure, "count_refused": rc_df(spec.get("count_refused"))},
     )
 
 
@@ -189,11 +191,38 @@ def _untime(mo: Any) -> None:
     """Zero the run times, which vary between runs (R: ``rc_untime()``)."""
     from metacheck.report.blocks import ReportTable
 
+    # the clock times kept for a TRO (metacheck 0.4.4.20) vary as well
+    env = mo.get("environment")
+    if isinstance(env, dict):
+        mo.extras["environment"] = {
+            **env,
+            **{k: "<time>" for k in ("started_at", "ended_at") if env.get(k) is not None},
+        }
+        # the machine and the Python found on it differ between the machines that make the goldens
+        for key, mark in (("host", "<host>"), ("python_local", "<python>")):
+            part = mo.extras["environment"].get(key)
+            if isinstance(part, dict):
+                mo.extras["environment"][key] = dict.fromkeys(part, mark)
+    # a PDF a script draws holds the time it was made: its size and hash differ per run
+    art = mo.get("artifacts")
+    if isinstance(art, pd.DataFrame) and len(art) > 0 and {"path", "stage"} <= set(art.columns):
+        art = art.copy()
+        pdf = art["path"].astype("string").str.lower().str.endswith(".pdf").fillna(False) & (
+            art["stage"] == "after_run"
+        )
+        art["size"] = art["size"].astype("float64").mask(pdf, 0.0)
+        art["sha256"] = art["sha256"].astype("object").mask(pdf, "<hash>")
+        mo.extras["artifacts"] = art
     rr = mo.get("run_results")
     if not isinstance(rr, pd.DataFrame) or len(rr) == 0:
         return
     rr = rr.copy()
     rr["elapsed"] = 0.0
+    for col in ("started_at", "ended_at"):
+        if col in rr.columns:
+            rr[col] = pd.array(
+                [None if pd.isna(v) else "<time>" for v in rr[col].tolist()], dtype="string"
+            )
     mo.extras["run_results"] = rr
 
     def fix(x: Any) -> Any:

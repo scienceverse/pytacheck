@@ -19,10 +19,11 @@
   reason: '"... in random order after participants were randomized." counts as describing randomization (7 sentences, metacheck 6); the tables are raw HTML blocks, not R chunks (D75)'
 
 # ethics_check --------------------------------------------------------------------
-"mod_ethics_review/ethics_check.no_text_column_ethics_match": &u102_no_text
+"mod_ethics_review/ethics_check.no_text_column": &u102_no_text
   kind: r_bug_fixed
   ref: U102
-  reason: a text table without a `text` column has no sentences ("na"); metacheck searches its first column and stops with an opaque error
+  reason: a text table without a `text` column has no sentences ("na"); metacheck searches its first column and stops with an opaque error (since 0.4.4.37 also in .data_source(), which reads `sent$text`)
+"mod_ethics_review/ethics_check.no_text_column_ethics_match": *u102_no_text
 "mod_ethics_review/ethics_check.no_text_column_live_match": *u102_no_text
 
 # funding_check -------------------------------------------------------------------
@@ -74,7 +75,6 @@
   kind: r_bug_fixed
   ref: U16
   reason: "only the sentence text read from the TEI differs ('G*Power 3.1', metacheck 'G*Power3.1'; io fix of the number-before-tag clean-up)"
-"mod_power/power.psychsci.tables": *u16_power
 
 # reg_check: a light for a check that could not run (U30) --------------------------
 # When every RegCheck comparison fails, reg_check's light is "fail" (what report()

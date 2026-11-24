@@ -48,7 +48,9 @@ rd_fetch_members <- function(url, names = NULL) {
   out
 }
 
-rd_download <- function(files, file_url = NULL, twice = FALSE, ...) {
+# `listing_extra`: more rows of the same repositories, which with `files` make the full listing
+# passed as `repo_listing` (the file count and the choice of files for the budget, #699)
+rd_download <- function(files, file_url = NULL, twice = FALSE, listing_extra = NULL, ...) {
   if (!is.null(file_url)) {
     local <- !is.na(file_url) & startsWith(file_url, "data/")
     file_url[local] <- paste0("file://", rd_data(substring(file_url[local], 6)))
@@ -61,8 +63,10 @@ rd_download <- function(files, file_url = NULL, twice = FALSE, ...) {
     options(old)
     unlink(sess, recursive = TRUE)
   })
-  dl <- download_repo_files(files, ...)
-  if (isTRUE(twice)) dl <- download_repo_files(files, ...)
+  extra <- list(...)
+  if (!is.null(listing_extra)) extra$repo_listing <- dplyr::bind_rows(files, listing_extra)
+  dl <- do.call(download_repo_files, c(list(files), extra))
+  if (isTRUE(twice)) dl <- do.call(download_repo_files, c(list(files), extra))
   fix <- function(x) gsub(rd_dir, "<DATA>", x, fixed = TRUE)
   failed <- attr(dl, "failed")
   failed$file_url <- fix(failed$file_url)

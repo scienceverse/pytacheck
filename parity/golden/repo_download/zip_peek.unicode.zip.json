@@ -13,7 +13,8 @@
       "csize",
       "offset",
       "crc",
-      "name_bytes"
+      "name_bytes",
+      "encrypted"
     ],
     "v": [
       {
@@ -64,9 +65,16 @@
           21,
           14
         ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -1,8 +1,9 @@
 """Ethics Approval Check (port of ``inst/modules/ethics_check.R``).
 
-The live-data helper the module relies on, ``.detect_live_data()``
-(``R/text-extractors.R``), is ported as
-:func:`metacheck.text.extract._detect_live_data`.
+Whether a statement is expected is decided from where the paper's data came
+from, ``.data_source()`` (``R/data-source.R``), ported as
+:func:`metacheck.modules._data_source._data_source` (metacheck 0.4.4.37; before,
+a search for live data collection, ``.detect_live_data()``).
 """
 
 from __future__ import annotations
@@ -13,11 +14,13 @@ from typing import Any
 
 import pandas as pd
 
+from metacheck._r import grepl
 from metacheck._r.base import plural
 from metacheck._r.frames import bind_rows
 from metacheck.core.doc import Doc
 from metacheck.core.errors import PytacheckWarning
 from metacheck.module import module
+from metacheck.modules._data_source import _data_source
 from metacheck.modules._paper_type import NO_LIVE_DATA, skipped_type, type_name
 from metacheck.papers.ids import resolve
 from metacheck.papers.model import Paper, PaperList, is_paper_list
@@ -30,20 +33,29 @@ __all__ = ["ethics_check"]
 # TRE patterns searched case-insensitively by text_search().
 _ETHICS_WORDS = (
     # committee name variants — human research
-    r"institutional\s+review\s+board",
+    r"(institutional|internal)\s+review\s+boards?",
     r"independent\s+ethics\s+committee",
-    r"ethical?\s+review\s+board",
-    r"ethics\s+(advisory\s+|review\s+)?(committee|board|panel|sub-?committee)",
-    r"ethical\s+(advisory\s+|review\s+)?(committee|board|panel|sub-?committee)",
-    r"research\s+ethics\s+(committee|board|panel)",
+    r"ethical?\s+review\s+boards?",
+    r"ethics\s+(advisory\s+|review\s+)?"
+    r"(committees?|boards?|panels?|sub-?committees?|commission)",
+    r"ethical\s+(advisory\s+|review\s+)?"
+    r"(committees?|boards?|panels?|sub-?committees?|commission)",
+    r"research\s+ethics\s+(committees?|boards?|panels?)",
     r"medical\s+ethics\s+committee",
+    r"bioethic(s|al)?\s+(committee|commission|board)",
+    r"ethik-?kommission",
+    r"ethic(s|al)\s+review\s+(authority|unit|office|agency)",
     r"human\s+(subjects?|research)\s+(committee|review\s+board)",
     r"human\s+research\s+ethics\s+(advisory\s+)?(panel|committee|board)",
+    r"human\s+(subjects?|research)\s+protections?\s+(office|program|programme|committee)",
+    r"office\s+(for|of)\s+(the\s+)?(protection\s+of\s+)?human\s+(subjects?|research)"
+    r"(\s+protections?)?",
     r"committee\s+(for|on)\s+(the\s+)?protection\s+of\s+human\s+subjects",
-    r"committee\s+on\s+(health\s+)?research\s+ethics",
+    r"committees?\s+(for|on)\s+(\w+\s+){0,4}research\s+ethics",
     r"office\s+of\s+research\s+ethics",
     r"\birb\b",
-    r"\biec\b",
+    # not a technical standard ("IEC 62471")
+    r"\biec\b($|[^ 0-9-]| +[^ 0-9])",
     r"\b(rec|reb|erb|dec)\b.{0,30}\b(ethic|approv|committee|board|panel|institutional|protocol)",
     r"\b(ethic|approv|committee|board|panel|institutional|protocol).{0,30}\b(rec|reb|erb|dec)\b",
     r"\bmetc\b",
@@ -73,12 +85,12 @@ _ETHICS_WORDS = (
     r"approved\s+by\s+(the\s+)?(ethics|irb|institutional|independent|local|review|research)",
     r"approved\s+by\s+.{0,60}ethics\s+(committee|board|panel|sub-?committee)",
     r"approved\s+by\s+.{0,80}(ethics|research)\s+.{0,30}"
-    r"(committee|board|panel|sub-?committee|council|office)",
-    r"approved\s+by\s+.{0,80}(committee|board|panel|sub-?committee|council)\s+.{0,40}"
-    r"(ethic|research)",
+    r"(committees?|boards?|panels?|sub-?committees?|council|office|commission)",
+    r"approved\s+by\s+.{0,80}(committees?|boards?|panels?|sub-?committees?|council|commission)"
+    r"\s+.{0,40}(ethic|research)",
     r"(received|obtained)\s+(ethics|ethical)?\s*(approval|clearance)\s+from\s+.{0,80}"
     r"(ethics|irb|institutional|research|review)\s+.{0,30}"
-    r"(committee|board|panel|sub-?committee|office)",
+    r"(committees?|boards?|panels?|sub-?committees?|office|commission)",
     r"this\s+study\s+(was\s+)?(approved|reviewed)\s+by",
     r"the\s+study\s+(was\s+)?(approved|reviewed)\s+by",
     r"the\s+protocol\s+(was\s+)?(approved|reviewed)\s+by",
@@ -98,30 +110,24 @@ _ETHICS_WORDS = (
     r"exempt(ed)?\s+from\s+(ethics|irb|institutional\s+review)",
     r"waived?\s+(by\s+)?(the\s+)?(ethics|irb|institutional|review)\s+(committee|board|review)?",
     r"deemed\s+exempt",
+    # ethics review that was not needed ("did not require further ethical
+    # review", "exempt from formal human research ethics review")
+    r"(ethics|ethical|irb|institutional)\s+review\s+(was|is)\s+"
+    r"(not\s+(required|needed|necessary|sought)|waived)",
+    r"not\s+(require|requiring|required|need|needed)\s+(an?\s+)?"
+    r"(further\s+|formal\s+|additional\s+|separate\s+)?(ethics|ethical|irb)\s+"
+    r"(review|approval|clearance)",
+    r"exempt(ed|ion)?\s+from\s+(formal\s+|further\s+)?(\w+\s+){0,3}(ethics|ethical|irb)\s+review",
+    r"\bno\s+(new\s+|further\s+)?(institutional\s+)?ethics\s+review",
+    r"scope\s+of\s+.{0,40}ethical\s+review",
     # Helsinki
     r"declaration\s+of\s+helsinki",
     r"helsinki\s+declaration",
 )
 
-_REPORT_APPROVED = "An ethics approval statement was detected, based on the following text:\n\n> {}"
-_REPORT_NONE = (
-    "We did not detect an ethics approval statement, and this paper does not appear to "
-    "involve live data collection from human or animal participants. Ethics approval is "
-    "typically not required for theoretical work, simulations, reviews, meta-analyses, or "
-    "secondary analyses of published data."
-)
-_REPORT_NO_PARTICIPANTS = (
-    "We did not detect an ethics approval statement. The paper states that no human or animal "
-    "participants took part, so we do not expect one:\n\n> {}"
-)
-_REPORT_NEEDS_PRESENT = (
-    "Based on the following text, we would expect an ethics approval statement, and it was "
-    "present:\n\n> {}\n\nEthics approval statement:\n\n> {}"
-)
-_REPORT_NEEDS_MISSING = (
-    "Based on the following text, we would expect an ethics approval statement, but it was "
-    "not present:\n\n> {}"
-)
+# a template line that is not a statement ("[Add ethics approval, recruitment, and stimulus
+# details here.]"), searched with perl = TRUE
+_PLACEHOLDER = r"\[\s*(add|insert)\b[^]]*(ethic|approv|irb|committee|board)"
 
 
 def _search_doc(paper: Any) -> Doc:
@@ -243,15 +249,19 @@ def _summarise(
         Patterns are designed to capture:
 
         **Human research committee names**
-        - `Institutional Review Board` / IRB (US standard)
-        - `Independent Ethics Committee` / IEC (ICH-GCP international clinical trial term)
+        - `Institutional Review Board` / IRB (US standard), also `Internal Review Board`
+        - `Independent Ethics Committee` / IEC (ICH-GCP international clinical trial
+          term); not `IEC` followed by a number, which is a technical standard
         - `Ethical/Ethics Review Board` (generic)
-        - `Ethics (Advisory/Review) Committee/Board/Panel/Sub-committee`
+        - `Ethics (Advisory/Review) Committee/Board/Panel/Sub-committee/Commission`,
+          in the singular or plural
         - `Research Ethics Committee/Board/Panel` (UK/Canada/Australia)
-        - `Medical Ethics Committee`
+        - `Medical Ethics Committee`, `Bioethics Committee/Commission`, `Ethikkommission`
+        - `Ethical Review Authority/Unit/Office/Agency`
         - `Human Subjects/Research Committee` / `Human Research Ethics (Advisory) Panel`
+        - `Human Research Protection Office/Program`, `Office for Human Subjects Protection`
         - `Committee for/on the Protection of Human Subjects`
-        - `Committee on (Health) Research Ethics`
+        - `Committee(s) on/for (Medical and Health) Research Ethics`
         - `Office of Research Ethics`
         - Abbreviations: IEC, REC, REB, ERB, METC, DEC. REC/REB/ERB/DEC are short
           enough to collide with unrelated jargon (e.g. `REC` as a recognition-heuristic
@@ -290,6 +300,12 @@ def _summarise(
         - `Exempted from (ethics|irb|institutional review)`
         - `Waived by the (ethics|irb|institutional|review) (committee|board)`
         - `Deemed exempt`
+        - Ethics review that was not needed: `Ethics review was not required`,
+          `did not require further ethical review`, `exempt from formal human
+          research ethics review`, `no new institutional ethics review`
+
+        A template line the authors have not filled in ("[Add ethics approval ...
+        here.]") is not a statement.
 
         **Declaration of Helsinki**
         - `Declaration of Helsinki` / `Helsinki Declaration`
@@ -301,20 +317,37 @@ def _summarise(
         - Ethical behaviour as a measured variable (e.g. "ethical decision-making")
         - URLs containing "ethics" in path components
 
-        Live data collection is detected by the internal helper `.detect_live_data()`,
-        which searches for sentences indicating that data were collected directly from
-        human or animal participants. Papers without any live-data signal are not
-        flagged as missing ethics approval. The helper uses conservative patterns to
-        avoid flagging secondary data analyses, computational experiments, or
-        economics papers that analyse existing survey data. See `.detect_live_data()`
-        for the full list of patterns and intentional exclusions.
+        **When a statement is expected**
 
-        A paper that states that no human or animal subjects took part ("no human
-        subjects were involved", "did not involve human participants", or people
-        taking part "not as subjects") is not expected to have an ethics statement,
-        whatever participant phrase it also has (see `.detect_no_participants()`).
-        A negation near a participant phrase alone ("No participants were
-        excluded") does not count: it reports a study with participants.
+        The module sorts each paper by where its data came from (the internal
+        `.data_source()`; the signs and how the rule was tested are described in
+        `R/data-source.R`):
+        - `own`: the authors collected data from people or animals, for this paper,
+          in an earlier study of their own, or (a protocol) will collect them;
+        - `existing_records`: records about individual people that the authors
+          obtained for this study, such as hospital records or a cohort;
+        - `existing_unclear`: existing data about people from a source the module
+          could not identify;
+        - `open_resource`: an open resource any researcher can use, such as UK
+          Biobank or NHANES;
+        - `none`: no data about people or animals (a review, simulation,
+          commentary, theory, tutorial, coding of published papers, or figures
+          about groups);
+        - `uncertain`: the signs were missing or pointed both ways;
+        - `no_text`: the paper has no text.
+
+        A statement is expected for `own`, `existing_records` and
+        `existing_unclear`. A paper without a statement in these classes, or in
+        `uncertain`, is flagged. The module reads the text, and the results of
+        `power`, `stat_p_exact`, `stat_check`, `repo_check`, `data_check` and
+        `prereg_check` when they ran before it (run it after them); without
+        `stat_p_exact`, it finds the p-values in the text.
+
+        On 199 PsyArXiv and medRxiv preprints labelled after the rule was fixed,
+        the module decided right whether a statement is needed for 86.9% (the
+        earlier live-data search: 83.4%). Its main errors: other people's studies
+        described in the words of a new study, records and specimens described
+        only as counts, and open resources the paper does not call open.
     """,
     keywords=["general"],
     params={"paper": "a paper object or paperlist object"},
@@ -323,106 +356,148 @@ def ethics_check(paper: Any) -> dict[str, Any]:
     """Port of ``inst/modules/ethics_check.R::ethics_check()``.
 
     Searches *paper* (a paper or paper list) for ethics approval, IRB,
-    waiver/exemption and Declaration of Helsinki statements, and for
-    sentences indicating live data collection from human or animal
-    participants (``.detect_live_data()``). Returns the matching sentences
-    (``table``, flagged ``ethics`` or ``live_data``), a per-paper summary
-    (``summary_table``), the traffic light (``na``: no paper collected live
-    data; ``green``: every such paper has an ethics statement; ``red``: some
+    waiver/exemption and Declaration of Helsinki statements, and sorts it by where its
+    data came from (``.data_source()``) to decide whether a statement is expected.
+    Returns the matching sentences (``table``, flagged ``ethics``, and the sentences
+    behind the data source, flagged ``live_data`` when they show the authors' own data
+    collection), a per-paper summary (``summary_table``), the traffic light (``na``: no
+    paper needs a statement; ``green``: every paper that does has one; ``yellow``: some
     lack one), a summary text and, for a single paper, the report.
 
     Like R, *paper* may also be a plain list of papers. Papers with duplicated
     IDs are renamed (``ID~2``, U208) and summarised one by one, a paper without
     an ``info`` row is summarised under its own ID, and a text table without a
     ``text`` column has no sentences (metacheck stops or mislabels these,
-    U101/U102). An empty paper list gives an empty result (metacheck stops, U79). Reproduces R's errors
+    U101/U102). An empty paper list gives an empty result. Reproduces R's errors
     for a table or a character vector instead of a paper.
     """
-    from metacheck.text.extract import _detect_live_data, _detect_no_participants
+    from metacheck.module import get_prev_outputs
 
     # R runs text_search(paper, ethics_words) first, which rejects anything but a
     # paper, a paper list (a plain list of papers too) or a table
     doc = _search_doc(paper)
     # a table fails here: "paper must be a paper or paperlist object."
     # An empty paper list has no IDs and gets a summary table without rows
-    # (metacheck stops: data.frame(paper_id = NULL) has no column to join by, U79)
     paper_ids = _paper_ids(paper)
 
     table = text_search(doc, list(_ETHICS_WORDS))
+    # a template line the authors have not filled in yet ("[Add ethics approval, recruitment,
+    # and stimulus details here.]") is not a statement; an anonymised one ("approved by the XXX
+    # University ethics committee") is, and so is one followed by a layout note
+    # ("[INSERT TABLE 1 HERE]")
+    if len(table) > 0:
+        placeholder = grepl(_PLACEHOLDER, table["text"].tolist(), ignore_case=True, perl=True)
+        table = table.loc[[not x for x in placeholder]].reset_index(drop=True)
     table["ethics"] = pd.Series([True] * len(table), index=table.index, dtype="boolean")
     if "text" not in table.columns:
         table["text"] = pd.Series([], dtype="string")
     # D84: a paper the expressions found no statement in gets bibr's statement
     table = _with_bibr_ethics(table, paper)
 
-    live_table = _detect_live_data(doc).copy()
-    live_table["live_data"] = pd.Series(
-        [True] * len(live_table), index=live_table.index, dtype="boolean"
+    # where the data came from ----
+    # read from the text, and from the results of the modules that ran before this one (see
+    # _data_source())
+    prev: dict[str, dict[str, Any]] = {}
+    for m in ("power", "stat_p_exact", "stat_check", "repo_check", "data_check", "prereg_check"):
+        if get_prev_outputs(m, "traffic_light") is None:
+            continue
+        prev[m] = {
+            "table": get_prev_outputs(m, "table"),
+            "ownership": get_prev_outputs(m, "ownership"),
+        }
+    # D85: a paper bibr classifies as a review, commentary, erratum, ... collects no data from
+    # participants, whatever its sentences about participants say
+    skipped = _skipped_types(paper)
+    ds = _data_source(
+        text_search(doc),
+        paper_ids,
+        info=_titles(paper, paper_ids),
+        prev=prev,
+        paper=paper,
+        forced_none={p: type_name(k) for p, k in skipped.items() if p in paper_ids},
+    )
+    source_table = ds["evidence"]
+    # the sentences that show the authors' own data collection, under the name the run scripts
+    # of the preprint repositories count (totals.py)
+    source_table["live_data"] = pd.Series(
+        [x == "own" for x in source_table["sign"].tolist()],
+        index=source_table.index,
+        dtype="boolean",
     )
 
     # re-order by paper_id and text_id
     table = _arrange(table, paper_ids)
-    live_table = _arrange(live_table, paper_ids)
 
     # summary_table ----
     ethics_summary = _summarise(table, "ethics", "ethics_statements")
-    live_summary = _summarise(live_table, "live_data", "live_data_statements")
     na: tuple[bool, None] = (False, None)
     ethics_rows = [ethics_summary.get(p, na) for p in paper_ids]
-    live_rows = [live_summary.get(p, na) for p in paper_ids]
-    # D85: a paper bibr classifies as a review, commentary, erratum, ... collects no
-    # data from participants, whatever its sentences about participants say
-    skipped = _skipped_types(paper)
-    live_rows = [
-        (False, r[1]) if p in skipped else r for p, r in zip(paper_ids, live_rows, strict=True)
-    ]
-    # A paper that states no human or animal subjects took part ("no human subjects were
-    # involved", "not as subjects recruited for a study") is not expected to have an ethics
-    # statement, whatever participant phrase it also has (see _detect_no_participants())
-    none_table = _detect_no_participants(doc)
-    none_ids = (
-        set(none_table["paper_id"].dropna().astype(str))
-        if "paper_id" in none_table.columns
-        else set()
-    )
-    states_none = [p in none_ids for p in paper_ids]
-    live_rows = [(False, r[1]) if s else r for s, r in zip(states_none, live_rows, strict=True)]
+    source_summary = ds["summary"].set_index("paper_id")
+    src_text = source_table["text"].tolist() if "text" in source_table.columns else []
+    src_pid = source_table["paper_id"].tolist() if "paper_id" in source_table.columns else []
+    statements_of: list[Any] = []
+    for p in paper_ids:
+        found = list(dict.fromkeys(t for t, q in zip(src_text, src_pid, strict=True) if q == p))
+        statements_of.append(found or None)
     summary_table = pd.DataFrame(
         {
             "paper_id": pd.Series(paper_ids, dtype="string"),
             "ethics_approved": pd.Series([r[0] for r in ethics_rows], dtype="boolean"),
             "ethics_statements": pd.Series([r[1] for r in ethics_rows], dtype=object),
-            "needs_ethics": pd.Series([r[0] for r in live_rows], dtype="boolean"),
-            "live_data_statements": pd.Series([r[1] for r in live_rows], dtype=object),
-            "states_no_participants": pd.Series(states_none, dtype="boolean"),
+            "data_source": pd.Series(
+                [source_summary.at[p, "data_source"] for p in paper_ids], dtype="string"
+            ),
+            "needs_ethics": pd.Series(
+                [source_summary.at[p, "needs_ethics"] for p in paper_ids], dtype="boolean"
+            ),
+            "data_source_signs": pd.Series(
+                [source_summary.at[p, "signs"] for p in paper_ids], dtype="string"
+            ),
+            "data_source_statements": pd.Series(statements_of, dtype=object),
         }
     )
 
     # traffic_light + summary_text ----
-    needs = [r[0] for r in live_rows]
+    # A statement is expected for the authors' own data and for records obtained for the study;
+    # a paper whose data source is uncertain is flagged too, as we could not rule out that it
+    # needs one.
+    needs = [x is True for x in summary_table["needs_ethics"].tolist()]
+    uncertain = [x == "uncertain" for x in summary_table["data_source"].tolist()]
     approved = [r[0] for r in ethics_rows]
-    n_needs = sum(needs)
+    n_check = sum(n or u for n, u in zip(needs, uncertain, strict=True))
     n_missing = sum(n and not a for n, a in zip(needs, approved, strict=True))
-    if n_needs == 0:
-        tl = "na"
-    elif n_missing == 0:
+    n_unsure = sum(u and not a for u, a in zip(uncertain, approved, strict=True))
+    if n_missing + n_unsure > 0:
+        # yellow, not red, until a validation shows people agree with most of its red findings
+        # (#695, point 2)
+        tl = "yellow"
+    elif n_check > 0:
         tl = "green"
     else:
-        tl = "red"
+        tl = "na"
     n_papers = len(summary_table)
-    if n_missing > 0:
+    if n_missing + n_unsure > 0:
+        parts_text = []
+        if n_missing > 0:
+            parts_text.append(
+                f"{n_missing:d} of {n_papers:d} paper{plural(n_papers)} appeared to report data "
+                "about people or animals that need an ethics statement, and lacked one."
+            )
+        if n_unsure > 0:
+            parts_text.append(
+                f"For {n_unsure:d} of {n_papers:d} paper{plural(n_papers)} we could not tell "
+                f"whether {'it reports' if n_unsure == 1 else 'they report'} data about people "
+                "or animals, and found no ethics statement."
+            )
+        summary_text = " ".join(parts_text)
+    elif n_check > 0:
         summary_text = (
-            f"{n_missing:d} of {n_papers:d} paper{plural(n_papers)} appeared to involve live "
-            "data collection and lacked an ethics approval statement."
-        )
-    elif n_needs > 0:
-        summary_text = (
-            "All papers that appeared to involve live data collection contained an ethics "
-            "approval statement."
+            "All papers that appeared to report data about people or animals that need an "
+            "ethics statement contained one."
         )
     else:
         summary_text = (
-            "No papers appeared to involve live data collection requiring an ethics approval "
+            "No papers appeared to report data about people or animals that need an ethics "
             "statement."
         )
     if n_papers == 1 and paper_ids[0] in skipped:
@@ -434,33 +509,131 @@ def ethics_check(paper: Any) -> dict[str, Any]:
     # report ----
     report: str | None = None
     if n_papers == 1:
-        # each statement once (metacheck quotes `table$text[table$ethics]`, every
-        # row, so a sentence found at several text_ids was repeated, U102)
-        statements = ethics_rows[0][1] or []
-        ethics_quote = "\n\n> ".join(_as_text(t) for t in statements)
-        if not needs[0] and states_none[0] and not approved[0]:
-            quote = "\n\n> ".join(_as_text(t) for t in dict.fromkeys(none_table["text"]))
-            report = _REPORT_NO_PARTICIPANTS.format(quote)
-        elif not needs[0]:
-            report = _REPORT_APPROVED.format(ethics_quote) if approved[0] else _REPORT_NONE
-        else:
-            found = live_rows[0][1]
-            live_statements: list[str | None] = [None] if found is None else list(found)
-            live_quote = "\n\n> ".join(_as_text(t) for t in live_statements)
-            if approved[0]:
-                report = _REPORT_NEEDS_PRESENT.format(live_quote, ethics_quote)
-            else:
-                report = _REPORT_NEEDS_MISSING.format(live_quote)
+        report = _report(
+            src=str(summary_table["data_source"].iloc[0]),
+            is_approved=bool(approved[0]),
+            statements=[_as_text(t) for t in (ethics_rows[0][1] or [])],
+            evidence=[_as_text(t) for t in src_text],
+            signs=str(summary_table["data_source_signs"].iloc[0]),
+        )
 
     # return a list ----
     return {
-        "table": bind_rows([table, live_table]),
+        "table": bind_rows([table, source_table]),
         "summary_table": summary_table,
-        "na_replace": {"ethics_approved": False, "states_no_participants": False},
+        "na_replace": {"ethics_approved": False},
         "traffic_light": tl,
         "summary_text": summary_text,
         "report": report,
     }
+
+
+def _quote(x: Sequence[str], max_: int | None = 3) -> str:
+    """``paste0("> ", head(unique(x), max), collapse = "\n\n")``."""
+    items = list(dict.fromkeys(x))
+    if max_ is not None:
+        items = items[:max_]
+    return "\n\n".join(f"> {t}" for t in items)
+
+
+def _report(
+    src: str, is_approved: bool, statements: Sequence[str], evidence: Sequence[str], signs: str
+) -> str:
+    """The report of a single paper: what its data source says, the sentences it rests on and
+    the statement found."""
+    main: str
+    if src == "own":
+        main = (
+            "The paper appears to report data that the authors collected from people or animals, "
+            "and it has an ethics statement."
+            if is_approved
+            else "The paper appears to report data that the authors collected from people or "
+            "animals, but we found no ethics statement. Such data need one: approval by an "
+            "ethics committee, or a reason why none was needed. We based this on the sentences "
+            "below. A paper can describe someone else's study in the same words; if these data "
+            "are not the authors' own, no statement is needed."
+        )
+    elif src == "existing_records":
+        main = (
+            "The paper appears to analyse records about individual people that the authors "
+            "obtained for this study, and it has an ethics statement."
+            if is_approved
+            else "The paper appears to analyse records about individual people that the authors "
+            "obtained for this study, such as hospital records or a cohort, but we found no "
+            "ethics statement. Such analyses usually need an approval or a waiver from an "
+            "ethics committee."
+        )
+    elif src == "existing_unclear":
+        main = (
+            "The paper appears to analyse data about people, from a source we could not "
+            "identify, and it has an ethics statement."
+            if is_approved
+            else "The paper appears to analyse data about people, but we could not tell where "
+            "the data came from. If the authors collected them, or obtained records for this "
+            "study, an ethics statement is needed. If they come from an open resource such as "
+            "UK Biobank or NHANES, it is not. We found no ethics statement."
+        )
+    elif src == "open_resource":
+        main = (
+            "The paper appears to analyse an open resource, which needs no ethics statement "
+            "of its own."
+        )
+    elif src == "none":
+        basis = (
+            f"we found: {signs}"
+            if signs
+            else "we found no method part, no sample description and no statistical results, "
+            "and at most one sign that the authors collected data"
+        )
+        main = (
+            f"The paper does not appear to report data about individual people or animals "
+            f"({basis}), so we do not expect an ethics statement."
+        )
+    elif src == "uncertain":
+        main = (
+            "We could not tell whether this paper reports data about people or animals, but it "
+            "has an ethics statement."
+            if is_approved
+            else "We could not tell whether this paper reports data about people or animals: the "
+            "signs we look for were missing or pointed both ways. If it does, it needs an ethics "
+            "statement, and we found none."
+        )
+    else:  # no_text
+        main = "The paper has too little text to check."
+    parts = [main]
+    if len(evidence) > 0:
+        parts.append(f"We based this on:\n\n{_quote(evidence)}")
+    elif signs and src != "none":
+        parts.append(f"We based this on: {signs}.")
+    if is_approved:
+        parts.append(f"Ethics statement:\n\n{_quote(statements, None)}")
+    return "\n\n".join(parts)
+
+
+def _titles(paper: Any, ids: Sequence[str]) -> pd.DataFrame | None:
+    """A table with ``paper_id`` and ``title`` for the papers (the ``info`` tables, under the
+    IDs the module uses), or ``None`` for something that is not a paper or a paper list."""
+    if isinstance(paper, Paper):
+        papers: list[Any] = [paper]
+    elif is_paper_list(paper):
+        papers = list(paper.values()) if isinstance(paper, Mapping) else list(paper)
+    else:
+        return None
+    from metacheck.papers.tables import paper_id
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", PytacheckWarning)
+        papers = list(resolve(papers))
+    rows: dict[str, Any] = {}
+    for p in papers:
+        own = paper_id(p)
+        if not own and isinstance(p, Paper) and isinstance(p.paper_id, str):
+            own = [p.paper_id]
+        if own and own[0] in ids:
+            rows.setdefault(own[0], p.title if isinstance(p, Paper) else None)
+    return pd.DataFrame(
+        {"paper_id": list(rows), "title": pd.Series(list(rows.values()), dtype="string")}
+    )
 
 
 def _with_bibr_ethics(table: pd.DataFrame, paper: Any) -> pd.DataFrame:

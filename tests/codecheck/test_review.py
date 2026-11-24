@@ -12,6 +12,7 @@ import gzip
 import lzma
 import math
 import shutil
+from collections.abc import Iterator
 from pathlib import Path
 
 import pandas as pd
@@ -135,8 +136,16 @@ def test_code_read_binary_is_not_code(tmp_path: Path, data: bytes, kind: str) ->
 # ---------------------------------------------------------------------------
 
 
-def test_code_lang_trailing_newline() -> None:
-    assert core.code_lang(["a.R\n", "b.py", "d.R "]) == [None, "Python", None]
+def test_code_lang_trailing_whitespace() -> None:
+    # a space, tab or line end after the extension is trimmed (metacheck 0.4.4.30, #700); other
+    # white space (a form feed) still hides it
+    assert core.code_lang(["a.R\n", "b.py", "d.R ", "e.R\t", "g.R\x0c"]) == [
+        "R",
+        "Python",
+        "R",
+        "R",
+        None,
+    ]
 
 
 # ---------------------------------------------------------------------------
@@ -210,7 +219,7 @@ def test_code_expand_zip_reads_a_zip_on_disk(
         zf.writestr("data.csv", "a\n1\n")
     monkeypatch.setattr(
         "metacheck.archives.download._repo_cache_path",
-        lambda repo, fp, cache=True: str(tmp_path / "cache" / fp),
+        lambda repo, fp, cache=True, **kw: str(tmp_path / "cache" / fp),
     )
     af = pd.DataFrame(
         {
@@ -228,8 +237,24 @@ def test_code_expand_zip_reads_a_zip_on_disk(
     assert Path(out["file_location"].iloc[1]).read_text() == "x <- 1\n"
 
 
+@pytest.fixture
+def _session_cache(tmp_path: Path) -> Iterator[None]:
+    from metacheck.utils import local_options
+
+    with local_options(
+        {
+            "metacheck.repo_cache.notified": True,
+            "metacheck.repo_cache.dir": str(tmp_path / "persist"),
+            "metacheck.repo_cache.session_dir": str(tmp_path / "session"),
+        }
+    ):
+        yield
+
+
+@pytest.mark.usefixtures("_session_cache")
 def test_code_expand_zip_mocked(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Expected rows from R with the same three functions mocked (testthat)."""
+    """The code members of each zip become rows, fetched by download_repo_files() (#699)."""
+    asked: list[tuple[str, list[str]]] = []
 
     def peek(url: str, **kwargs: object) -> pd.DataFrame:
         if "other" in url:
@@ -239,21 +264,17 @@ def test_code_expand_zip_mocked(monkeypatch: pytest.MonkeyPatch) -> None:
         )
 
     def fetch(url: str, names: list[str], dest: str, **kwargs: object) -> pd.DataFrame:
-        ok = [True, *([False, True] * len(names))[: len(names) - 1]]
-        return pd.DataFrame(
-            {
-                "name": names,
-                "path": [f"{dest}/{n}" for n in names],
-                "size": [7.0 * (i + 1) for i in range(len(names))],
-                "ok": ok,
-            }
-        )
+        asked.append((url, list(names)))
+        paths = []
+        for n in names:
+            p = Path(dest) / n
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_text("x <- 1\n")
+            paths.append(str(p))
+        return pd.DataFrame({"name": names, "path": paths, "size": 7.0, "ok": True, "error": None})
 
     monkeypatch.setattr("metacheck.archives.zip_peek.zip_peek", peek)
     monkeypatch.setattr("metacheck.archives.zip_peek._zip_fetch_members", fetch)
-    monkeypatch.setattr(
-        "metacheck.archives.download._repo_cache_path", lambda repo, fp, cache=True: f"/cache/{fp}"
-    )
     af = pd.DataFrame(
         {
             "repo_url": ["https://osf.io/abcde"] * 3,
@@ -264,16 +285,21 @@ def test_code_expand_zip_mocked(monkeypatch: pytest.MonkeyPatch) -> None:
         }
     )
     out = core._code_expand_zip(af)
-    assert out["file_name"].tolist() == ["data.zip", "b.R", "other.ZIP", "a.R", "s.do", "y.R"]
+    # one fetch per zip, of its code members only
+    assert asked == [
+        ("https://x/data.zip", ["code/a.R", "nb.ipynb", "s.do"]),
+        ("https://x/other.zip", ["y.R"]),
+    ]
+    assert out["file_name"].tolist() == [
+        "data.zip", "b.R", "other.ZIP", "a.R", "nb.ipynb", "s.do", "y.R",
+    ]  # fmt: skip
     assert out["file_path"].tolist()[3:] == [
         "sub/data.zip/code/a.R",
+        "sub/data.zip/nb.ipynb",
         "sub/data.zip/s.do",
         "NA/y.R",
     ]
-    assert out["file_location"].tolist()[3:] == [
-        "/cache/sub/data.zip.contents/code/a.R",
-        "/cache/sub/data.zip.contents/s.do",
-        "/cache/NA.contents/y.R",
-    ]
-    assert out["file_size"].tolist() == [100, 5, 50, 7, 21, 7]
-    assert out["file_url"].isna().tolist() == [False, True, False, True, True, True]
+    # added in the shape the listing had: no archive columns, no location column it lacked
+    assert list(out.columns) == [c for c in af.columns if c in out.columns]
+    assert out["file_url"].isna().tolist() == [False, True, False, True, True, True, True]
+    assert out["file_size"].tolist() == [100, 5, 50, 10, 30, 40, 2]

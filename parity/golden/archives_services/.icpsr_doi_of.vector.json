@@ -1,0 +1,17 @@
+{
+  "id": ".icpsr_doi_of.vector",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "10.3886/ICPSR04652",
+      "10.3886/E195681V1",
+      "10.3886/E100462V3",
+      null
+    ]
+  },
+  "metacheck_version": "0.4.4.40",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

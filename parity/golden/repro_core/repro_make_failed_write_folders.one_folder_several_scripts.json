@@ -1,0 +1,63 @@
+{
+  "id": "repro_make_failed_write_folders.one_folder_several_scripts",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "made",
+      "text",
+      "again",
+      "folder"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "script",
+          "folder"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "f1.R",
+              "f2.R",
+              "f3.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code/Figures",
+              "code/Figures",
+              "code/Figures"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          " **3 scripts wrote into a folder that the deposit does not have**, so we made it and ran them once more: `code/Figures` for `f1.R`; `code/Figures` for `f2.R`; `code/Figures` for `f3.R`. Keeping the (empty) output folders in the deposit, or making them in the code with `dir.create()`, solves this."
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          0
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.40",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

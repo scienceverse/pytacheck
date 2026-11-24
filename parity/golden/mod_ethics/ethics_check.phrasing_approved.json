@@ -48,6 +48,7 @@
           "header",
           "section_type",
           "ethics",
+          "sign",
           "live_data"
         ],
         "v": [
@@ -124,6 +125,14 @@
             ]
           },
           {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
             "t": "lgl",
             "v": [
               null,
@@ -136,7 +145,7 @@
       {
         "t": "chr",
         "v": [
-          "No papers appeared to involve live data collection requiring an ethics approval statement."
+          "No papers appeared to report data about people or animals that need an ethics statement."
         ]
       },
       {
@@ -148,7 +157,7 @@
       {
         "t": "chr",
         "v": [
-          "No papers appeared to involve live data collection requiring an ethics approval statement."
+          "No papers appeared to report data about people or animals that need an ethics statement."
         ]
       },
       {
@@ -158,9 +167,10 @@
           "paper_id",
           "ethics_approved",
           "ethics_statements",
+          "data_source",
           "needs_ethics",
-          "live_data_statements",
-          "states_no_participants"
+          "data_source_signs",
+          "data_source_statements"
         ],
         "v": [
           {
@@ -204,11 +214,27 @@
             ]
           },
           {
+            "t": "chr",
+            "v": [
+              "none",
+              "none",
+              "none"
+            ]
+          },
+          {
             "t": "lgl",
             "v": [
               false,
               false,
               false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              ""
             ]
           },
           {
@@ -234,30 +260,15 @@
                 ]
               }
             ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              false,
-              false,
-              false
-            ]
           }
         ]
       },
       {
         "t": "list",
         "names": [
-          "ethics_approved",
-          "states_no_participants"
+          "ethics_approved"
         ],
         "v": [
-          {
-            "t": "lgl",
-            "v": [
-              false
-            ]
-          },
           {
             "t": "lgl",
             "v": [
@@ -268,6 +279,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

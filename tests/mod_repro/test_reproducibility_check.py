@@ -772,7 +772,10 @@ def test_install_report_and_dependency_unavailable(
     ) in text
     assert "**1 of these were no longer on live CRAN**" in text
     assert "**Failed:** ggplot2 [network issue] (boom); lme4 [NA]" in text
-    assert "could not run because its own dependency is unavailable" in mo.summary_text
+    assert (
+        "Of the others, 1 could not run because a package or program was not available."
+        in mo.summary_text
+    )
 
 
 def test_docker_sandbox_mocked(

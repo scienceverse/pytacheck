@@ -1210,3 +1210,385 @@
         "py": "None"
   "py_drop":
   - "x"
+- "id": "sync04418.data_classify_files.names"
+  "r": "data_classify_files"
+  "py": "metacheck.datacheck.files.data_classify_files"
+  "args":
+    "file_name":
+      "$chr":
+      - "run.sh"
+      - "go.bash"
+      - "x.zsh"
+      - "build.bat"
+      - "a.cmd"
+      - "setup.ps1"
+      - "data_report.html"
+      - "data_notes.md"
+      - "data.csv"
+      - "LICENSE_code_MIT.txt"
+      - "license_data.txt"
+      - "license_code.R"
+- "id": "sync04418.data_classify_files.release_group"
+  "r": "data_classify_files"
+  "py": "metacheck.datacheck.files.data_classify_files"
+  "args":
+    "file_name":
+      "$chr":
+      - "plugin.js"
+      - "run.R"
+      - "run2.R"
+    "file_path":
+      "$chr":
+      - "lib-1.2.3/plugin.js"
+      - "run.R"
+      - "run2.R"
+    "group":
+      "$chr":
+      - "a"
+      - "b"
+      - "b"
+- "id": "sync04418.data_classify_files.release_same_group"
+  "r": "data_classify_files"
+  "py": "metacheck.datacheck.files.data_classify_files"
+  "args":
+    "file_name":
+      "$chr":
+      - "plugin.js"
+      - "run.R"
+    "file_path":
+      "$chr":
+      - "lib-1.2.3/plugin.js"
+      - "run.R"
+    "group":
+      "$chr":
+      - "a"
+      - "a"
+- "id": "sync04418.data_classify_files.release_alone"
+  "r": "data_classify_files"
+  "py": "metacheck.datacheck.files.data_classify_files"
+  "args":
+    "file_name":
+      "$chr":
+      - "run.R"
+    "file_path":
+      "$chr":
+      - "analysis-v2.1.0/run.R"
+- "id": "sync04418.data_classify_files.others_folders"
+  "r": "data_classify_files"
+  "py": "metacheck.datacheck.files.data_classify_files"
+  "args":
+    "file_name":
+      "$chr":
+      - "b.js"
+      - "x.php"
+      - "a.ado"
+      - "app.min.js"
+      - "own.js"
+      - "x.csv"
+    "file_path":
+      "$chr":
+      - "node_modules/a/b.js"
+      - "vendor/x.php"
+      - "ados/a.ado"
+      - "app.min.js"
+      - "src/own.js"
+      - "vendor/x.csv"
+- "id": "sync04418.is_others_code_path.folders"
+  "r": ".is_others_code_path"
+  "py": "metacheck.datacheck.files._is_others_code_path"
+  "args":
+    "path":
+      "$chr":
+      - "node_modules/a/b.js"
+      - "vendor/x.php"
+      - "ados/a.ado"
+      - "app.min.js"
+      - "src/own.js"
+      - "a.R"
+      - "lib-1.2.3/p.js"
+      - "tools\\lib-1.2.3\\p.js"
+- "id": "sync04418.is_others_code_path.group"
+  "r": ".is_others_code_path"
+  "py": "metacheck.datacheck.files._is_others_code_path"
+  "args":
+    "path":
+      "$chr":
+      - "lib-1.2.3/p.js"
+      - "run.R"
+      - "lib-2.0/p.js"
+      - "other.R"
+      - "o2.R"
+    "is_code":
+      "$expr":
+        "r": "c(TRUE, TRUE, TRUE, TRUE, TRUE)"
+        "py": "[True, True, True, True, True]"
+    "group":
+      "$chr":
+      - "a"
+      - "a"
+      - "b"
+      - "c"
+      - "c"
+- "id": "sync04418.is_r_package_file.subfolder_alone"
+  "r": ".is_r_package_file"
+  "py": "metacheck.datacheck.files._is_r_package_file"
+  "args":
+    "file_path":
+      "$chr":
+      - "good 2/DESCRIPTION"
+      - "good 2/NAMESPACE"
+      - "good 2/R/f.R"
+      - "good 2/man/f.Rd"
+- "id": "sync04418.is_r_package_file.subfolder_with_code"
+  "r": ".is_r_package_file"
+  "py": "metacheck.datacheck.files._is_r_package_file"
+  "args":
+    "file_path":
+      "$chr":
+      - "good 2/DESCRIPTION"
+      - "good 2/NAMESPACE"
+      - "good 2/R/f.R"
+      - "good 2/man/f.Rd"
+      - "analysis.R"
+- "id": "sync04418.is_r_package_file.subfolder_with_readme"
+  "r": ".is_r_package_file"
+  "py": "metacheck.datacheck.files._is_r_package_file"
+  "args":
+    "file_path":
+      "$chr":
+      - "good 2/DESCRIPTION"
+      - "good 2/NAMESPACE"
+      - "good 2/R/f.R"
+      - "good 2/man/f.Rd"
+      - "README.Rmd"
+      - "README.md"
+- "id": "sync04418.is_r_package_file.two_packages"
+  "r": ".is_r_package_file"
+  "py": "metacheck.datacheck.files._is_r_package_file"
+  "args":
+    "file_path":
+      "$chr":
+      - "good 2/DESCRIPTION"
+      - "good 2/NAMESPACE"
+      - "good 2/R/f.R"
+      - "good 2/man/f.Rd"
+      - "other/DESCRIPTION"
+      - "other/NAMESPACE"
+      - "other/R/g.R"
+- "id": "sync04418.is_r_package_file.two_packages_with_data"
+  "r": ".is_r_package_file"
+  "py": "metacheck.datacheck.files._is_r_package_file"
+  "args":
+    "file_path":
+      "$chr":
+      - "good 2/DESCRIPTION"
+      - "good 2/NAMESPACE"
+      - "good 2/R/f.R"
+      - "good 2/man/f.Rd"
+      - "other/DESCRIPTION"
+      - "other/NAMESPACE"
+      - "d/x.csv"
+- "id": "sync04418.data_group_from_path.study_numbers"
+  "r": ".data_group_from_path"
+  "py": "metacheck.datacheck.files._data_group_from_path"
+  "args":
+    "paths":
+      "$chr":
+      - "study104/a.csv"
+      - "data/study03032026.csv"
+      - "STUDY-20-00338.pdf"
+      - "Pilot Study 1A/x.csv"
+      - "pilot2_data.csv"
+      - "pilot/x.csv"
+      - "Study 2/a.csv"
+      - "study2a_data.csv"
+      - "experiment3explicit.csv"
+      - "Exp1/raw.csv"
+      - "study2_2019.csv"
+      - "study1_2.csv"
+      - "index1.csv"
+      - "study1_20230512.csv"
+      - "Study2_15032021_data.csv"
+      - "study3_12345678.csv"
+      - "Pilot experiment 3b/x.csv"
+      - "study12/a.csv"
+      - "study_1/a.csv"
+- "id": "sync04435.data_group_from_path.prefilter"
+  "r": ".data_group_from_path"
+  "py": "metacheck.datacheck.files._data_group_from_path"
+  "args":
+    "paths":
+      "$chr":
+      - "Study 1/data.csv"
+      - "pilot/x.csv"
+      - "Pilot Study 1A/a.csv"
+      - "exp2/b.csv"
+      - "text1.csv"
+      - "study2_2019.csv"
+      - "a/b/c"
+      - null
+      - ""
+      - "index2.csv"
+      - "Study 1/data.csv"
+- "id": "sync04435.data_group_from_path.empty"
+  "r": ".data_group_from_path"
+  "py": "metacheck.datacheck.files._data_group_from_path"
+  "args":
+    "paths":
+      "$chr": []
+- "id": "review.read_head_typed.wide_blank.csv"
+  "r": "identity"
+  "py": "tests.datacheck_files.review_helpers.read_head_typed"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({d <- data_read_head(rpath(\"tests/datacheck_files/data/review/wide_blank.csv\"),\
+          \ n_rows = Inf); if (is.null(d)) return(NULL); types <- unname(lapply(d, function(x) c(typeof(x),\
+          \ class(x)))); for (j in seq_along(d)) {if (is.complex(d[[j]])) d[[j]] <- as.character(d[[j]]);\
+          \ if (inherits(d[[j]], \"integer64\")) d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))};\
+          \ list(names = names(d), types = types, data = d)})"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "path": "tests/datacheck_files/data/review/wide_blank.csv"
+    "n_rows": null
+- "id": "sync04435.blank_cols_dropped.wide_blank.csv"
+  "r": "identity"
+  "py": "tests.datacheck_files.review_helpers.blank_cols_dropped"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({d <- data_read_head(rpath(\"tests/datacheck_files/data/review/wide_blank.csv\"),\
+          \ n_rows = Inf); list(ncol = ncol(d), dropped = attr(d, \"blank_cols_dropped\"))})"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "path": "tests/datacheck_files/data/review/wide_blank.csv"
+- "id": "review.read_head_typed.wide_blank_stop.csv"
+  "r": "identity"
+  "py": "tests.datacheck_files.review_helpers.read_head_typed"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({d <- data_read_head(rpath(\"tests/datacheck_files/data/review/wide_blank_stop.csv\"\
+          ), n_rows = Inf); if (is.null(d)) return(NULL); types <- unname(lapply(d, function(x) c(typeof(x),\
+          \ class(x)))); for (j in seq_along(d)) {if (is.complex(d[[j]])) d[[j]] <- as.character(d[[j]]);\
+          \ if (inherits(d[[j]], \"integer64\")) d[[j]] <- as.numeric(bit64:::as.character.integer64(d[[j]]))};\
+          \ list(names = names(d), types = types, data = d)})"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "path": "tests/datacheck_files/data/review/wide_blank_stop.csv"
+    "n_rows": null
+- "id": "sync04435.blank_cols_dropped.wide_blank_stop.csv"
+  "r": "identity"
+  "py": "tests.datacheck_files.review_helpers.blank_cols_dropped"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({d <- data_read_head(rpath(\"tests/datacheck_files/data/review/wide_blank_stop.csv\"\
+          ), n_rows = Inf); list(ncol = ncol(d), dropped = attr(d, \"blank_cols_dropped\"))})"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "path": "tests/datacheck_files/data/review/wide_blank_stop.csv"
+- "id": "sync04418.read_head_attrs.loo.rds"
+  "r": "identity"
+  "py": "tests.datacheck_files.parity_helpers.read_head_attrs"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({d <- data_read_head(rpath(\"tests/datacheck_files/data/plain_table/loo.rds\"), n_rows\
+          \ = Inf); list(names = names(d), attrs = lapply(d, function(x) {a <- attributes(x); a$levels\
+          \ <- NULL; a$names <- NULL; if (!is.null(a$labels)) a$labels <- as.list(a$labels); if (length(a))\
+          \ a[order(names(a))] else NULL}), utf8_repaired = NULL)})"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "path": "tests/datacheck_files/data/plain_table/loo.rds"
+    "n_rows": null
+- "id": "sync04418.read_head_attrs.idate.rds"
+  "r": "identity"
+  "py": "tests.datacheck_files.parity_helpers.read_head_attrs"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({d <- data_read_head(rpath(\"tests/datacheck_files/data/plain_table/idate.rds\"),\
+          \ n_rows = Inf); list(names = names(d), attrs = lapply(d, function(x) {a <- attributes(x); a$levels\
+          \ <- NULL; a$names <- NULL; if (!is.null(a$labels)) a$labels <- as.list(a$labels); if (length(a))\
+          \ a[order(names(a))] else NULL}), utf8_repaired = NULL)})"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "path": "tests/datacheck_files/data/plain_table/idate.rds"
+    "n_rows": null
+- "id": "sync04418.read_head_attrs.mixed.rds"
+  "r": "identity"
+  "py": "tests.datacheck_files.parity_helpers.read_head_attrs"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({d <- data_read_head(rpath(\"tests/datacheck_files/data/plain_table/mixed.rds\"),\
+          \ n_rows = Inf); list(names = names(d), attrs = lapply(d, function(x) {a <- attributes(x); a$levels\
+          \ <- NULL; a$names <- NULL; if (!is.null(a$labels)) a$labels <- as.list(a$labels); if (length(a))\
+          \ a[order(names(a))] else NULL}), utf8_repaired = NULL)})"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "path": "tests/datacheck_files/data/plain_table/mixed.rds"
+    "n_rows": null
+- "id": "sync04418.read_head_attrs.spss.rds"
+  "r": "identity"
+  "py": "tests.datacheck_files.parity_helpers.read_head_attrs"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({d <- data_read_head(rpath(\"tests/datacheck_files/data/plain_table/spss.rds\"), n_rows\
+          \ = Inf); list(names = names(d), attrs = lapply(d, function(x) {a <- attributes(x); a$levels\
+          \ <- NULL; a$names <- NULL; if (!is.null(a$labels)) a$labels <- as.list(a$labels); if (length(a))\
+          \ a[order(names(a))] else NULL}), utf8_repaired = NULL)})"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "path": "tests/datacheck_files/data/plain_table/spss.rds"
+    "n_rows": null
+- "id": "sync04418.read_head_attrs.predictions.rds"
+  "r": "identity"
+  "py": "tests.datacheck_files.parity_helpers.read_head_attrs"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({d <- data_read_head(rpath(\"tests/datacheck_files/data/plain_table/predictions.rds\"\
+          ), n_rows = Inf); list(names = names(d), attrs = lapply(d, function(x) {a <- attributes(x);\
+          \ a$levels <- NULL; a$names <- NULL; if (!is.null(a$labels)) a$labels <- as.list(a$labels);\
+          \ if (length(a)) a[order(names(a))] else NULL}), utf8_repaired = NULL)})"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "path": "tests/datacheck_files/data/plain_table/predictions.rds"
+    "n_rows": null
+- "id": "sync04418.read_head_attrs.predictions.RData"
+  "r": "identity"
+  "py": "tests.datacheck_files.parity_helpers.read_head_attrs"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({d <- data_read_head(rpath(\"tests/datacheck_files/data/plain_table/predictions.RData\"\
+          ), n_rows = Inf); list(names = names(d), attrs = lapply(d, function(x) {a <- attributes(x);\
+          \ a$levels <- NULL; a$names <- NULL; if (!is.null(a$labels)) a$labels <- as.list(a$labels);\
+          \ if (length(a)) a[order(names(a))] else NULL}), utf8_repaired = NULL)})"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "path": "tests/datacheck_files/data/plain_table/predictions.RData"
+    "n_rows": null

@@ -858,6 +858,80 @@ CASES += [
 ]
 
 
+# --- file-sharing services, archives listed and not checked, file kinds (#660, #648) ------------
+# GEO, CRAN and ICPSR records are not recorded either: every request fails on both sides, so the
+# deposit is "unfound" and set aside (metacheck lists the authors' own, which needs the ownership
+# engine, D141).
+DROPBOX = "https://www.dropbox.com/s/abc123/project.zip?dl=0"
+CASES += [
+    (
+        "file_share.dropbox",
+        "a link to Dropbox and no repository: yellow, with the warning",
+        one(
+            [],
+            "p_fs1",
+            [f"All data and code are available at {DROPBOX}."],
+        ),
+        {},
+    ),
+    (
+        "file_share.two",
+        "two file-sharing services, one of them a hyperlink only",
+        one(
+            ["https://drive.google.com/drive/folders/1AbC?usp=sharing"],
+            "p_fs2",
+            [f"Data are at {DROPBOX} and code at https://app.box.com/s/xyz9."],
+        ),
+        {},
+    ),
+    (
+        "file_share.with_local",
+        "a file-sharing link beside a checked local folder: the light is yellow",
+        local(FIX + "tidy", "p_fs3", text=[f"Materials are on {DROPBOX}."]),
+        {},
+    ),
+    (
+        "file_share.none",
+        "no such link: no warning, a zero count",
+        one([], "p_fs4", ["Data are at https://osf.io/abcde."]),
+        {},
+    ),
+    (
+        "seq.geo_only",
+        "a GEO accession and nothing else: set aside, the light is na",
+        one([], "p_seq1", ["RNA-seq data are deposited in GEO (GSE149523)."]),
+        {},
+    ),
+    (
+        "seq.with_local",
+        "a GEO accession beside a checked local folder: only the folder is checked",
+        local(FIX + "tidy", "p_seq2", text=["RNA-seq data are deposited in GEO (GSE149523)."]),
+        {},
+    ),
+    (
+        "cran.only",
+        "a CRAN package: set aside, the light is na",
+        one(
+            [], "p_cran1", ["Our package is on CRAN: https://CRAN.R-project.org/package=metacheck."]
+        ),
+        {},
+    ),
+    (
+        "icpsr.only",
+        "an openICPSR package: set aside, the light is na",
+        one([], "p_icpsr1", ["Data and code: https://doi.org/10.3886/E195681V1."]),
+        {},
+    ),
+    (
+        "local.kinds",
+        "file kinds decide the counts: an empty README does not count, a .7z and a .jar are "
+        "archives, a .log.gz is not; .Rapp.history and .RDataTmp are junk",
+        local(FIX + "kinds", "p_kinds"),
+        {},
+    ),
+]
+
+
 # cases whose repo_error R fills with its own crash text (a dplyr, match() or
 # data.frame() error) where pytacheck says what went wrong: error texts are not
 # compared, only whether each row has one (compare: presence, docs/PARITY.md)

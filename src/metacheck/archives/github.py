@@ -228,6 +228,23 @@ def _url_encode(url: str, reserved: bool = False) -> str:
     return url_encode(url, reserved=reserved)
 
 
+def _url_encode_paths(paths: list[str]) -> list[str]:
+    """Each part of a file's path encoded (``utils::URLencode(reserved = TRUE)``), the slashes kept.
+
+    A space, ``#``, ``?``, ``%`` or ``+`` in a folder or file name would otherwise
+    make an address the host refuses; ``path`` and ``name`` stay as they are, as the
+    cache's file names and the paths a paper's code reads are built from them
+    (metacheck #667, which lost 184 files of one OSF project's GitHub storage).
+    """
+    out: list[str] = []
+    for p in paths:
+        parts = p.split("/") if p != "" else []
+        if parts and parts[-1] == "":  # strsplit() drops a trailing empty piece
+            parts.pop()
+        out.append("/".join(_url_encode(x, reserved=True) for x in parts))
+    return out
+
+
 @functools.cache
 def _file_types_table() -> pd.DataFrame:
     """One row per extension of ``metacheck::file_types``: ``ext`` and ``type``.
@@ -1056,12 +1073,20 @@ def github_tree_files(repo: Any) -> dict[str, Any]:
         }
 
     blobs = _filter_blobs(field(tree, "tree") or [])
+    # Symbolic links (mode 120000) are stored as a small text file holding the path they point
+    # to, and their raw address serves that text: a check read "../data/small.csv" as the file's
+    # content (metacheck #700). They are left out of the files and returned as `links`, with
+    # their targets (`_repo_links`).
+    is_link = [field(x, "mode") == "120000" for x in blobs]
+    link_paths = [_empty_or(field(x, "path"), "") for x, k in zip(blobs, is_link, strict=True) if k]
+    blobs = [x for x, k in zip(blobs, is_link, strict=True) if not k]
     paths = [_empty_or(field(x, "path"), "") for x in blobs]
     if not blobs:
         files_df = _empty_tree_files()
     else:
         repo_str = _as_list(repo)[0] if _is_vector(repo) else repo
         raw_base = f"https://raw.githubusercontent.com/{clean_repo}/{default_branch}/"
+        enc_paths = _url_encode_paths(paths)
         names = [_r_basename(p) for p in paths]
         files_df = pd.DataFrame(
             {
@@ -1069,7 +1094,7 @@ def github_tree_files(repo: Any) -> dict[str, Any]:
                 "clean_repo": pd.Series([clean_repo] * len(blobs), dtype="string"),
                 "name": pd.Series(names, dtype="string"),
                 "path": pd.Series(paths, dtype="string"),
-                "download_url": pd.Series([raw_base + p for p in paths], dtype="string"),
+                "download_url": pd.Series([raw_base + p for p in enc_paths], dtype="string"),
                 "size": pd.Series([_vapply_num(field(x, "size")) for x in blobs], dtype="float64"),
                 "ft": pd.Series(["file"] * len(blobs), dtype="string"),
             }
@@ -1077,6 +1102,14 @@ def github_tree_files(repo: Any) -> dict[str, Any]:
         files_df["ext"] = pd.Series([_file_ext(n).lower() for n in names], dtype="string")
         files_df = _add_file_types(files_df, drop_ext=True)
 
+    links = None
+    if link_paths:
+        raw_base = f"https://raw.githubusercontent.com/{clean_repo}/{default_branch}/"
+        links = _repo_links(
+            link_paths,
+            all_paths=[_empty_or(field(x, "path"), "") for x in (field(tree, "tree") or [])],
+            raw_urls=[raw_base + p for p in _url_encode_paths(link_paths)],
+        )
     return {
         "gated": False,
         "reason": None,
@@ -1084,7 +1117,69 @@ def github_tree_files(repo: Any) -> dict[str, Any]:
         "default_branch": default_branch,
         "license": license_id,
         "info": info,
+        "links": links,
     }
+
+
+def _repo_links(
+    link_paths: list[str],
+    all_paths: list[str],
+    raw_urls: list[str],
+    max_links: int = 50,
+    targets: list[str | None] | None = None,
+) -> pd.DataFrame:
+    """Port of ``.repo_links()``: the symbolic links of a repository listing, as a frame.
+
+    ``path``, ``target`` (the path the link holds, ``None`` when it could not be read) and
+    ``broken`` (``True`` when the target is not in the repository, ``None`` when unknown).
+    *link_paths* are the links' paths, *all_paths* every path of the listing (files and
+    folders), *raw_urls* the addresses that serve each link's text. At most *max_links*
+    targets are read, one request each (metacheck #700); *targets* gives them instead.
+    """
+    import posixpath
+
+    n = len(link_paths)
+    target: list[str | None] = list(targets) if targets is not None else [None] * n
+    if targets is None:
+        for i in range(min(n, max_links)):
+            try:
+                resp = _perform("GET", raw_urls[i], timeout=20)
+                target[i] = resp.text.strip() if resp.status_code < 400 else None
+            except Exception:
+                target[i] = None
+    known = set(all_paths)
+
+    def resolve(i: int) -> str | None:
+        t = target[i]
+        if t is None or t.startswith("/"):
+            return None
+        parts = posixpath.dirname(link_paths[i]).split("/") + t.split("/")
+        out: list[str] = []
+        for q in parts:
+            if q in ("", "."):
+                continue
+            if q == "..":
+                if not out:
+                    return None
+                out.pop()
+            else:
+                out.append(q)
+        return "/".join(out)
+
+    broken: list[bool | None] = []
+    for i in range(n):
+        if target[i] is None:
+            broken.append(None)
+        else:
+            r = resolve(i)
+            broken.append(r is None or r not in known)
+    return pd.DataFrame(
+        {
+            "path": pd.Series(link_paths, dtype="string"),
+            "target": pd.Series(target, dtype="string"),
+            "broken": pd.array(broken, dtype="boolean"),
+        }
+    )
 
 
 def _repo_info(meta: Any) -> dict[str, Any]:

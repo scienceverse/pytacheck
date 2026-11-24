@@ -340,7 +340,6 @@
   "args":
     "x": {"$expr": {"r": "{source('tests/mod_p_values/report_tables.R'); mp_report_tables(read(c('upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json')), 'all_p_values')}", "py": "__import__('tests.mod_p_values.report_tables', fromlist=['x']).mp_report_tables(pc.read(['upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json']), 'all_p_values')"}}
 - "id": "report_tables.all_p_values.real"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U16", "reason": "The sentences read from the TEI differ (io fix: 'p = .27', metacheck 'p =.27'; 'see Fig. 3a' is not replaced by the supplement URL), which also lets one more 'p < .001' be found."}
   "r": "identity"
   "py": "tests.mod_p_values.report_tables.identity"
   "args":

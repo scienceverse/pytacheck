@@ -55,6 +55,8 @@ _DTYPES: dict[str, str] = {
     "date_registered": "string",
     "contributors": "string",
     "contributor_orcids": "string",
+    "contributor_families": "string",
+    "n_contributors": "Int64",
     "primary_file": "string",
     "orcid": "string",
     "osf_url": "string",
@@ -584,24 +586,44 @@ def _osf_info_ids(osf_id: Any, pb: Any, cache: bool) -> pd.DataFrame:
         resps = http.batch_query(
             [all_urls[i] for i in fetch_idx], msg="OSF Info", req_func=_osf_headers
         )
+        # An OSF item without contributors (a single file) cannot have them added: the OSF
+        # refuses the whole request (HTTP 400, "not embeddable"), and every link to a file was
+        # reported as not found (metacheck #672). Such an item is asked for again without
+        # them, one extra request for each.
+        refused = [k for k, r in enumerate(resps) if _osf_embed_refused(r)]
+        if refused:
+            again = http.batch_query(
+                [
+                    re.sub(r"[?&]embed=bibliographic_contributors$", "", all_urls[fetch_idx[k]])
+                    for k in refused
+                ],
+                msg="OSF Info",
+                req_func=_osf_headers,
+            )
+            for k, r in zip(refused, again, strict=True):
+                resps[k] = r
         for i, resp in zip(fetch_idx, resps, strict=True):
             ident = all_ids[i]
             try:
                 results[i] = _osf_parse_response(resp, pb=pb, osf_id=ident)
             except Exception:
                 results[i] = _frame({"osf_id": [ident], "osf_type": "error"}, 1)
-            # A refusal (401/403, read as "private") is not kept: the OSF also refuses public
-            # projects for a while, and a kept refusal made a paper's own project look empty in
-            # every later run.
+
+    # a record with more contributors than the OSF named in its answer gets the full list, also
+    # one kept in the cache (metacheck #682)
+    completed = _osf_complete_contributors(list(results))
+    changed = [i for i in range(len(results)) if completed[i] is not results[i]]
+    results = completed
+
+    # A refusal (401/403, read as "private") is not kept: the OSF also refuses public projects for
+    # a while, and a kept refusal made a paper's own project look empty in every later run.
+    if cache is True:
+        for i in sorted(set(fetch_idx) | set(changed)):
             r_i = results[i]
-            if (
-                cache is True
-                and _repo_info_ok(r_i)
-                and not (
-                    r_i is not None and "osf_type" in r_i and (r_i["osf_type"] == "private").any()
-                )
+            if _repo_info_ok(r_i) and not (
+                r_i is not None and "osf_type" in r_i and (r_i["osf_type"] == "private").any()
             ):
-                _repo_info_cache_put("osf", ident, results[i])
+                _repo_info_cache_put("osf", all_ids[i], r_i)
 
     info_table = bind_rows(results)
     if len(info_table) != len(all_ids):
@@ -619,6 +641,50 @@ def _osf_info_ids(osf_id: Any, pb: Any, cache: bool) -> pd.DataFrame:
             [info_table, _frame({"osf_id": invalid, "osf_type": "invalid"}, len(invalid))]
         )
     return info_table
+
+
+def _osf_errors(resp: Any) -> list[Any] | None:
+    """Port of ``R/archive-osf-helpers.R::.osf_errors()``: the errors in an OSF API answer that
+    is not a success (the body's ``errors``, each with a ``detail`` and a ``source``), or ``None``
+    when the body has none or cannot be read."""
+    if resp is None or not hasattr(resp, "status_code"):
+        return None
+    try:
+        body = _resp_body_json(resp)
+    except Exception:
+        return None
+    errors = body.get("errors") if isinstance(body, dict) else None
+    return errors if isinstance(errors, list) else None
+
+
+def _osf_error_detail(resp: Any) -> str:
+    """Port of ``R/archive-osf-helpers.R::.osf_error_detail()``: the OSF's own reason in an
+    answer that is not a success, as one text, or ``""``."""
+    out: list[str] = []
+    for e in _osf_errors(resp) or []:
+        d = e.get("detail") if isinstance(e, dict) else None
+        text = (
+            d
+            if isinstance(d, str)
+            else (d[0] if isinstance(d, list) and d and isinstance(d[0], str) else "")
+        )
+        if text and text not in out:
+            out.append(text)
+    return "; ".join(out)
+
+
+def _osf_embed_refused(resp: Any) -> bool:
+    """Port of ``R/archive-osf-helpers.R::.osf_embed_refused()``: whether the OSF refused a
+    request because of its ``embed`` parameter (HTTP 400 with an error whose source is
+    ``embed``): an item without contributors, such as a single file, cannot have them added
+    (metacheck #672)."""
+    if resp is None or not hasattr(resp, "status_code") or resp.status_code != 400:
+        return False
+    for e in _osf_errors(resp) or []:
+        src = e.get("source") if isinstance(e, dict) else None
+        if isinstance(src, dict) and src.get("parameter") == "embed":
+            return True
+    return False
 
 
 def _osf_parse_response(
@@ -657,6 +723,21 @@ def _osf_parse_response(
             single = isinstance(all_data, dict)
         elif sc in (401, 403):
             return _frame({"osf_id": [ident], "osf_type": "private", "public": False}, 1)
+        elif sc == 400:
+            # The OSF refused the request itself, which says nothing about whether the item
+            # exists: it was reported as "not found" (metacheck #672)
+            detail = _osf_error_detail(resp)
+            what = "An OSF resource" if ident is None else ident
+            tail = f": {detail}" if detail else ""
+            warnings.warn(f"{what}: the OSF refused the request (HTTP 400){tail}", stacklevel=2)
+            return _frame(
+                {
+                    "osf_id": [ident],
+                    "osf_type": "error",
+                    "error": f"the OSF refused the request (HTTP 400){tail}",
+                },
+                1,
+            )
         elif sc == 429:
             # The OSF sends no time at which its limit ends (100 requests per hour without
             # a key, 10,000 per day with one), so an hour is assumed. `error` marks the row
@@ -967,26 +1048,37 @@ def _osf_github_files(node: str) -> pd.DataFrame | None:
 # ---------------------------------------------------------------------------
 
 
-def _osf_contributors(recs: list[dict[str, Any]]) -> tuple[list[str | None], list[str | None]]:
-    """Port of ``.osf_contributors()``: each record's contributors and their ORCID iDs.
+def _osf_contributors(
+    recs: list[dict[str, Any]],
+) -> tuple[list[str | None], list[str | None], list[str | None], list[int | None]]:
+    """Port of ``.osf_contributors()``: each record's contributors, ORCID iDs, family names and count.
 
     The bibliographic contributors OSF lists in a node's, registration's or preprint's
     citation, as ``"Name; Name"`` and ``"id; id"``. ``.osf_info()`` asks for them in the
     request it makes anyway (``?embed=bibliographic_contributors``); they tell a paper's
     own project from one it reuses. ``None`` (``NA``) where the answer holds none (a
-    listing of child nodes, or an answer from before they were asked for).
+    listing of child nodes, or an answer from before they were asked for). Also their family
+    names, as ``"Family; Family"``, which the OSF keeps apart from their given names (a
+    contributor without one gets the family part of the full name), and how many contributors
+    there are in all: the OSF names only the first 10 in this answer (metacheck 0.4.4.25, #682).
     """
+    from metacheck.archives.ownership import _own_person_family
     from metacheck.utils import _meta_orcids
 
     names: list[str | None] = []
     orcids: list[str | None] = []
+    families: list[str | None] = []
+    totals: list[int | None] = []
     for rec in recs:
         users = _get(rec, "embeds", "bibliographic_contributors", "data")
         if not isinstance(users, list) or not users:
             names.append(None)
             orcids.append(None)
+            families.append(None)
+            totals.append(None)
             continue
         nm: list[str] = []
+        fm: list[str | None] = []
         orc: list[str] = []
         for u in users:
             att = _get(u, "embeds", "users", "data", "attributes")
@@ -995,13 +1087,138 @@ def _osf_contributors(recs: list[dict[str, Any]]) -> tuple[list[str | None], lis
             full = att.get("full_name")
             if isinstance(full, str) and full:
                 nm.append(full)
+                fam = att.get("family_name")
+                fm.append(fam if isinstance(fam, str) else None)
             social = att.get("social")
             o = social.get("orcid") if isinstance(social, dict) else None
             if o is not None:
                 orc.append(o if isinstance(o, str) else str(o))
+        # a contributor without a family name of its own: the family part of the full name
+        fam_out: list[str] = []
+        for q, f in zip(nm, fm, strict=True):
+            if f is None or not f.strip():
+                f = " ".join(_own_person_family(q))
+            f = f.strip()
+            if f:
+                fam_out.append(f)
         names.append("; ".join(dict.fromkeys(nm)) if nm else None)
         orcids.append(_meta_orcids(orc))
-    return names, orcids
+        families.append("; ".join(dict.fromkeys(fam_out)) if fam_out else None)
+        total = _get(rec, "embeds", "bibliographic_contributors", "links", "meta", "total")
+        if isinstance(total, list):
+            total = total[0] if total else None
+        try:
+            totals.append(int(total) if total is not None and not isinstance(total, bool) else None)
+        except (TypeError, ValueError):
+            totals.append(None)
+    return names, orcids, families, totals
+
+
+def _osf_complete_contributors(rows: list[Any]) -> list[Any]:
+    """Port of ``.osf_complete_contributors()``: the full list of contributors of a cut-short record.
+
+    The OSF names only the first 10 contributors of a project, registration or preprint in its
+    answer (metacheck #682). A record with more gets the full list, one request each (up to 100
+    names): cut short, the list could not show that a project the paper reuses was made by others
+    (osf.io/xv5rp: 10 of 11 named). A record stored before the count was kept, naming exactly 10,
+    is completed the same way. *rows* is a list of parsed records (one-row data frames, as
+    :func:`_osf_info`'s batch builds them); a failed request leaves a record as it was.
+    """
+    from metacheck.archives import osf as _osf
+    from metacheck.utils import get_option
+
+    kinds = {"nodes", "registrations", "preprints"}
+    idx: list[int] = []
+    for i, r in enumerate(rows):
+        if (
+            not isinstance(r, pd.DataFrame)
+            or len(r) != 1
+            or "osf_type" not in r
+            or r["osf_type"].iloc[0] not in kinds
+            or "contributors" not in r
+            or is_missing(r["contributors"].iloc[0])
+        ):
+            continue
+        n_named = len(str(r["contributors"].iloc[0]).split(";"))
+        n_all = None
+        if "n_contributors" in r and not is_missing(r["n_contributors"].iloc[0]):
+            n_all = int(r["n_contributors"].iloc[0])
+        if (n_named == 10) if n_all is None else (n_named < n_all):
+            idx.append(i)
+    if not idx:
+        return rows
+    osf_api = get_option("metacheck.osf.api")
+    urls = [
+        f"{osf_api}/{rows[i]['osf_type'].iloc[0]}/{rows[i]['osf_id'].iloc[0]}"
+        "/bibliographic_contributors/?page[size]=100"
+        for i in idx
+    ]
+    pages = _osf._osf_get_pages_parallel(urls)
+    out = list(rows)
+    for k, i in enumerate(idx):
+        p = pages[k]
+        if not isinstance(p, dict) or not p.get("data"):
+            continue
+        cb = _osf_contributors(
+            [
+                {
+                    "embeds": {
+                        "bibliographic_contributors": {"data": p["data"], "links": p.get("links")}
+                    }
+                }
+            ]
+        )
+        if cb[0][0] is None:
+            continue
+        r = rows[i].copy()
+        r["contributors"] = pd.Series([cb[0][0]], dtype="string", index=r.index)
+        r["contributor_orcids"] = pd.Series([cb[1][0]], dtype="string", index=r.index)
+        r["contributor_families"] = pd.Series([cb[2][0]], dtype="string", index=r.index)
+        if cb[3][0] is not None:
+            r["n_contributors"] = pd.Series([cb[3][0]], dtype="Int64", index=r.index)
+        out[i] = r
+    return out
+
+
+def _osf_complete_table(tbl: Any) -> Any:
+    """Port of ``.osf_complete_table()``: :func:`_osf_complete_contributors` for a whole listing.
+
+    ``osf_info()``'s table (one row per project, component and file), as it keeps it in the lasting
+    cache: the rows of projects, registrations and preprints whose list of contributors was cut
+    short get the full list.
+    """
+    if (
+        not isinstance(tbl, pd.DataFrame)
+        or len(tbl) == 0
+        or "osf_type" not in tbl
+        or "contributors" not in tbl
+    ):
+        return tbl
+    pos = [
+        k
+        for k, t in enumerate(tbl["osf_type"].tolist())
+        if t in ("nodes", "registrations", "preprints")
+    ]
+    if not pos:
+        return tbl
+    rows = [tbl.iloc[[k]] for k in pos]
+    done = _osf_complete_contributors(rows)
+    changed = [j for j in range(len(rows)) if done[j] is not rows[j]]
+    if not changed:
+        return tbl
+    tbl = tbl.copy()
+    for col, dtype in (
+        ("contributor_orcids", "string"),
+        ("contributor_families", "string"),
+        ("n_contributors", "Int64"),
+    ):
+        if col not in tbl:
+            tbl[col] = pd.Series([pd.NA] * len(tbl), dtype=dtype, index=tbl.index)
+    for j in changed:
+        for col in ("contributors", "contributor_orcids", "contributor_families", "n_contributors"):
+            if col in done[j]:
+                tbl.iloc[pos[j], tbl.columns.get_loc(col)] = done[j][col].iloc[0]
+    return tbl
 
 
 def _osf_node_data(data: Any, _context: list[dict[str, Any]] | None = None) -> pd.DataFrame:
@@ -1010,6 +1227,7 @@ def _osf_node_data(data: Any, _context: list[dict[str, Any]] | None = None) -> p
     if not recs:
         return pd.DataFrame()
     c = _Cols(recs, _context, listing=not isinstance(data, dict))
+    cb = _osf_contributors(recs)
     return _frame(
         {
             "osf_id": c.first(("id",)),
@@ -1029,8 +1247,10 @@ def _osf_node_data(data: Any, _context: list[dict[str, Any]] | None = None) -> p
             # project from an older one it reuses
             "date_created": c.first(("attributes", "date_created")),
             "date_modified": c.first(("attributes", "date_modified")),
-            "contributors": _osf_contributors(recs)[0],
-            "contributor_orcids": _osf_contributors(recs)[1],
+            "contributors": cb[0],
+            "contributor_orcids": cb[1],
+            "contributor_families": cb[2],
+            "n_contributors": cb[3],
         },
         len(recs),
     )
@@ -1131,6 +1351,7 @@ def _osf_preprint_data(data: Any, _context: list[dict[str, Any]] | None = None) 
     if not recs:
         return pd.DataFrame()
     c = _Cols(recs, _context, listing=not isinstance(data, dict))
+    cb = _osf_contributors(recs)
     return _frame(
         {
             "osf_id": c.first(("id",)),
@@ -1148,8 +1369,10 @@ def _osf_preprint_data(data: Any, _context: list[dict[str, Any]] | None = None) 
             "parent": c.first(("relationships", "node", "data", "id")),
             "project": c.first(("relationships", "root", "data", "id")),
             "primary_file": c.first(("relationships", "primary_file", "links", "related", "href")),
-            "contributors": _osf_contributors(recs)[0],
-            "contributor_orcids": _osf_contributors(recs)[1],
+            "contributors": cb[0],
+            "contributor_orcids": cb[1],
+            "contributor_families": cb[2],
+            "n_contributors": cb[3],
         },
         len(recs),
     )
@@ -1161,6 +1384,7 @@ def _osf_reg_data(data: Any, _context: list[dict[str, Any]] | None = None) -> pd
     if not recs:
         return pd.DataFrame()
     c = _Cols(recs, _context, listing=not isinstance(data, dict))
+    cb = _osf_contributors(recs)
     return _frame(
         {
             "osf_id": c.first(("id",)),
@@ -1177,8 +1401,10 @@ def _osf_reg_data(data: Any, _context: list[dict[str, Any]] | None = None) -> pd
             "description": c.first(("attributes", "description")),
             "date_created": c.first(("attributes", "date_created")),
             "date_registered": c.first(("attributes", "date_registered")),
-            "contributors": _osf_contributors(recs)[0],
-            "contributor_orcids": _osf_contributors(recs)[1],
+            "contributors": cb[0],
+            "contributor_orcids": cb[1],
+            "contributor_families": cb[2],
+            "n_contributors": cb[3],
         },
         len(recs),
     )

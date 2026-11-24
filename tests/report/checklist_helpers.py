@@ -438,6 +438,29 @@ def rc_files(kind: str) -> dict[str, Any]:
         }
     if kind == "no_paths":
         return {"files": _df(file_name=["a.csv"]), "naming": None, "useless": None}
+    if kind == "junk_only":
+        return {
+            "files": None,
+            "naming": None,
+            "useless": _df(
+                repo_url=["https://osf.io/abcde"] * 2,
+                file_path=["__MACOSX/._a.csv", "__MACOSX/._b.csv"],
+            ),
+        }
+    if kind == "many":
+        n = 2100
+        p = [f"site{i % 30 + 1:03d}/plot{i % 20 + 1:02d}/day{i + 1:06d}.csv" for i in range(n)]
+        return {
+            "files": _df(
+                repo_url=["https://zenodo.org/records/1"] * n,
+                file_name=[x.rsplit("/", 1)[-1] for x in p],
+                file_path=p,
+                data_type=["data"] * n,
+                doc_role=[na] * n,
+            ),
+            "naming": None,
+            "useless": None,
+        }
     raise ValueError(f"no files {kind}")
 
 

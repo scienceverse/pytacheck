@@ -1,0 +1,64 @@
+{
+  "id": "file_share_links.others",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 6,
+    "names": [
+      "paper_id",
+      "href",
+      "text_id",
+      "service"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3",
+          "6c4258abe0fec3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://we.tl/t-abc",
+          "https://mega.nz/folder/abc#key",
+          "https://www.icloud.com/iclouddrive/0abc",
+          "https://pan.baidu.com/s/1abc",
+          "https://univ.sharepoint.com/:f:/s/team/abc",
+          "https://wetransfer.com/downloads/abc"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1,
+          1,
+          1,
+          2,
+          2
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "WeTransfer",
+          "MEGA",
+          "iCloud Drive",
+          "Baidu Netdisk",
+          "OneDrive",
+          "WeTransfer"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.40",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -14,7 +14,8 @@
       "traffic_light",
       "summary_text",
       "summary_table",
-      "na_replace"
+      "na_replace",
+      "count_refused"
     ],
     "v": [
       {
@@ -146,9 +147,32 @@
         "names": [
           "code_n"
         ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "n_files",
+          "message"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

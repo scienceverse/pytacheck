@@ -1,6 +1,6 @@
 {
 "extract_stats.2": {"r": "8400aa614fa00ecd", "py": "aeca7e6c2a32f7e2", "diff": ["Statistic[]"]},
-"stat_check.red.several": {"r": "b1268ca947bfc088", "py": "f9e50202b3b50cc2", "diff": ["summary_table.statcheck_decision_errors[]", "summary_table.statcheck_errors[]", "summary_table.statcheck_found[]", "summary_text[]", "table"]},
+"stat_check.red.several": {"r": "c89d9a85fd89e714", "py": "00f5085a40f16c9e", "diff": ["summary_table.statcheck_decision_errors[]", "summary_table.statcheck_errors[]", "summary_table.statcheck_found[]", "summary_text[]", "table"]},
 "statcheck.error.condition_length": {"r": "ac5146cf65ca52a8", "py": "fa788537cd8bc57f", "diff": ["<R error, Python value>"]},
 "statcheck.error.differing_rows": {"r": "ac5146cf65ca52a8", "py": "bbf796867cc51e3c", "diff": ["<R error, Python value>"]},
 "statcheck.error.no_test_type": {"r": "ac5146cf65ca52a8", "py": "d33e6a78120356d0", "diff": ["<R error, Python value>"]},

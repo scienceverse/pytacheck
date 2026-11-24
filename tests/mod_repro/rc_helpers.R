@@ -95,9 +95,12 @@ rc_input <- function(name, absolute = FALSE) {
     if (!is.null(spec$version_pin)) {
       head$version_pin <- list(r_versions = unlist(spec$version_pin))
     }
+    # repositories refused for their number of files (#706)
+    if (!is.null(spec$count_refused)) head$count_refused <- rc_df(spec$count_refused)
   } else {
     head <- list(module = "data_check", table = data.frame(), paper = paper,
-                 summary_table = data.frame(paper_id = ids), structure = structure_df)
+                 summary_table = data.frame(paper_id = ids), structure = structure_df,
+                 count_refused = rc_df(spec$count_refused))
   }
   head$prev_outputs <- prev
   class(head) <- "metacheck_module_output"
@@ -122,7 +125,22 @@ rc_tables_dir <- function(name, td, tables) {
 # execution table's "Time (s)", deparsed into the report's R chunk) so the
 # goldens are reproducible.
 rc_untime <- function(mo) {
+  # the clock times kept for a TRO (metacheck 0.4.4.20) vary as well
+  if (!is.null(mo$environment)) {
+    for (k in c("started_at", "ended_at")) if (!is.null(mo$environment[[k]])) mo$environment[[k]] <- "<time>"
+    # the machine and the Python found on it differ between the machines that make the goldens
+    for (k in names(mo$environment$host)) mo$environment$host[[k]] <- "<host>"
+    for (k in names(mo$environment$python_local)) mo$environment$python_local[[k]] <- "<python>"
+  }
+  # a PDF a script draws holds the time it was made: its size and hash differ per run
+  if (!is.null(mo$artifacts) && nrow(mo$artifacts)) {
+    pdf <- grepl("\\.pdf$", mo$artifacts$path, ignore.case = TRUE) & mo$artifacts$stage == "after_run"
+    mo$artifacts$size[pdf] <- 0
+    mo$artifacts$sha256[pdf] <- "<hash>"
+  }
   if (!is.null(mo$run_results) && nrow(mo$run_results)) {
+    for (k in c("started_at", "ended_at"))
+      mo$run_results[[k]][!is.na(mo$run_results[[k]])] <- "<time>"
     mo$run_results$elapsed <- 0
     mo$report <- gsub('"Time \\(s\\)" = (c\\([^)]*\\)|[0-9.e+-]+)', '"Time (s)" = 0',
                       mo$report)
@@ -185,7 +203,7 @@ rc_run_mocked <- function(name, ...) {
     repro_install_deps = function(install_deps, lib_dir, cran_to_main_lib = FALSE,
                                   deadline = NULL)
       rc_fake_install(install_deps),
-    repro_install_deps_docker = function(install_deps, lib_dir, image = "", timeout = 600)
+    repro_install_deps_docker = function(install_deps, lib_dir, image = "", timeout = 600, deposit_pkgs = NULL)
       rc_fake_install(install_deps),
     repro_docker_available = function() list(ok = TRUE, msg = ""),
     repro_run_scripts_docker = function(run_tbl, order, sandbox_root, lib_dir = NULL,

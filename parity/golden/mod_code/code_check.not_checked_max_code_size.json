@@ -1,0 +1,794 @@
+{
+  "id": "code_check.not_checked_max_code_size",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace",
+      "version_pin",
+      "count_refused"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "code_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Code Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 8,
+        "names": [
+          "paper_id",
+          "repo_name",
+          "repo_url",
+          "file_name",
+          "file_path",
+          "file_url",
+          "file_location",
+          "file_size",
+          "language",
+          "checked",
+          "error",
+          "parse_error",
+          "parse_error_msg",
+          "code_abs_path",
+          "absolute_paths",
+          "code_setwd",
+          "setwd_calls",
+          "code_install_packages",
+          "install_packages_calls",
+          "library_lines",
+          "library_max_between",
+          "packages_n",
+          "packages",
+          "comment_lines",
+          "code_lines",
+          "percentage_comment",
+          "has_docstring",
+          "files_written",
+          "loaded_files_missing",
+          "loaded_files_missing_names",
+          "loaded_files_fetched_names"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "not_checked",
+              "not_checked",
+              "not_checked",
+              "not_checked",
+              "not_checked",
+              "not_checked",
+              "not_checked",
+              "not_checked"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/nochk",
+              "https://osf.io/nochk",
+              "https://osf.io/nochk",
+              "https://osf.io/nochk",
+              "https://osf.io/nochk",
+              "https://osf.io/nochk",
+              "https://osf.io/nochk",
+              "https://osf.io/nochk"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "bglmm.R",
+              "big.R",
+              "html_named.py",
+              "ok.R",
+              "png_named.R",
+              "pointer.R",
+              "pointer_nosize.R",
+              "rdata_named.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "bglmm.R",
+              "big.R",
+              "html_named.py",
+              "ok.R",
+              "png_named.R",
+              "pointer.R",
+              "pointer_nosize.R",
+              "rdata_named.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "tests/mod_code/fixtures/not_checked/bglmm.R",
+              "tests/mod_code/fixtures/not_checked/big.R",
+              "tests/mod_code/fixtures/not_checked/html_named.py",
+              "tests/mod_code/fixtures/not_checked/ok.R",
+              "tests/mod_code/fixtures/not_checked/png_named.R",
+              "tests/mod_code/fixtures/not_checked/pointer.R",
+              "tests/mod_code/fixtures/not_checked/pointer_nosize.R",
+              "tests/mod_code/fixtures/not_checked/rdata_named.R"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              75,
+              201,
+              30,
+              7,
+              8,
+              65,
+              57,
+              31
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "R",
+              "R",
+              "Python",
+              "R",
+              "R",
+              "R",
+              "R",
+              "R"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "it was not checked, because it is a JAGS or BUGS model saved with an .R ending, not R code",
+              "it was not checked, because it is 201.0 B, more than max_code_size (0.0 MB)",
+              "it was not checked, because it is an HTML page, not code",
+              null,
+              "it was not checked, because it is a PNG image, not code",
+              "it was not checked, because it is a Git LFS pointer: the repository holds a small text file in place of the file itself, which was not deposited",
+              "it was not checked, because it is a Git LFS pointer: the repository holds a small text file in place of the file itself, which was not deposited",
+              "it was not checked, because it is a compressed file (such as saved R data), not code"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              false,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              0,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              "",
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              0,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              "",
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              0,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              "",
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              0,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              0,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              "",
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              0,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              1,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              0,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              "",
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              0,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              "",
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Below, we describe some best coding practices and give the results of automatic evaluation of these practices in the code files below. This check may miss things or produce false positives if your scripts are less typical.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = c(\"bglmm.R\", \"big.R\", \"html_named.py\", \n\"ok.R\", \"png_named.R\", \"pointer.R\", \"pointer_nosize.R\", \"rdata_named.R\"\n), \"% Comments\" = c(\"\", \"\", \"\", \"0%\", \"\", \"\", \"\", \"\"), \"Missing Files\" = c(NA, \nNA, NA, 0L, NA, NA, NA, NA), \"Absolute Paths\" = c(NA, NA, NA, \n0L, NA, NA, NA, NA), \"Code Between Libraries\" = c(NA_integer_, \nNA_integer_, NA_integer_, NA_integer_, NA_integer_, NA_integer_, \nNA_integer_, NA_integer_)), row.names = c(NA, 8L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "#### Code files not checked",
+          "We did not check 8 code files, for the reason given with each:",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"bglmm.R\", \"big.R\", \"html_named.py\", \n\"png_named.R\", \"pointer.R\", \"pointer_nosize.R\", \"rdata_named.R\", \n\"analysis.jl\"), Reason = c(\"it was not checked, because it is a JAGS or BUGS model saved with an .R ending, not R code\", \n\"it was not checked, because it is 201.0 B, more than max_code_size (0.0 MB)\", \n\"it was not checked, because it is an HTML page, not code\", \"it was not checked, because it is a PNG image, not code\", \n\"it was not checked, because it is a Git LFS pointer: the repository holds a small text file in place of the file itself, which was not deposited\", \n\"it was not checked, because it is a Git LFS pointer: the repository holds a small text file in place of the file itself, which was not deposited\", \n\"it was not checked, because it is a compressed file (such as saved R data), not code\", \n\"Julia code is recognised, but not checked\")), row.names = c(NA, \n8L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "#### Code Comments",
+          "Best programming practice is to add comments to code, to explain what the code does (to yourself in the future, or peers who want to re-use your code).",
+          "#### Missing Files",
+          "All files loaded in the 1 of 8 code files we could read were present in the repository.",
+          "",
+          "#### Absolute Paths",
+          "Best programming practice is to use relative file paths (e.g., './files') instead of absolute file paths (e.g., 'C://Lakens/project_dir/files') as these folder names do not exist on other computers. No absolute file paths were found in any of the code files.",
+          "",
+          "#### Working Directory (setwd)",
+          "Best programming practice is to avoid `setwd()` in analysis code: it hardcodes an assumption about the working directory (often an absolute path on the author's own machine), so the code breaks when run anywhere else. Keep the working directory as the caller sets it and use relative paths. No `setwd()` calls were found in any of the code files.",
+          "",
+          "#### Package Installation (install.packages)",
+          "Best programming practice is to avoid `install.packages()` in analysis code: it installs software on whoever runs the script without asking, which is at minimum disruptive (an unexpected install, network access, a package version the author never tested against) and at worst a security risk if it points at an untrusted repository. Document required packages instead (a README, or a list of them: an `renv.lock`/`DESCRIPTION` for R, a `requirements.txt` for Python). No `install.packages()` calls were found in any of the code files.",
+          "",
+          "#### Libraries / Imports",
+          "Best programming practice is to load all required libraries/imports in one block near the top of the code. In all code files, libraries/imports were loaded in one block.",
+          "#### Packages / Dependencies",
+          "No packages/libraries were detected as loaded in the code files. (This check reads R and Python imports; other languages are not scanned for packages.) Even when no imports are detected, it is good practice to record the exact package versions the analysis depended on — see \"Reproducible Environment\" below.",
+          "#### Reproducible Environment",
+          "No `renv.lock` file, `sessionInfo()`/`session_info()` record, or `groundhog`/`checkpoint` date-pin call was found anywhere in the repository. Without one of these, the exact R and package versions used for the analysis are not recoverable, and package versions may drift between when this analysis was run and any later reproduction attempt. Consider depositing an `renv.lock` (via the `renv` package), a `sessionInfo()` text dump, or a `groundhog`/`checkpoint` date-pin alongside the code.\n\nNo list of the Python packages the code needs (a `requirements.txt`, `environment.yml`, `Pipfile.lock`, `poetry.lock`, `uv.lock` or `pyproject.toml`) was found anywhere in the repository. Without one, the package versions used for the analysis are not recoverable, and they may drift between when this analysis was run and any later reproduction attempt. Consider depositing a `requirements.txt` that lists each package with its version (for example the output of `pip freeze`).",
+          "",
+          "#### Parsable code",
+          "All R-type code files (.R, .Rmd, .qmd) could be read in. There were no parsing issues.",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We found 7 R, 1 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 0 JASP code files.\n-  8 code files were not checked; the report names them and says why.\n-  1 code file (ok.R) had no comments.\n-  All libraries/imports were loaded in one block.\n-  No pinned R/package environment (renv.lock, sessionInfo(), or groundhog/checkpoint) was found. Consider adding a solution to improve computational reproducibility.\n-  No list of Python package versions (requirements.txt or similar) was found. Consider adding one to improve computational reproducibility."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "code_n",
+          "code_checked",
+          "code_abs_path",
+          "code_setwd",
+          "code_install_packages",
+          "code_missing_files",
+          "code_min_comments",
+          "code_parse_errors",
+          "code_packages_n",
+          "code_files_failed",
+          "code_version_pinned"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              8
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              8
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ],
+        "names": [
+          "code_n"
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "pinned",
+          "mechanisms",
+          "r_versions",
+          "renv_files",
+          "renv_packages",
+          "sessioninfo_files",
+          "session_packages",
+          "pin_dates",
+          "python_files",
+          "python_pinned",
+          "file_location"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "file_name",
+              "package",
+              "version",
+              "source",
+              "remote"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "file_name",
+              "package",
+              "version",
+              "source",
+              "remote"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "mechanism",
+              "date"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "n_files",
+          "message"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.40",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

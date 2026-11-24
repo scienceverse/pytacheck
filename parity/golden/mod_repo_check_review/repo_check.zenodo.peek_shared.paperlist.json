@@ -15,6 +15,7 @@
       "summary_text",
       "summary_table",
       "gated_repos",
+      "archive_deposits",
       "partial_repos",
       "naming_issues",
       "repo_metadata",
@@ -23,6 +24,7 @@
       "roster_check",
       "group_no_evidence",
       "useless_files",
+      "symlinks",
       "view_only",
       "na_replace"
     ],
@@ -63,6 +65,7 @@
           "archive_size",
           "data_type",
           "doc_role",
+          "file_kind",
           "group",
           "paper_id"
         ],
@@ -420,6 +423,31 @@
           {
             "t": "chr",
             "v": [
+              "code",
+              "code",
+              "readme",
+              "readme",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "code",
+              "code",
+              "data",
+              "data",
+              "archive",
+              "archive",
+              "archive",
+              "archive",
+              "materials",
+              "materials"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "ex1",
               "ex1",
               null,
@@ -475,10 +503,10 @@
           "#### Whose Deposits",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://zenodo.org/records/5559101' target='_blank'>zenodo.org/records/5559101<\/a>\", \n\"<a href='https://zenodo.org/records/5559101' target='_blank'>zenodo.org/records/5559101<\/a>\"\n), \"Cited in\" = c(\"text\", \"text\"), Whose = c(\"the authors', for this paper\", \n\"the authors', for this paper\"), Why = c(\"a link in the main text, not shown to be anyone else's\", \n\"a link in the main text, not shown to be anyone else's\")), row.names = c(NA, \n-2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Repositories",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://zenodo.org/records/5559101' target='_blank'>zenodo.org/records/5559101<\/a>\", \n\"<a href='https://zenodo.org/records/5559101' target='_blank'>zenodo.org/records/5559101<\/a>\"\n), Platform = c(\"zenodo\", \"zenodo\"), \"All Files\" = c(10L, 10L\n), \"Data Files\" = c(4L, 4L), \"Code Files\" = c(2L, 2L), READMEs = c(0L, \n0L), Archives = c(2L, 2L)), row.names = c(NA, -2L), class = c(\"tbl_df\", \n\"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"<a href='https://zenodo.org/records/5559101' target='_blank'>zenodo.org/records/5559101<\/a>\", \n\"<a href='https://zenodo.org/records/5559101' target='_blank'>zenodo.org/records/5559101<\/a>\"\n), Platform = c(\"zenodo\", \"zenodo\"), \"All Files\" = c(10L, 10L\n), \"Data Files\" = c(4L, 4L), \"Code Files\" = c(2L, 2L), READMEs = c(1L, \n1L), Archives = c(2L, 2L)), row.names = c(NA, -2L), class = c(\"tbl_df\", \n\"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Files",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"https://zenodo.org/records/5559101\", \n\"https://zenodo.org/records/5559101\", \"https://zenodo.org/records/5559101\", \n\"https://zenodo.org/records/5559101\", \"https://zenodo.org/records/5559101\", \n\"https://zenodo.org/records/5559101\", \"https://zenodo.org/records/5559101\", \n\"https://zenodo.org/records/5559101\", \"https://zenodo.org/records/5559101\", \n\"https://zenodo.org/records/5559101\", \"https://zenodo.org/records/5559101\", \n\"https://zenodo.org/records/5559101\", \"https://zenodo.org/records/5559101\", \n\"https://zenodo.org/records/5559101\", \"https://zenodo.org/records/5559101\", \n\"https://zenodo.org/records/5559101\", \"https://zenodo.org/records/5559101\", \n\"https://zenodo.org/records/5559101\", \"https://zenodo.org/records/5559101\", \n\"https://zenodo.org/records/5559101\"), File = c(\"<a href='https://zenodo.org/api/records/5559101/files/analysis.R/content' target='_blank'>analysis.R<\/a>\", \n\"<a href='https://zenodo.org/api/records/5559101/files/analysis.R/content' target='_blank'>analysis.R<\/a>\", \n\"README.md\", \"README.md\", \"raw data.csv\", \"raw data.csv\", \"participant_01.csv\", \n\"participant_01.csv\", \"participant_2.csv\", \"participant_2.csv\", \n\"analysis.R\", \"analysis.R\", \"données.csv\", \"données.csv\", \"inner.zip\", \n\"inner.zip\", \"results.tar.gz\", \"results.tar.gz\", \"task.edat2\", \n\"task.edat2\"), Size = c(\"300 B\", \"300 B\", \"10 B\", \"10 B\", \"18 B\", \n\"18 B\", \"24 B\", \"24 B\", \"23 B\", \"23 B\", \"19 B\", \"19 B\", \"13 B\", \n\"13 B\", \"10 B\", \"10 B\", \"15 B\", \"15 B\", \"11 B\", \"11 B\"), Type = c(\"code\", \n\"code\", \"text\", \"text\", \"data\", \"data\", \"data\", \"data\", \"data\", \n\"data\", \"code\", \"code\", \"data\", \"data\", \"archive\", \"archive\", \n\"archive\", \"archive\", \"file\", \"file\")), row.names = c(NA, -20L\n), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
-          "#### README Files\n\nREADME files are a way to document the contents and structure of a folder, helping users locate the information they need. You can use a README to document changes to a repository, and explain how files are named. Please consider adding a README to each repository or including 'README' in the name of your overview document.",
+          "README files were found in all repositories.",
           "#### Archive Files\n\nThe following files are not ZIP archives: results.tar.gz, results.tar.gz. We recommend the `.zip` format for archives: only ZIP stores its file listing in a way that lets a tool inspect the contents without downloading the whole archive, so a `.zip` is more discoverable and re-usable than a `.7z`, `.rar`, `.tar` or `.tar.gz`.",
           "#### Proprietary E-Prime Files\n\nThe repository contains 2 E-Prime files (task.edat2, task.edat2). These are proprietary **binary** formats that only the E-Prime software can open, so metacheck does not download or read them and other researchers cannot reuse them directly. 2 of them have no matching plain-text export. Please also upload the E-Prime **.txt export** (File → Export in E-Prime) for each, so the trial-level data is readable without the proprietary software.",
           "#### File Naming",
@@ -497,7 +525,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We found 20 files in 2 repositories.\n-  We found 0 README files and 2 repositories without READMEs.\n-  We found 4 archive files.\n-  We found 2 proprietary E-Prime files.\n-  We found 6 file naming problems to fix."
+          "\n-  We found 20 files in 2 repositories.\n-  We found 0 README files and 0 repositories without READMEs.\n-  We found 4 archive files.\n-  We found 2 proprietary E-Prime files.\n-  We found 6 file naming problems to fix."
         ]
       },
       {
@@ -517,6 +545,11 @@
           "repo_own",
           "repo_others",
           "ref_others",
+          "file_share_n",
+          "icpsr_own_n",
+          "cran_own_n",
+          "archive_own_n",
+          "ref_own",
           "repo_view_only",
           "roster_mismatch"
         ],
@@ -566,8 +599,8 @@
           {
             "t": "int",
             "v": [
-              0,
-              0
+              1,
+              1
             ]
           },
           {
@@ -620,6 +653,41 @@
             ]
           },
           {
+            "t": "int",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
             "t": "lgl",
             "v": [
               false,
@@ -632,11 +700,44 @@
         "t": "df",
         "nrow": 0,
         "names": [
+          "paper_id",
           "repo_url",
           "repo_type",
           "repo_error"
         ],
         "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "paper_id",
+          "accession",
+          "archive",
+          "repo_url"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
           {
             "t": "chr",
             "v": []
@@ -657,7 +758,8 @@
         "names": [
           "paper_id",
           "repo_url",
-          "files_listed"
+          "files_listed",
+          "reason"
         ],
         "v": [
           {
@@ -670,6 +772,10 @@
           },
           {
             "t": "int",
+            "v": []
+          },
+          {
+            "t": "lgl",
             "v": []
           }
         ]
@@ -768,6 +874,7 @@
           "resource_type",
           "resource_subtype",
           "related",
+          "organisation",
           "paper_id",
           "ownership",
           "ownership_group",
@@ -861,6 +968,13 @@
           {
             "t": "chr",
             "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "p_zb",
               "p_za"
             ]
@@ -903,9 +1017,13 @@
           "dep_description",
           "dep_creators",
           "dep_orcids",
+          "dep_creator_families",
+          "dep_n_creators",
           "dep_type",
+          "dep_org",
           "dep_related",
           "dep_date",
+          "dep_updated",
           "dep_year",
           "osf_type",
           "osf_category",
@@ -930,7 +1048,8 @@
           "citing",
           "citing_sections",
           "cff_dois",
-          "listing_cut"
+          "listing_cut",
+          "listing_short"
         ],
         "v": [
           {
@@ -1081,6 +1200,34 @@
             ]
           },
           {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
             "t": "int",
             "v": [
               10,
@@ -1205,6 +1352,13 @@
               false,
               false
             ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false
+            ]
           }
         ]
       },
@@ -1225,7 +1379,8 @@
           "archive_format",
           "archive_size",
           "data_type",
-          "doc_role"
+          "doc_role",
+          "file_kind"
         ],
         "v": [
           {
@@ -1274,6 +1429,10 @@
           },
           {
             "t": "dbl",
+            "v": []
+          },
+          {
+            "t": "chr",
             "v": []
           },
           {
@@ -1359,6 +1518,9 @@
         ]
       },
       {
+        "t": "null"
+      },
+      {
         "t": "df",
         "nrow": 0,
         "names": [
@@ -1389,6 +1551,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

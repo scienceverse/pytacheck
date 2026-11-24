@@ -1,0 +1,25 @@
+{
+  "id": "sync04418.data_classify_files.names",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "code",
+      "code",
+      "code",
+      "code",
+      "code",
+      "code",
+      "documentation",
+      "documentation",
+      "data",
+      "documentation",
+      "documentation",
+      "code"
+    ]
+  },
+  "metacheck_version": "0.4.4.40",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

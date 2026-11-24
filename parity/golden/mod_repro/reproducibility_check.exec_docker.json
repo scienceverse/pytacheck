@@ -22,6 +22,8 @@
       "stat_output",
       "match_table",
       "modifications",
+      "artifacts",
+      "environment",
       "checklist_section",
       "sandbox"
     ],
@@ -300,7 +302,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We assessed 2 R code files for reproducibility and ran 1 of them (each in an isolated Docker container).\n-  1 of 2 scripts ran without error when executed.\n-  1 script could not run because its own dependency is unavailable (not counted as an error of the code).\n-  1 installable dependency detected."
+          "\n-  We assessed 2 R code files for reproducibility and ran 1 of them (each in an isolated Docker container).\n-  1 of 2 scripts ran without error when executed.\n-  Of the others, 1 could not run because a package or program was not available.\n-  1 installable dependency detected."
         ]
       },
       {
@@ -318,12 +320,20 @@
           "repro_scripts_n",
           "repro_not_analysis_n",
           "repro_not_downloaded_n",
+          "repro_ran_n",
+          "repro_code_error_n",
+          "repro_dependency_n",
+          "repro_time_n",
+          "repro_not_checkable_n",
           "repro_fail_file",
           "repro_fail_package",
           "repro_fail_undefined",
           "repro_fail_syntax",
           "repro_fail_environment",
           "repro_fail_settings",
+          "repro_fail_platform",
+          "repro_fail_how_to_run",
+          "repro_fail_from_report",
           "repro_fail_internet",
           "repro_fail_download",
           "repro_fail_interactive",
@@ -401,6 +411,12 @@
           {
             "t": "int",
             "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
               0
             ]
           },
@@ -408,6 +424,48 @@
             "t": "int",
             "v": [
               1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
             ]
           },
           {
@@ -494,6 +552,14 @@
           0,
           0,
           0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
           0
         ],
         "names": [
@@ -505,12 +571,20 @@
           "repro_scripts_n",
           "repro_not_analysis_n",
           "repro_not_downloaded_n",
+          "repro_ran_n",
+          "repro_code_error_n",
+          "repro_dependency_n",
+          "repro_time_n",
+          "repro_not_checkable_n",
           "repro_fail_file",
           "repro_fail_package",
           "repro_fail_undefined",
           "repro_fail_syntax",
           "repro_fail_environment",
           "repro_fail_settings",
+          "repro_fail_platform",
+          "repro_fail_how_to_run",
+          "repro_fail_from_report",
           "repro_fail_internet",
           "repro_fail_download",
           "repro_fail_interactive",
@@ -539,7 +613,11 @@
           "elapsed",
           "script_lines",
           "captures",
-          "reason"
+          "started_at",
+          "ended_at",
+          "exit_status",
+          "reason",
+          "checked"
         ],
         "v": [
           {
@@ -751,8 +829,36 @@
           {
             "t": "chr",
             "v": [
+              "<time>",
+              "<time>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<time>",
+              "<time>"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "package",
               null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "dependency",
+              "ran"
             ]
           }
         ]
@@ -1353,7 +1459,9 @@
         "names": [
           "file_name",
           "change_type",
-          "detail"
+          "detail",
+          "sha256_before",
+          "sha256_after"
         ],
         "v": [
           {
@@ -1373,13 +1481,203 @@
             "v": [
               "\"data.csv\" -> \"data.csv\""
             ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "5da893f9488d77dd506dcdc70f2ec8ad7c4926332653810fd89270a061c2571c"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "stage",
+          "path",
+          "size",
+          "sha256",
+          "mime_type",
+          "source",
+          "status"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "deposit",
+              "before_run",
+              "before_run",
+              "before_run"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data.csv",
+              "data.csv",
+              "needs_missing_pkg.R",
+              "ok.R"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              32,
+              32,
+              43,
+              50
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "b4d4e4e1bbd394260dd4c214327e8f73c1ba8f8945f735b27e40cf366bc9ad24",
+              "b4d4e4e1bbd394260dd4c214327e8f73c1ba8f8945f735b27e40cf366bc9ad24",
+              "21e20c6b2407cb3b95fa6371a88d26ef27ad4b674895da07b66dac1523baeae0",
+              "5da893f9488d77dd506dcdc70f2ec8ad7c4926332653810fd89270a061c2571c"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text/csv",
+              "text/csv",
+              "text/x-r-source",
+              "text/x-r-source"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "metacheck_version",
+          "started_at",
+          "ended_at",
+          "host",
+          "sandbox",
+          "network_isolated",
+          "internet",
+          "timeout_per_script",
+          "total_timeout",
+          "python_local",
+          "docker"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "0.4.4.40"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<time>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<time>"
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "r_version",
+              "platform",
+              "os"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "<host>"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "<host>"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "<host>"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "docker"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              60
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              3600
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
           }
         ]
       },
       {
         "t": "chr",
         "v": [
-          "We ran the paper's 2 R scripts in the order they depend on each other, each in an isolated container, for at most 1 minute per script.\n\n**1 of 2 scripts ran to the end**: 1 could not run on our server.\n\n| Script | Result | What happened |\n|---|---|---|\n| needs&#95;missing&#95;pkg.R | Could not run on our server | It needs the R package notapkg123, which we could not install. This is not an error in the script. |\n| ok.R | Ran to the end |  |\n\n### How to make your code run on another computer\n\nWe ran your code on a clean computer, the way a reader or reviewer would. Below is each problem we found, the scripts it affects, and how to fix it. Fix them in the order given: a problem near the top can cause the ones below it.\n\n**A package could not be installed.**\n\n- <code>needs&#95;missing&#95;pkg.R<\/code> needs <code>notapkg123<\/code>.\n\n<code>notapkg123<\/code> is not on CRAN, and your code does not say where it comes from. If it comes from GitHub or Bioconductor, install it at the top of the script, or name the command in the README, for example <code>remotes::install&#95;github(\"user/notapkg123\")<\/code> or <code>BiocManager::install(\"notapkg123\")<\/code>, with the version you used.\n\n### Comparison with the paper\n\nWe found no statistical tests in the paper to compare with the output of the code."
+          "We ran the paper's 2 R scripts in the order they depend on each other, each in an isolated container, for at most 1 minute per script.\n\n**1 of 2 scripts ran to the end**: 1 could not run because a package or program was not available.\n\n| Script | Result | What happened |\n|---|---|---|\n| needs&#95;missing&#95;pkg.R | Could not run on our server | It needs the R package notapkg123, which we could not install. This is not an error in the script. |\n| ok.R | Ran to the end |  |\n\n### How to make your code run on another computer\n\nWe ran your code on a clean computer, the way a reader or reviewer would. Below is each problem we found, the scripts it affects, and how to fix it. Fix them in the order given: a problem near the top can cause the ones below it.\n\n**A package could not be installed.**\n\n- <code>needs&#95;missing&#95;pkg.R<\/code> needs <code>notapkg123<\/code>.\n\n<code>notapkg123<\/code> is not on CRAN, and your code does not say where it comes from. If it comes from GitHub or Bioconductor, install it at the top of the script, or name the command in the README, for example <code>remotes::install&#95;github(\"user/notapkg123\")<\/code> or <code>BiocManager::install(\"notapkg123\")<\/code>, with the version you used.\n\n### Comparison with the paper\n\nWe found no statistical tests in the paper to compare with the output of the code."
         ]
       },
       {
@@ -1390,6 +1688,6 @@
       }
     ]
   },
-  "metacheck_version": "0.4.4.6",
+  "metacheck_version": "0.4.4.40",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

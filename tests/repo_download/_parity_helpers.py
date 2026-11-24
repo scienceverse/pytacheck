@@ -107,9 +107,14 @@ def download(
     files: pd.DataFrame,
     file_url: list[str | None] | None = None,
     twice: bool = False,
+    listing_extra: pd.DataFrame | None = None,
     **kwargs: Any,
 ) -> dict[str, Any]:
     """``download_repo_files(files, ...)`` into a throwaway session dir; paths as ``<SESSION>``.
+
+    *listing_extra*: more rows of the same repositories, which with *files* make the full
+    listing passed as ``repo_listing`` (the file count and the choice of files for the budget,
+    #699).
 
     *file_url* entries starting with ``data/`` become ``file://`` URLs of fixtures.
     With *twice*, the download is repeated (the second run reuses the cache)
@@ -124,6 +129,8 @@ def download(
             f"file://{DATA / u[5:]}" if isinstance(u, str) and u.startswith("data/") else u
             for u in file_url
         ]
+    if listing_extra is not None:
+        kwargs["repo_listing"] = pd.concat([files, listing_extra], ignore_index=True)
     sess = tempfile.mkdtemp(prefix="pc_sess_")
     old = {
         "metacheck.repo_cache.session_dir": get_option("metacheck.repo_cache.session_dir"),

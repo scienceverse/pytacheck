@@ -15,6 +15,7 @@ R block's execution step) and ``_reproducibility_py`` (the Python block).
 
 from __future__ import annotations
 
+import contextlib
 import os
 import re
 import shutil
@@ -26,10 +27,17 @@ from typing import Any
 import pandas as pd
 
 from metacheck._r import bind_rows, grepl, plural, strsplit
-from metacheck._values import as_str
+from metacheck._values import as_str, is_missing
+from metacheck.codecheck.core import code_read
 from metacheck.module import module
 from metacheck.modules import _reproducibility as h
+from metacheck.modules._count_refused import _count_refused_add
 from metacheck.report import scroll_table
+from metacheck.repro.provenance import (
+    _repro_prov_finish,
+    _repro_prov_note_materialised,
+    _repro_prov_state,
+)
 
 _NA_REPLACE_EMPTY = {
     "repro_code_n": 0.0,
@@ -652,6 +660,9 @@ def _check(paper: Any, cleanup: list[str], **a: Any) -> dict[str, Any]:
     a["net"] = _repro_download_limits(a["internet"], a["max_file_size"], a["max_download_size"])
     # set when the first script starts, R or Python (see total_timeout)
     a["run_state"] = {"script_deadline": None, "prep_skipped_left": None}
+    # what a TRO needs of this run (metacheck.repro.provenance): when the check started, the
+    # files copied from the deposit, the run folder before the first script, the scripts
+    a["prov"] = _repro_prov_state()
 
     def pid(*dfs: Any) -> str | None:
         return h._pid(paper, *dfs)
@@ -697,12 +708,21 @@ def _check(paper: Any, cleanup: list[str], **a: Any) -> dict[str, Any]:
             max_download_size=a["max_download_size"],
         )
 
+    # repositories data_check or code_check refused for their number of files: a paper with
+    # no code left says so, not only "no code files" (#706)
+    count_refused = _count_refused_add(
+        get_prev_outputs("code_check", "count_refused"),
+        get_prev_outputs("data_check", "count_refused"),
+    )
     if structure_df is None:
-        structure_df = run_missing("data_check").get("structure")
+        dc = run_missing("data_check")
+        structure_df = dc.get("structure")
+        count_refused = _count_refused_add(count_refused, dc.get("count_refused"))
     if code_tbl is None:
         cc = run_missing("code_check")
         code_tbl = cc.table
         version_pin = cc.get("version_pin")
+        count_refused = _count_refused_add(count_refused, cc.get("count_refused"))
     # Deposits linked in the paper that hold other people's work or the authors' earlier work
     # are not checked (repo_check's `table_not_checked`, #648), but the paper's own code may
     # read their files, as a re-analysis of another team's data does. The files of theirs that
@@ -810,7 +830,17 @@ def _check(paper: Any, cleanup: list[str], **a: Any) -> dict[str, Any]:
     # SPSS / Stata data without syntax ------------------------------------------
     fnames_all = h._chr_col(structure_df, "file_name")
     code_fnames = h._chr_col(code_tbl, "file_name")
-    ss = h.spss_stata(fnames_all, code_fnames)
+    # An SPSS or Stata data file the deposit's own code reads (read_sav(), read.dta(),
+    # rio::import(), ...) is data for that code, not a sign that the analysis was left out
+    # (#695, point 42).
+    read_code_txt: list[str | None] = []
+    if code_tbl is not None and "file_location" in code_tbl.columns:
+        for loc in h._chr_col(code_tbl, "file_location"):
+            if loc is None or not os.path.exists(loc):
+                continue
+            with contextlib.suppress(Exception):  # tryCatch(error = function(e) character(0))
+                read_code_txt.extend(code_read(loc))
+    ss = h.spss_stata(fnames_all, code_fnames, read_code_txt)
     spss_red, stata_red = ss["spss_red"], ss["stata_red"]
     spss_report, stata_report = ss["spss_report"], ss["stata_report"]
 
@@ -824,7 +854,9 @@ def _check(paper: Any, cleanup: list[str], **a: Any) -> dict[str, Any]:
         from metacheck.statout.stat_output import stat_output_write
 
         sandbox_root = _new_sandbox(keep_sandbox, cleanup)
-        repro_materialize_layout(plan, structure_df, sandbox_root)
+        _repro_prov_note_materialised(
+            a["prov"], repro_materialize_layout(plan, structure_df, sandbox_root)
+        )
         stat_output_write(stat_output, sandbox_root)
 
     # Non-R code with no way to check its results ------------------------------
@@ -886,9 +918,11 @@ def _check(paper: Any, cleanup: list[str], **a: Any) -> dict[str, Any]:
     extra = [*(spss_report or []), *(stata_report or []), *(nonr_report or [])]
 
     # R and Python are handled in this phase.
-    no_code = "We found no R or Python code files to assess for reproducibility."
+    no_code = h._repro_no_code_text(note, count_refused)
+    if empty_tl == "na" and count_refused is not None and len(count_refused):
+        empty_tl = "yellow"
     if code_tbl is None or len(code_tbl) == 0 or "language" not in code_tbl.columns:
-        return empty(no_code + note, empty_tl, extra)
+        return empty(no_code, empty_tl, extra)
     langs = h._chr_col(code_tbl, "language")
     if "file_name" in code_tbl.columns:
         # renv's own files (renv/activate.R, renv/library/) are not the paper's analysis
@@ -903,7 +937,7 @@ def _check(paper: Any, cleanup: list[str], **a: Any) -> dict[str, Any]:
     py_files = code_tbl.iloc[keep_py].reset_index(drop=True)
     has_r, has_py = len(r_files) > 0, len(py_files) > 0
     if not has_r and not has_py:
-        return empty(no_code + note, empty_tl, extra)
+        return empty(no_code, empty_tl, extra)
     if execute and a["sandbox"] == "process":
         _require_process(has_r=has_r, has_py=has_py)
 
@@ -970,6 +1004,7 @@ def _check(paper: Any, cleanup: list[str], **a: Any) -> dict[str, Any]:
         keep_sandbox=keep_sandbox,
         code_tbl=code_tbl,
         version_pin=version_pin,
+        structure_df=structure_df,
     )
 
 
@@ -1111,6 +1146,7 @@ def _finish(
     keep_sandbox: bool,
     code_tbl: pd.DataFrame | None = None,
     version_pin: Any = None,
+    structure_df: pd.DataFrame | None = None,
 ) -> dict[str, Any]:
     """Combine the R and Python blocks, with the sections shared across languages."""
     from metacheck.repro.outcomes import (
@@ -1186,6 +1222,23 @@ def _finish(
             r["install_results"] if r["install_results"] is not None else py["install_results"]
         )
     modifications = _bind(r["modifications"], py["modifications"])
+    # Provenance for a TRO (metacheck.repro.provenance): every file as downloaded, just before
+    # the first script ran, and what the scripts made, changed or removed; the system that
+    # ran them; each modified script's hash before and after metacheck changed it. Only when
+    # code was run.
+    artifacts: pd.DataFrame | None = None
+    environment: dict[str, Any] | None = None
+    if execute:
+        artifacts, modifications, environment = _repro_prov_finish(
+            a.get("prov"),
+            modifications,
+            structure_df,
+            sandbox_root,
+            sandbox=a["sandbox"],
+            timeout=a["timeout"],
+            total_timeout=a.get("total_timeout"),
+            internet=a.get("net") is not None,
+        )
     # the scripts, the software not run, and why scripts did not run through (#568, item 24)
     run_counts = _repro_run_counts(run_results)
     summary_table = pd.concat([summary_table, run_counts.reset_index(drop=True)], axis=1)
@@ -1210,6 +1263,10 @@ def _finish(
         "stat_output": stat_output or None,
         "match_table": match_table_raw,
         "modifications": modifications,
+        # Provenance for a TRO: one row per file (stage deposit / before_run / after_run) and
+        # the system that ran the code; None when no code was run.
+        "artifacts": artifacts,
+        "environment": environment,
         # The checklist report's own section on this check (None when no code ran).
         # Returned as a module-specific output until ModuleOutput has the field.
         "checklist_section": _checklist(
@@ -1400,6 +1457,7 @@ def _assess_r(
         _REPRO_STARTED_OUTCOMES,
         _repro_absent_report,
         _repro_error_message,
+        _repro_groups_sentence,
         _repro_read_failed_msg,
         _repro_run_light,
         _repro_starts_app,
@@ -1637,11 +1695,25 @@ def _assess_r(
     # JSON/HTML dumps, binary data, JAGS/BUGS models.
     sniff_type: list[str | None] = [None] * n_code
     sniff_detail: list[str | None] = [None] * n_code
-    for i in [i for i in range(n_code) if parse_error_raw[i] or is_binary[i]]:
+    # code_check does not parse a JAGS or BUGS model saved as .R (0.4.4.33): its parse_error is
+    # NA ("not checked"), not TRUE, so such a file was not looked at here and was run as an R
+    # script. A file code_check did not check is looked at too, but only to find a model; a
+    # model found that way counts as not parsing, as code_check had it before, so it is not run
+    # as R either (runs_as_r, below).
+    not_checked = (
+        [is_missing(v) for v in h._col(r_files, "parse_error")]
+        if "parse_error" in r_files.columns
+        else [False] * n_code
+    )
+    for i in [i for i in range(n_code) if parse_error_raw[i] or is_binary[i] or not_checked[i]]:
         others = [raw_texts[j] for j in range(n_code) if j != i]
         if _repro_is_jags_model(raw_texts[i], names[i], other_code_text=others):
             sniff_type[i] = "jags_model"
             sniff_detail[i] = "JAGS/BUGS model definition (not standalone R)"
+            if not_checked[i]:
+                parse_error_raw[i] = True
+            continue
+        if not parse_error_raw[i] and not is_binary[i]:
             continue
         path_i = resolve(i)
         detected = reads[i][1] if path_i is not None and h._file_exists(path_i) else None
@@ -1857,6 +1929,10 @@ def _assess_r(
         install_results = ex["install_results"]
         run_tbl = ex["run_tbl"]
         order_tbl = ex["order_tbl"]
+        # and say of the corrected order what its table shows: the text kept the first
+        # order's "no ordering signal" or cycle beside the corrected table (#648, K8f)
+        cycle = [str(x) for x in h._as_list(order_tbl.attrs.get("cycle"))]
+        ambiguous_order = ambiguous_order and h._is_true(order_tbl.attrs.get("ambiguous"))
         stat_output = ex["stat_output"]
         structure_df = ex["structure_df"]
         plan = ex["plan"]
@@ -1967,7 +2043,7 @@ def _assess_r(
     report_order, order_table = _order_report(order_tbl, cycle, ambiguous_order, fuzzy_sources)
 
     total_ambiguous = sum(ambiguous_n)
-    report_paths = _repro_path_fix_text(rewrite_list, execute)
+    report_paths = _repro_path_fix_text(rewrite_list, execute, absent=unresolved_refs)
     # archives the run unpacked because the code reads files inside them (#648)
     arch_txt = _repro_archive_text(structure_df, code_texts)
     if arch_txt:
@@ -2056,7 +2132,6 @@ def _assess_r(
     # 10. Summary ----------------------------------------------------------------------
     outcomes_all = h._chr_col(run_results, "outcome") if run_results is not None else []
     n_ran_ok = sum(o == "ran_ok" for o in outcomes_all) if run_results is not None else None
-    n_nodep_sum = sum(o == "dependency_unavailable" for o in outcomes_all)
     n_by_src_sum = sum(o == "run_by_source" for o in outcomes_all)
     # the scripts with a result of their own, and those that were started: files of software
     # or of functions only were counted as scripts run (#648)
@@ -2108,12 +2183,12 @@ def _assess_r(
             f"{n_ran_ok:d} of {n_run_own:d} script{plural(n_run_own)} ran without error when "
             f"executed{more}."
         )
-    if n_nodep_sum > 0:
-        lines.append(
-            f"{n_nodep_sum:d} script{plural(n_nodep_sum)} could not run because "
-            f"{plural(n_nodep_sum, 'its', 'their')} own dependency is unavailable (not counted "
-            "as an error of the code)."
-        )
+    # did not reproduce, lacked a package or program, out of time, or could not be checked
+    # automatically (#580)
+    if execute and n_run_own > 0:
+        groups_sentence = _repro_groups_sentence(run_results)
+        if groups_sentence is not None:
+            lines.append(groups_sentence)
     if len(reported_inputs) > 0:
         nr = len(reported_inputs)
         lines.append(
@@ -2256,6 +2331,17 @@ def _r_modifications(
                             f"{int(n):d} groundhog, checkpoint or renv call{plural(int(n))}",
                         )
                     )
+        # calls that need a screen, replaced so they run without one (#580)
+        if run_tbl is not None and "screen_calls_replaced" in run_tbl.columns:
+            for fn, calls in zip(
+                h._chr_col(run_tbl, "file_name"),
+                h._chr_col(run_tbl, "screen_calls_replaced"),
+                strict=True,
+            ):
+                if h._nzchar(calls):
+                    rows += [
+                        (fn, "screen_call_replaced", x) for x in strsplit(calls, "; ", fixed=True)
+                    ]
         tail: list[tuple[Any, str, Any]] = []
         for fn, kinds in (ex.get("old_defaults_used") or {}).items():
             tail += [(fn, "old_default", _OLD_DEFAULT_DETAIL.get(k)) for k in kinds]
@@ -2305,6 +2391,19 @@ def _r_modifications(
                 )
                 for s, f in zip(
                     h._chr_col(folders, "script"), h._chr_col(folders, "folder"), strict=True
+                )
+            ]
+        pkgs_inst = ex.get("r_pkgs_installed")
+        if pkgs_inst is not None and len(pkgs_inst):
+            later += [
+                (
+                    s,
+                    "package_installed",
+                    f"installed {p}, which the error named and no script loads, and ran it "
+                    "once more",
+                )
+                for s, p in zip(
+                    h._chr_col(pkgs_inst, "script"), h._chr_col(pkgs_inst, "package"), strict=True
                 )
             ]
         # bind_rows(rw_rows, setwd, lib_loc, font, library, env, slash, old_default, stan,

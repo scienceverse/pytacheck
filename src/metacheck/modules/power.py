@@ -246,7 +246,9 @@ def power(paper: Any, seed: Any = 8675309) -> dict[str, Any]:
             tl = "green"
             report_text.append("All essential information could be detected.")
         else:
-            tl = "red"
+            # LLM found incomplete power analyses; yellow, not red, until a validation shows
+            # people agree with most of its red findings (#695, point 2)
+            tl = "yellow"
             report_text.append(
                 "Some essential information could not be detected: " + ", ".join(cols_with_na)
             )

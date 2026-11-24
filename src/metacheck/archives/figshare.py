@@ -604,8 +604,8 @@ def _figshare_info(
     """Port of R/archive-figshare.R::.figshare_info(): one article.
 
     Returns a one-row table: ``figshare_id`` and either ``error``
-    (``"unfound"``, with a warning, or ``"parse_error"``) or the article's
-    metadata and ``files``.
+    (``"unfound"``, with a warning, ``"parse_error"``, or ``"empty_response"``, with a warning: a
+    200 answer without the record's title, DOI and files) or the article's metadata and ``files``.
     """
     from metacheck.archives import _spinner, _tick
 
@@ -622,6 +622,22 @@ def _figshare_info(
         rec = _resp_json(resp)
         if rec is None:
             obj["error"] = _cell("parse_error")
+            return pd.DataFrame(obj)
+        # A 200 answer without the record's title, DOI and files is a failed lookup, not an empty
+        # record: 4TU answered so for 10.4121/14199176 on 2026-11-20, the empty listing was saved
+        # in the cache, and the paper had no data or code in every later run, while the record has
+        # 6 files (metacheck #711)
+        rec_files = field(rec, "files")
+        if (
+            not _empty_or(field(rec, "title"), "")
+            and not _empty_or(field(rec, "doi"), "")
+            and not (rec_files is not None and len(rec_files) > 0)
+        ):
+            warnings.warn(
+                f"{_paste(figshare_id)}: {host} answered without the record's title, DOI or files",
+                stacklevel=2,
+            )
+            obj["error"] = _cell("empty_response")
             return pd.DataFrame(obj)
 
         authors_field = field(rec, "authors")
@@ -799,8 +815,8 @@ _FILE_COLUMNS = (
 def figshare_file_download(
     figshare_id: Any,
     download_to: str = ".",
-    max_file_size: float | None = 10,
-    max_download_size: float | None = 100,
+    max_file_size: float | None = 100,
+    max_download_size: float | None = 500,
     unzip_types: Any = None,
     host: str = "api.figshare.com",
     pb: Any = None,
@@ -810,8 +826,10 @@ def figshare_file_download(
     *figshare_id* is an article ID, URL or DOI, or a sequence of them. Creates
     a ``figshare_<id>`` folder under *download_to* (``_1``, ``_2``... when it
     exists) and downloads each file into it. Files over *max_file_size* MB
-    are skipped, then the largest files until the total is under
-    *max_download_size* MB (``None``/``inf``: no limit). Zips are downloaded
+    (default 100) are skipped, and the largest files are left out until the total
+    is under *max_download_size* MB (default 500; ``None``/``inf``: no limit), so
+    the smallest are kept while they fit, as in
+    :func:`~metacheck.archives.download.download_repo_files`. Zips are downloaded
     whole unless *unzip_types* names file categories to extract from them.
     Returns the file table (``None`` when the article lists no files);
     files left out by the size limits have ``downloaded = False`` (when all
@@ -911,7 +929,7 @@ def _figshare_zip_members(
     url: str,
     dest: str,
     keep_types: Any = ("data", "documentation"),
-    max_file_size: float | None = 10,
+    max_file_size: float | None = 100,
     size: Any = None,
 ) -> pd.DataFrame | None:
     """Port of R/archive-figshare.R::.figshare_zip_members(): extract wanted zip members.

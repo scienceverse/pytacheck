@@ -1,0 +1,104 @@
+{
+  "id": "expand.latin1.tar",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "repo_url",
+      "file_name",
+      "file_path",
+      "file_url",
+      "file_location",
+      "file_size",
+      "data_type",
+      "doc_role",
+      "data_format",
+      "archive_file_path",
+      "archive_file_location"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "r",
+          "r"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "plain.csv",
+          "Thüringen.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "latin1.tar/plain.csv",
+          "latin1.tar/Thüringen.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "<tempdir>/metacheck-archives/fe33d9eae10cb9c1b384329ef2d42548/plain.csv",
+          "<tempdir>/metacheck-archives/fe33d9eae10cb9c1b384329ef2d42548/Thüringen.csv"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          817,
+          817
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data",
+          "data"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "tabular",
+          "tabular"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "latin1.tar",
+          "latin1.tar"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "<TMP>/latin1.tar",
+          "<TMP>/latin1.tar"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.4.4.40",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

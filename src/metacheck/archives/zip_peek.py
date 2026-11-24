@@ -40,9 +40,10 @@ from contextvars import ContextVar
 from typing import TYPE_CHECKING, Any
 from urllib.parse import urlsplit
 
-from metacheck._r import grepl, gsub, strsplit, sub
+from metacheck._r import grepl, gsub, plural, strsplit, sub
 from metacheck._values import is_missing
 from metacheck.archives._atomic import atomic_write
+from metacheck.utils import _is_web_address
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -765,22 +766,25 @@ def _entry_table(infos: Sequence[zipfile.ZipInfo]) -> pd.DataFrame:
             "name_bytes": pd.Series(
                 [float(_zip_stored_name_len(i)) for _, i in kept], dtype="float64"
             ),
+            # encrypted: flag bit 0, or AES (method 99)
+            "encrypted": pd.Series(
+                [bool(i.flag_bits & 0x1) or i.compress_type == 99 for _, i in kept],
+                dtype="bool",
+            ),
         }
     )
-
-
-_URL_SCHEME = re.compile(r"^[A-Za-z][A-Za-z0-9+.-]*://")
 
 
 def _is_local_file(x: Any) -> bool:
     """Port of ``R/zip-peek.R::.is_local_file()``: an existing file, not a URL.
 
-    Anything with a URL scheme (``https://``, ``file://``) is a URL.
+    Anything with a URL scheme (``https://``, ``file://``) is a URL; a Windows drive written
+    as ``C://`` is a path (metacheck 0.4.4.37, #723).
     """
     if not isinstance(x, str | os.PathLike):
         return False
     s = os.fspath(x)
-    if not isinstance(s, str) or not s or _URL_SCHEME.match(s):
+    if not isinstance(s, str) or not s or _is_web_address(s):
         return False
     return os.path.isfile(s)
 
@@ -1449,6 +1453,26 @@ def _is_readable_archive(name: Any) -> list[bool]:
     ]
 
 
+def _is_archive_name(name: Any) -> list[bool]:
+    """Port of ``R/zip-peek.R::.is_archive_name()``: an archive, a container of several files.
+
+    A ``.zip``, a tar (also compressed), a ``.7z`` or a ``.rar``. A single compressed file
+    (``scan.nii.gz``, ``run.log.gz``) is not one, as it holds one file, which is what it is;
+    repo_check counted 280 compressed logs of one deposit as archives and advised the ``.zip``
+    format for them (metacheck #648).
+    """
+    names = _chr_list(name)
+    return [
+        a or b or c
+        for a, b, c in zip(
+            _is_zip(names),
+            _is_tar_archive(names),
+            _grepl("[.](7z|rar)$", names, ignore_case=True),
+            strict=True,
+        )
+    ]
+
+
 # -- expanding downloaded archives ---------------------------------------------
 
 
@@ -1644,31 +1668,10 @@ def _zip_name(info: Any) -> str:
     return _decode_zip_name(_zip_raw_name(info), bool(info.flag_bits & 0x800))
 
 
-def _r_member_path(raw: bytes, windows: bool = os.name == "nt") -> bytes:
-    """R's internal unzip drops ``../`` path components (with a warning).
-
-    On Windows a ``"\\"`` in a name separates folders (``..\\x`` would climb out
-    of the destination) and a drive (``C:/``) cannot be a folder name, so
-    backslashes are read as ``"/"`` and a leading drive is dropped first.
-    """
-    if windows:
-        raw = raw.replace(b"\\", b"/")
-        if len(raw) >= 2 and raw[1:2] == b":" and raw[:1].isalpha():
-            raw = raw[2:].lstrip(b"/")
-    if raw.startswith(b"../") or b"/../" in raw:
-        shown = raw.decode("utf-8", "replace")
-        warnings.warn(f"skipped \"../\" path component(s) in '{shown}'", stacklevel=4)
-        while raw.startswith(b"../"):
-            raw = raw[3:]
-        while b"/../" in raw:
-            raw = raw.replace(b"/../", b"/", 1)
-    return raw
-
-
 def _zip_disk_name(name: str, windows: bool = os.name == "nt") -> str:
     """The name :func:`_unzip_all` writes member *name* under, below its folder: on
     Windows with ``"/"`` for ``"\\"`` and without a leading drive (``C:/x.csv`` is
-    ``x.csv``), as :func:`_r_member_path` does; elsewhere *name* itself."""
+    ``x.csv``); elsewhere *name* itself."""
     if not windows:
         return name
     name = name.replace("\\", "/")
@@ -1677,57 +1680,201 @@ def _zip_disk_name(name: str, windows: bool = os.name == "nt") -> str:
     return name
 
 
-def _unzip_all(zip_path: str, exdir: str, members: set[str] | None = None) -> None:
-    """``utils::unzip(zip_path, exdir = exdir)``: extract a zip below *exdir*.
+def _zip_unsafe_path(rel: str) -> bool:
+    """Port of ``R/zip-peek.R::.zip_unsafe_path()``: would a member's name (with ``/`` between
+    folders) write outside the folder it is unpacked into: a ``..`` folder, or a path from the
+    root or a drive letter. Such a member is never unpacked."""
+    return bool(re.match(r"^([A-Za-z]:)?/", rel)) or ".." in rel.split("/")
 
-    Member names are used byte for byte (a backslash is part of the file name,
-    ``C:/x`` makes a folder ``C:``, a leading ``/`` is harmless), except that
-    ``../`` components are dropped. Parent folders are made as needed; a
-    member that cannot be written (a file is in the way) is an error that
-    ends the extraction. A member :mod:`zipfile` cannot read (a compression
-    method it lacks, a damaged local header) is skipped with a warning, and
-    the CRC of the data itself is not checked, as R's unzip does not check it.
-    With *members*, only the members of those names (``unzip(files = ...)``).
+
+_ZIP_METHODS = {
+    9: "Deflate64",
+    12: "bzip2",
+    14: "LZMA",
+    93: "Zstandard",
+    95: "XZ",
+    98: "PPMd",
+}
+
+
+def _zip_unpack_reason(method: Any, flags: Any = None) -> str:
+    """Port of ``R/zip-peek.R::.zip_unpack_reason()``: why a member of a zip could not be
+    unpacked, from its compression method and its flags (``None`` when unknown).
+
+    :mod:`zipfile` reads stored, deflate, bzip2 and lzma members, so the methods named here are
+    the others (Deflate64, which Windows uses for large files, Zstandard, XZ, PPMd; D154).
     """
-    ex = os.fsencode(exdir)
-    os.makedirs(ex, exist_ok=True)
-    with zipfile.ZipFile(zip_path) as zf:
+    if flags is not None and int(flags) & 1:
+        return "it is encrypted"
+    if method is not None and not is_missing(method) and int(method) == 99:
+        return "it is encrypted (AES)"
+    if method is not None and not is_missing(method) and int(method) not in (0, 8, 12, 14):
+        what = _ZIP_METHODS.get(int(method), f"method {int(method)}")
+        return f"it is compressed with {what}, which metacheck cannot unpack"
+    return "its contents did not unpack to the size the archive records"
+
+
+def _unzip_all(path: str, exdir: str, files: Sequence[str] | None = None) -> pd.DataFrame | None:
+    """Port of ``R/zip-peek.R::.unzip_all()``: unpack a zip on disk into *exdir*.
+
+    Every file in it, or only the members named in *files* (as :func:`_zip_name` names them, in
+    valid UTF-8; a name in the old DOS characters, CP437, is a readable name). A member that
+    cannot be unpacked (encrypted, compressed with a method that cannot be read, a path outside
+    *exdir*, not in the archive) does not stop the others and is reported with its reason.
+
+    Returns a data frame with one row per member: ``name``, ``path`` (the written file, ``None``
+    when not written) and ``reason`` (why not, ``None`` when written); ``None`` when the file is
+    not a readable zip. :func:`_unzip_failed_note` turns the members not written into a
+    sentence for a message.
+    """
+    import pandas as pd
+
+    try:
+        zf = zipfile.ZipFile(path)
+    except Exception:  # not a zip, or a damaged one
+        return None
+    with zf:
+        infos: dict[str, zipfile.ZipInfo] = {}
         for info in zf.infolist():
-            if members is not None and _zip_name(info) not in members:
+            name = _zip_name(info)
+            if not name.endswith("/"):
+                infos.setdefault(name, info)
+        names = list(infos) if files is None else [str(f) for f in files]
+        paths: list[str | None] = [None] * len(names)
+        reasons: list[str | None] = [None] * len(names)
+        if names:
+            os.makedirs(exdir, exist_ok=True)
+        for k, name in enumerate(names):
+            found = infos.get(name)
+            rel = name.replace("\\", "/")
+            if found is None:
+                reasons[k] = "not in the archive"
                 continue
-            # a CP437 name is written as UTF-8, so the files on disk have
-            # readable names (R writes the raw bytes: U76)
-            name = _zip_name(info).encode("utf-8", "surrogateescape")
-            out = ex + b"/" + _r_member_path(name)
-            if out.endswith(b"/"):  # a directory entry
-                if not os.path.exists(out):
-                    try:
-                        os.makedirs(out, exist_ok=True)
-                    except OSError:
-                        pass
+            info = found
+            if _zip_unsafe_path(rel):
+                reasons[k] = "its path leads outside the folder"
                 continue
-            pp = len(ex) + 1
-            while (k := out.find(b"/", pp)) >= 0:
-                parent = out[:k]
-                if not os.path.exists(parent):
-                    try:
-                        os.mkdir(parent)
-                    except OSError:
-                        pass
-                pp = k + 1
-            try:
-                src = zf.open(info)
-            except (NotImplementedError, RuntimeError, zipfile.BadZipFile):
-                warnings.warn(f"zip file is corrupt: cannot read '{_zip_name(info)}'", stacklevel=3)
+            if info.flag_bits & 1 or info.compress_type == 99:
+                reasons[k] = _zip_unpack_reason(info.compress_type, info.flag_bits)
                 continue
             try:
-                fout = open(out, "wb")  # noqa: SIM115
-            except OSError as e:
-                src.close()
-                raise RuntimeError(f"cannot open file '{os.fsdecode(out)}': {e.strerror}") from e
-            with fout, src:
-                src._expected_crc = None  # type: ignore[attr-defined]  # R ignores CRCs
-                shutil.copyfileobj(src, fout)
+                with zf.open(info) as src:
+                    src._expected_crc = None  # type: ignore[attr-defined]  # R ignores CRCs
+                    data = src.read()
+            except Exception:
+                reasons[k] = _zip_unpack_reason(info.compress_type, info.flag_bits)
+                continue
+            if len(data) != info.file_size:
+                reasons[k] = _zip_unpack_reason(info.compress_type, info.flag_bits)
+                continue
+            target = os.path.join(exdir, _zip_disk_name(name))
+            try:
+                os.makedirs(os.path.dirname(target), exist_ok=True)
+                with open(target, "wb") as fh:
+                    fh.write(data)
+                paths[k] = target
+            except OSError:
+                reasons[k] = "the file could not be written to disk"
+    return pd.DataFrame(
+        {
+            "name": pd.Series(names, dtype="object"),
+            "path": pd.Series(paths, dtype="object"),
+            "reason": pd.Series(reasons, dtype="object"),
+        }
+    )
+
+
+def _unzip_failed_note(unpacked: Any, archive: str) -> str | None:
+    """Port of ``R/zip-peek.R::.unzip_failed_note()``: a sentence naming the members
+    :func:`_unzip_all` could not write and why, for a message or a warning; ``None`` when every
+    member was written. *archive* names the zip in the sentence. At most five members are named."""
+    if unpacked is None:
+        return None
+    bad = unpacked[unpacked["path"].isna()]
+    if len(bad) == 0:
+        return None
+    n = len(bad)
+    shown = [
+        f"{nm} ({why})" for nm, why in zip(bad["name"].head(5), bad["reason"].head(5), strict=True)
+    ]
+    more = f"; and {n - 5} more" if n > 5 else ""
+    return (
+        f"{n} file{'s' if n != 1 else ''} in {archive} could not be unpacked: "
+        f"{'; '.join(shown)}{more}"
+    )
+
+
+def _unzip_failed_text(failed: Any) -> dict[str, Any]:
+    """Port of ``R/zip-peek.R::.unzip_failed_text()``: the report section and summary sentence
+    for members of zips that data_check could not unpack (encrypted, or compressed with a method
+    that cannot be read).
+
+    *failed* has the columns ``archive``, ``file_name`` and ``reason`` (the attribute
+    ``unpack_failed`` of :func:`_expand_zip`'s rows). Returns ``{"report": ..., "summary": ...}``,
+    both ``None`` when there are none.
+    """
+    import pandas as pd
+
+    none: dict[str, Any] = {"report": None, "summary": None}
+    if not isinstance(failed, pd.DataFrame) or len(failed) == 0:
+        return none
+    failed = failed[~failed.duplicated(subset=["archive", "file_name"])]
+    whole = failed["file_name"].isna()
+    arch = failed[whole]
+    memb = failed[~whole]
+    n = len(memb)
+    lines = []
+    for archive in dict.fromkeys(memb["archive"].tolist()):
+        f = memb[memb["archive"] == archive]
+        note = _unzip_failed_note(
+            pd.DataFrame({"name": f["file_name"], "path": None, "reason": f["reason"]}),
+            f"`{archive}`",
+        )
+        lines.append(f"- {note}.")
+    na = len(arch)
+    sent = []
+    if na:
+        sent.append(
+            f"{na} archive{plural(na)} in the repository could not be opened, so the checks did "
+            f"not see {plural(na, 'its', 'their')} files"
+        )
+    if n:
+        sent.append(
+            f"{n} file{plural(n)} in the repository's archives could not be unpacked, so the "
+            f"checks did not see {plural(n, 'it', 'them')}"
+        )
+    joined = "; ".join(sent)
+    return {
+        "report": [
+            "#### Files that could not be unpacked",
+            f"{joined}:",
+            "",
+            *[
+                f"- `{a}` could not be opened ({r})."
+                for a, r in zip(arch["archive"].tolist(), arch["reason"].tolist(), strict=True)
+            ],
+            *lines,
+        ],
+        "summary": f"{joined}.",
+    }
+
+
+def _archive_unopened(empty: pd.DataFrame, row: Any, path: Any) -> pd.DataFrame:
+    """Port of ``.archive_unopened()``: an archive that could not be opened at all (damaged, or
+    cut off: a zip without its central directory, #703), as the empty result of
+    :func:`_expand_zip`, :func:`_expand_tar` or :func:`_expand_compressed` with the attribute
+    ``unpack_failed``: before, it was dropped without a word, and a repository holding only such
+    an archive was reported as having no files."""
+    import pandas as pd
+
+    empty.attrs["unpack_failed"] = pd.DataFrame(
+        {
+            "archive": [_archive_label(row, path)],
+            "file_name": pd.Series([None], dtype="object"),
+            "reason": ["it is damaged or incomplete"],
+        }
+    )
+    return empty
 
 
 def _in_download_folder(path: str) -> bool:
@@ -1805,12 +1952,25 @@ def _archive_keep(name: Sequence[str | None], skip_types: Any) -> list[bool]:
     roles = _data_doc_role(base)
     skip = set(_chr_list(skip_types))
     useless = is_useless_file(path)
+    # an archive inside the archive is kept too, so data_check opens it in turn (zips inside zips
+    # were not opened, #700)
+    inner = [
+        a or b or c
+        for a, b, c in zip(
+            _is_zip(base), _is_tar_archive(base), _is_single_compress(base), strict=True
+        )
+    ]
     return [
-        (t in ("data", "code") or (t == "documentation" and r in ("codebook", "readme")))
-        and t not in skip
+        (
+            (
+                (t in ("data", "code") or (t == "documentation" and r in ("codebook", "readme")))
+                and t not in skip
+            )
+            or ia
+        )
         and not re.search("(^|/)__MACOSX/", str(p))
         and not u
-        for t, r, p, u in zip(types, roles, path, useless, strict=True)
+        for t, r, p, u, ia in zip(types, roles, path, useless, inner, strict=True)
     ]
 
 
@@ -1845,6 +2005,7 @@ def _with_oversize(
     name: Sequence[str],
     file_size: Sequence[float],
     archive: Any = None,
+    attr_name: str = "oversize",
 ) -> pd.DataFrame:
     """Port of ``R/zip-peek.R::.with_oversize()``: *rows* plus a row per inner file not unpacked.
 
@@ -1852,12 +2013,17 @@ def _with_oversize(
     (``file_location`` ``NA``), the way a file too large to download is
     listed. The same files are attached as ``attrs["oversize"]`` (``file_name``,
     ``file_size`` in bytes, ``NaN`` when unknown), which ``data_check`` adds to
-    its record of files over the limit.
+    its record of files over the limit. With ``attr_name = "over_budget"`` they are the files
+    that did not fit in what was left of the repository's download budget (#699).
     """
     import pandas as pd
 
     if len(name) == 0:
         return rows
+    # concatenating drops the attributes an earlier call set
+    kept = {
+        a: rows.attrs[a] for a in ("oversize", "over_budget", "unpack_failed") if a in rows.attrs
+    }
     from metacheck.datacheck.files import _data_doc_role, data_classify_files, data_format
 
     n = len(name)
@@ -1883,7 +2049,9 @@ def _with_oversize(
     extra["archive_file_path"] = pd.Series([label] * n, dtype="string")
     extra["archive_file_location"] = pd.Series([_archive_loc(archive)] * n, dtype="string")
     out = pd.concat([rows, extra], ignore_index=True) if len(rows) else extra
-    out.attrs["oversize"] = pd.DataFrame(
+    for a, v in kept.items():
+        out.attrs[a] = v
+    out.attrs[attr_name] = pd.DataFrame(
         {
             "file_name": pd.Series(base, dtype="string"),
             "file_size": pd.Series([float(s) for s in file_size], dtype="float64"),
@@ -1892,11 +2060,43 @@ def _with_oversize(
     return out
 
 
+def _fit_budget(
+    size: Sequence[float], max_total: float, name: Sequence[str] | None = None
+) -> list[bool]:
+    """Port of ``R/zip-peek.R::.fit_budget()``: which files of sizes *size* fit in *max_total* bytes.
+
+    Taken smallest first (ties by *name*): the files of an archive unpacked within what is
+    left of its repository's download budget (#699). A file of unknown size does not fit
+    unless there is no limit.
+    """
+    from metacheck._r import r_sort_key
+
+    n = len(size)
+    if not math.isfinite(max_total):
+        return [True] * n
+    names = list(range(n)) if name is None else list(name)
+    fit = [False] * n
+    used = 0.0
+    for k in sorted(
+        range(n),
+        key=lambda k: (
+            math.isnan(size[k]),
+            0.0 if math.isnan(size[k]) else size[k],
+            r_sort_key(names[k]),
+        ),
+    ):
+        if not math.isnan(size[k]) and used + size[k] <= max_total:
+            fit[k] = True
+            used += size[k]
+    return fit
+
+
 def _expand_zip(
     zip_path: Any,
     zip_row: pd.DataFrame,
     skip_types: Any = "materials",
     max_bytes: float = math.inf,
+    max_total: float = math.inf,
 ) -> pd.DataFrame:
     """Port of ``R/zip-peek.R::.expand_zip()``: rows for the data files inside a zip.
 
@@ -1911,6 +2111,11 @@ def _expand_zip(
     reported in ``attrs["oversize"]``, like a file too large to download, and
     a copy left by an earlier run is removed, so the cache never holds more
     than the limits.
+
+    The files not yet unpacked are also held to *max_total*, the bytes left in the
+    repository's download budget (#699): taken smallest first, the rest reported in
+    ``attrs["over_budget"]``. The budget counted the zip at its packed size only, so its files
+    could take the folder past the budget.
     """
     empty = zip_row.iloc[0:0].copy()
     if _missing_path(zip_path):
@@ -1921,7 +2126,7 @@ def _expand_zip(
         with zipfile.ZipFile(zip_path) as zf:
             infos = zf.infolist()
     except Exception:
-        return empty
+        return _archive_unopened(empty, zip_row, zip_path)
     entries = [(_zip_name(i), float(i.file_size)) for i in infos]
     entries = [(n, s) for n, s in entries if not n.endswith("/")]
     if not infos or not entries:
@@ -1935,11 +2140,27 @@ def _expand_zip(
             _unlink(dest, _zip_disk_name(n))
     want = [n for n, k, o in zip(names, keep, over, strict=True) if k and not o]
     missing = [n for n in want if not os.path.exists(f"{dest}/{_zip_disk_name(n)}")]
+    size_of = dict(zip(names, sizes, strict=True))
+    fit = _fit_budget([size_of[n] for n in missing], max_total, missing)
+    no_room = [n for n, f in zip(missing, fit, strict=True) if not f]
+    no_room_size = [size_of[n] for n in no_room]
+    missing = [n for n, f in zip(missing, fit, strict=True) if f]
+    want = [n for n in want if n not in set(no_room)]
+    failed = None
     if missing:
         part = f"{dest}.part"
         shutil.rmtree(part, ignore_errors=True)
         try:
-            _unzip_all(zip_path, part, members=set(missing))
+            # a member that cannot be unpacked (encrypted, or compressed with a method that
+            # cannot be read) is named, not left out without a word
+            unpacked = _unzip_all(zip_path, part, files=missing)
+            note = _unzip_failed_note(unpacked, os.path.basename(zip_path))
+            if note is not None:
+                from metacheck.archives import _message
+
+                _message(note)
+            if unpacked is not None:
+                failed = unpacked[unpacked["path"].isna()][["name", "reason"]]
         except Exception:  # noqa: S110 - R: tryCatch(unzip(...), error = NULL)
             pass
         except BaseException:  # a stop: the half-written folder is not left in the cache
@@ -1949,7 +2170,7 @@ def _expand_zip(
         _move_extracted(part, dest, [_zip_disk_name(n) for n in missing])
     label = _archive_label(zip_row, zip_path)
     rows = _archive_rows(dest, zip_row, label, skip_types, archive=zip_path) if want else empty
-    return _with_oversize(
+    out = _with_oversize(
         rows,
         zip_row,
         label,
@@ -1957,6 +2178,22 @@ def _expand_zip(
         [s for s, o in zip(sizes, over, strict=True) if o],
         archive=zip_path,
     )
+    out = _with_oversize(
+        out, zip_row, label, no_room, no_room_size, archive=zip_path, attr_name="over_budget"
+    )
+    # and given to data_check, which names them in its report (attribute "unpack_failed", see
+    # :func:`_unzip_failed_text`)
+    if failed is not None and len(failed) > 0:
+        import pandas as pd
+
+        out.attrs["unpack_failed"] = pd.DataFrame(
+            {
+                "archive": [label] * len(failed),
+                "file_name": failed["name"].tolist(),
+                "reason": failed["reason"].tolist(),
+            }
+        )
+    return out
 
 
 def _unlink(dest: str, name: str) -> None:
@@ -1967,7 +2204,12 @@ def _unlink(dest: str, name: str) -> None:
         os.unlink(f"{dest}/{name}")
 
 
-def _untar_all(tar_path: str, exdir: str, members: set[str] | None = None) -> None:
+def _untar_all(
+    tar_path: str,
+    exdir: str,
+    members: set[str] | None = None,
+    rename: dict[str, str] | None = None,
+) -> None:
     """``utils::untar(tar_path, exdir = exdir)`` as metacheck runs it (GNU ``tar -xf``).
 
     Member by member, as GNU tar does: a member whose name has a ``..``
@@ -1975,7 +2217,9 @@ def _untar_all(tar_path: str, exdir: str, members: set[str] | None = None) -> No
     removed, and a member that cannot be extracted does not stop the others.
     Unlike GNU tar, links that point outside *exdir* are not extracted
     (:mod:`tarfile`'s ``data`` filter): an archive from a repository must not
-    write outside the cache. With *members*, only those members.
+    write outside the cache. With *members*, only those members. A file in *rename* is
+    written under the readable name it maps to (a stored name that is not valid UTF-8 cannot
+    be a file name on every system).
     """
     import tarfile
 
@@ -1987,6 +2231,17 @@ def _untar_all(tar_path: str, exdir: str, members: set[str] | None = None) -> No
             if members is not None and member.name not in members:
                 continue
             try:
+                if rename and member.name in rename and member.isfile():
+                    to = os.path.join(exdir, rename[member.name].lstrip("/"))
+                    if ".." in rename[member.name].split("/"):
+                        continue
+                    src = tf.extractfile(member)
+                    if src is None:
+                        continue
+                    os.makedirs(os.path.dirname(to), exist_ok=True)
+                    with src, open(to, "wb") as out:
+                        shutil.copyfileobj(src, out)
+                    continue
                 tf.extract(member, exdir, filter="data")
             except Exception:  # noqa: S112 - GNU tar reports the member and goes on
                 continue
@@ -1997,6 +2252,7 @@ def _expand_tar(
     tar_row: pd.DataFrame,
     skip_types: Any = "materials",
     max_bytes: float = math.inf,
+    max_total: float = math.inf,
 ) -> pd.DataFrame:
     """Port of ``R/zip-peek.R::.expand_tar()``: rows for the data files inside a tarball.
 
@@ -2010,10 +2266,14 @@ def _expand_tar(
     member's size from its headers before anything is written; a compressed
     tar gives only names without reading it all, so its kept members are
     unpacked and any over the limit removed again straight away.
+
+    The files not yet unpacked are also held to *max_total*, the bytes left in the
+    repository's download budget, as in :func:`_expand_zip` (#699). A compressed tar's files
+    are unpacked first and those that do not fit removed again.
     """
     import tarfile
 
-    from metacheck.archives.tar_peek import _tar_list_file
+    from metacheck.archives.tar_peek import _tar_list_file, _utf8_names
 
     empty = tar_row.iloc[0:0].copy()
     if _missing_path(tar_path):
@@ -2024,10 +2284,15 @@ def _expand_tar(
         with tarfile.open(tar_path, "r:*") as tf:
             members = [m for m in tf.getmembers() if not m.isdir()]
     except Exception:
-        return empty
+        return _archive_unopened(empty, tar_row, tar_path)
     if not members:
         return empty
-    names = [m.name for m in members]
+    # A tar records no character set for its names: a name that is not valid UTF-8 is
+    # read as Latin-1, as other text files are (metacheck's `.utf8_lines()`); text
+    # functions stopped on it, as on a zip's old DOS names. The member is unpacked under
+    # its readable name.
+    stored = [m.name for m in members]
+    names = _utf8_names(stored)
     plain = bool(re.search(r"[.]tar$", tar_path, re.IGNORECASE))
     listing = _tar_list_file(tar_path) if plain else None
     if listing is None:
@@ -2035,7 +2300,7 @@ def _expand_tar(
     else:
         # the sizes of a plain tar come from its headers (a link has none)
         by_member = dict(zip(listing["member"].tolist(), listing["size"].tolist(), strict=True))
-        sizes = [float(by_member.get(n, math.nan)) for n in names]
+        sizes = [float(by_member.get(n, math.nan)) for n in stored]
     keep = _archive_keep(names, skip_types)
     over = [k and not math.isnan(s) and s > max_bytes for k, s in zip(keep, sizes, strict=True)]
     for n, o in zip(names, over, strict=True):
@@ -2043,11 +2308,27 @@ def _expand_tar(
             _unlink(dest, n)
     want = [n for n, k, o in zip(names, keep, over, strict=True) if k and not o]
     missing = [n for n in want if not os.path.exists(f"{dest}/{n}")]
+    # a plain tar gives the sizes before anything is unpacked
+    no_room: list[str] = []
+    no_room_size: list[float] = []
+    if missing and plain:
+        size_of = dict(zip(names, sizes, strict=True))
+        fit = _fit_budget([size_of[n] for n in missing], max_total, missing)
+        no_room = [n for n, f in zip(missing, fit, strict=True) if not f]
+        no_room_size = [size_of[n] for n in no_room]
+        missing = [n for n, f in zip(missing, fit, strict=True) if f]
+    new_files = list(missing)
     if missing:
         part = f"{dest}.part"
         shutil.rmtree(part, ignore_errors=True)
+        stored_of = dict(zip(names, stored, strict=True))
         try:
-            _untar_all(tar_path, part, members=set(missing))
+            _untar_all(
+                tar_path,
+                part,
+                members={stored_of[n] for n in missing},
+                rename={stored_of[n]: n for n in missing if stored_of[n] != n},
+            )
         except Exception:  # noqa: S110 - R: tryCatch(untar(...), error = NULL)
             pass
         except BaseException:  # a stop: the half-written folder is not left in the cache
@@ -2062,19 +2343,35 @@ def _expand_tar(
             sizes[i] = float(os.path.getsize(got))
             over[i] = True
             _unlink(dest, n)
+    # a compressed tar: of the files just unpacked, those that do not fit are removed again
+    if not plain and new_files and math.isfinite(max_total):
+        got_size = [
+            float(os.path.getsize(f"{dest}/{n}")) if os.path.isfile(f"{dest}/{n}") else math.nan
+            for n in new_files
+        ]
+        within = _fit_budget(got_size, max_total, new_files)
+        # a file that is not there is not counted (R: !there | .fit_budget(...))
+        fit = [math.isnan(g) or w for g, w in zip(got_size, within, strict=True)]
+        no_room = [n for n, f in zip(new_files, fit, strict=True) if not f]
+        no_room_size = [g for g, f in zip(got_size, fit, strict=True) if not f]
+        for n in no_room:
+            _unlink(dest, n)
     label = _archive_label(tar_row, tar_path)
     rows = (
         _archive_rows(dest, tar_row, label, skip_types, archive=tar_path)
         if any(k and not o for k, o in zip(keep, over, strict=True))
         else empty
     )
-    return _with_oversize(
+    out = _with_oversize(
         rows,
         tar_row,
         label,
         [n for n, o in zip(names, over, strict=True) if o],
         [s for s, o in zip(sizes, over, strict=True) if o],
         archive=tar_path,
+    )
+    return _with_oversize(
+        out, tar_row, label, no_room, no_room_size, archive=tar_path, attr_name="over_budget"
     )
 
 
@@ -2107,6 +2404,7 @@ def _expand_compressed(
     gz_row: pd.DataFrame,
     skip_types: Any = "materials",
     max_bytes: float = math.inf,
+    max_total: float = math.inf,
 ) -> pd.DataFrame:
     """Port of ``R/zip-peek.R::.expand_compressed()``: a single-file ``.gz``/``.bz2``/``.xz``.
 
@@ -2122,6 +2420,9 @@ def _expand_compressed(
     is reported in ``attrs["oversize"]`` (size ``NaN``, since only "more than
     the limit" is known). A copy over the limit left by an earlier run is
     removed.
+
+    Decompression also stops at *max_total*, the bytes left in the repository's download budget
+    (#699); a file stopped there is reported in ``attrs["over_budget"]`` instead.
     """
     empty = gz_row.iloc[0:0].copy()
     if _missing_path(gz_path):
@@ -2159,6 +2460,9 @@ def _expand_compressed(
                     if written > max_bytes:
                         status = "over"
                         break
+                    if written > max_total:
+                        status = "no_room"
+                        break
                     oc.write(chunk)
         except Exception:
             status = "failed"
@@ -2171,7 +2475,17 @@ def _expand_compressed(
                 return _with_oversize(
                     empty, gz_row, label, [inner_name], [math.nan], archive=gz_path
                 )
-            return empty
+            if status == "no_room":
+                return _with_oversize(
+                    empty,
+                    gz_row,
+                    label,
+                    [inner_name],
+                    [math.nan],
+                    archive=gz_path,
+                    attr_name="over_budget",
+                )
+            return _archive_unopened(empty, gz_row, gz_path)
         os.makedirs(dest, exist_ok=True)
         _move_extracted(part, dest, [inner_name])
     # the file is closed before its size is read (metacheck reads it before the

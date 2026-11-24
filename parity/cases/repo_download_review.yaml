@@ -740,6 +740,17 @@
           "r": "'.expand_tar'"
           "py": "'_expand_tar'"
       "fixture": "review/hostile.tar.gz"
+- "id": "expand.latin1.tar"
+  "r": "do.call"
+  "py": "tests.repo_download._parity_helpers.do_call"
+  "args":
+    "what":
+      "$expr":
+        "r": "local({source(file.path(root, 'tests/repo_download/review_helpers.R'), local = TRUE); rv_expand})"
+        "py": "__import__('tests.repo_download._review_helpers', fromlist=['x']).expand"
+    "args":
+      "fn": *id004
+      "fixture": "review/latin1.tar"
 - "id": "expand.dirlink.tar.gz"
   "r": "do.call"
   "py": "tests.repo_download._parity_helpers.do_call"

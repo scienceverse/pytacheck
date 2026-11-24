@@ -475,7 +475,9 @@ def test_dryad_download_reauthenticates_once(tmp_path: Path) -> None:
 
 def test_dryad_file_download(mock_api: object, tmp_path: Path) -> None:
     with pytest.warns(UserWarning, match="2 of 4 files from Dryad dataset 10.5061/dryad.j1fd7"):
-        dl = dryad_file_download("https://doi.org/10.5061/dryad.j1fd7", download_to=str(tmp_path))
+        dl = dryad_file_download(
+            "https://doi.org/10.5061/dryad.j1fd7", download_to=str(tmp_path), max_file_size=10
+        )
     assert dl is not None
     assert dl.columns.tolist() == list(dryad._FILE_COLUMNS)
     # the omitted (too large) big.bin stays in the table, not downloaded (U36)

@@ -68,7 +68,8 @@ def test_inaccessible_link_twice_is_named_twice() -> None:
     papers = [{"url": ["https://osf.io/3cz2e"], "id": "p", "text": ["See osf.io/3cz2e."]}]
     mo = run_prereg(papers=papers)
     assert mo.traffic_light == "na"
-    assert "2 registration links could not be accessed" in mo.summary_text
+    # no recording for the link: the OSF "did not answer" (metacheck #541)
+    assert "2 OSF links could not be checked, because the OSF did not answer" in mo.summary_text
 
 
 def test_report_tables() -> None:

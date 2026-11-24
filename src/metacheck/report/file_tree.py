@@ -36,6 +36,7 @@ from typing import Any
 import pandas as pd
 
 from metacheck._r.base import r_sort_key
+from metacheck.utils import _is_web_address
 
 __all__ = [
     "brief_file_tree",
@@ -67,6 +68,9 @@ _UNKNOWN_ICON = "❓"  # ❓
 _MARK_JUNK = {"problem": "junk: remove", "suggestion": "junk: keep only on purpose"}
 _MARK_EMPTY = "empty folder"
 _MARK_HIDDEN = "hidden file"
+
+#: The most lines drawn of one repository's tree (``.file_tree_max_lines``, #702)
+_FILE_TREE_MAX_LINES = 2000
 
 
 def _na(x: Any) -> bool:
@@ -155,11 +159,16 @@ def useless_file_kind(path: Sequence[Any] | str | None) -> list[str | None]:
             kind = "compiled Python files"
         elif base.startswith("~$") or re.search(r"^\.~lock\..*#$", base):
             kind = "open-document lock files"
-        elif base == ".Rhistory":
+        elif base in (".Rhistory", ".Rapp.history"):
+            # the R app on macOS keeps it as .Rapp.history (metacheck #648)
             kind = "R history"
         elif re.search(r"(~|\.bak|\.swp|\.swo)$", base, flags=re.I):
             kind = "editor backups"
-        elif re.search(r"\.(tmp|temp)$", base, flags=re.I):
+        elif re.search(r"\.(tmp|temp)$", base, flags=re.I) or re.search(
+            r"^\.RDataTmp[0-9]*$", base
+        ):
+            # R writes a workspace to .RDataTmp first and renames it when saving ends, so one
+            # left behind is an interrupted save (metacheck #648: a 9 MB one)
             kind = "temporary files"
         out.append(kind)
     return out
@@ -275,6 +284,27 @@ def file_tree_rows(paths: Sequence[Any], is_dir: Sequence[bool] | None = None) -
     )
 
 
+def _path_ancestors(paths: Sequence[str]) -> tuple[list[int], list[str]]:
+    """Port of ``.path_ancestors()``: every folder above each of *paths* ("a" and "a/b" for
+    "a/b/c.csv"), as ``(i, prefix)`` pairs, the shallowest first.
+
+    In one pass over all paths, so the junk folders, the files they hold and the empty folders of
+    a tree are found without comparing each folder with every path (#702). A "/" at the end of a
+    path closes its last part and is no folder above it, as ``strsplit()`` reads it.
+    """
+    idx: list[int] = []
+    prefix: list[str] = []
+    for i, p in enumerate(paths):
+        n = len(p)
+        at = p.find("/")
+        while at != -1:
+            if at + 1 < n:  # 1-based position < nchar
+                idx.append(i)
+                prefix.append(p[:at])
+            at = p.find("/", at + 1)
+    return idx, prefix
+
+
 def _list_files(folder: str) -> list[str]:
     """``list.files(folder, all.files = TRUE, recursive = TRUE, include.dirs = TRUE)``."""
     found: list[str] = []
@@ -329,17 +359,17 @@ def file_tree_entries(
     # A junk folder is shown as one line: the shallowest folder of a junk path
     # that is itself junk (".git" for ".git/objects/ab/cd"), with the number of
     # files under it; nothing below it is drawn.
-    junk_root: list[str | None] = []
-    for i, p in enumerate(path):
-        root = None
-        if junk_kind[i] is not None:
-            seg = p.split("/")
-            for k in range(1, len(seg)):
-                prefix = "/".join(seg[:k])
-                if useless_file_kind(prefix)[0] is not None:
-                    root = prefix
-                    break
-        junk_root.append(root)
+    # (each folder name is judged once, for all paths below it, #702)
+    junk_root: list[str | None] = [None] * len(path)
+    junk_at = [i for i, k in enumerate(junk_kind) if k is not None]
+    if junk_at:
+        a_i, a_prefix = _path_ancestors([path[i] for i in junk_at])
+        up = _unique(a_prefix)
+        is_junk = {u: k is not None for u, k in zip(up, useless_file_kind(up), strict=True)}
+        for ai, pre in zip(a_i, a_prefix, strict=True):
+            # the shallowest
+            if is_junk[pre] and junk_root[junk_at[ai]] is None:
+                junk_root[junk_at[ai]] = pre
     in_junk_dir = [r is not None for r in junk_root]
     # a folder that is itself junk counts as its own root
     own_root = [
@@ -349,7 +379,13 @@ def file_tree_entries(
         [r for r in junk_root if r is not None] + [path[i] for i, o in enumerate(own_root) if o]
     )
     files_on_list = [p for i, p in enumerate(path) if not is_dir[i]]
-    n_files = {r: sum(1 for p in files_on_list if p.startswith(r + "/")) for r in roots}
+    # the folders above each file, for the files under each junk folder and for the empty folders
+    # below
+    _, file_anc = _path_ancestors(files_on_list)
+    anc_count: dict[str, int] = {}
+    for pre in file_anc:
+        anc_count[pre] = anc_count.get(pre, 0) + 1
+    n_files = {r: anc_count.get(r, 0) for r in roots}
 
     keep = [i for i in range(len(path)) if not in_junk_dir[i] and not own_root[i]]
     e_path = [path[i] for i in keep] + roots
@@ -359,12 +395,7 @@ def file_tree_entries(
     sev = useless_file_severity(kind)
 
     # empty folders: folders with no file anywhere below them
-    empty = [
-        e_dir[i]
-        and e_n[i] is None
-        and not any(f.startswith(e_path[i] + "/") for f in files_on_list)
-        for i in range(len(e_path))
-    ]
+    empty = [e_dir[i] and e_n[i] is None and e_path[i] not in anc_count for i in range(len(e_path))]
 
     # what is shown after each name
     first: dict[str, int] = {}
@@ -416,9 +447,6 @@ def file_tree_entries(
             "mark": pd.Series(mark, dtype="string"),
         }
     )
-
-
-_URL = re.compile(r"^[A-Za-z][A-Za-z0-9+.-]*://")
 
 
 def file_tree_block(
@@ -474,6 +502,11 @@ def file_tree_block(
         rows = file_tree_rows(entries["path"].tolist(), entries["is_dir"].tolist())
         if len(rows) == 0:
             continue
+        # at most _FILE_TREE_MAX_LINES lines, then one line with how many more (#702): a tree of
+        # 369,548 lines cannot be read
+        n_rows = len(rows)
+        if n_rows > _FILE_TREE_MAX_LINES:
+            rows = rows.iloc[:_FILE_TREE_MAX_LINES].reset_index(drop=True)
         # A tree has to READ as a tree: every line in order, with the branch
         # characters lining up. So the rows are laid out as text with the
         # per-file columns padded to align.
@@ -501,6 +534,8 @@ def file_tree_block(
             re.sub(r"\s+$", "", a + b + c + (d if has_naming else ""))
             for a, b, c, d in zip(p_text, p_first, p_study, naming_txt, strict=True)
         ]
+        if n_rows > len(rows):
+            lines.append(f"(and {n_rows - len(rows):,} more files and folders, not shown)")
         blocks.append(
             {"repo": str(repo), "lines": lines, "has_study": has_study, "has_naming": has_naming}
         )
@@ -511,7 +546,7 @@ def file_tree_block(
     for b in blocks:
         # a local folder by its own name: its full path is the place on the
         # computer that ran the check, on a server its job folder
-        label = b["repo"] if _URL.match(b["repo"]) else os.path.basename(b["repo"].rstrip("/"))
+        label = b["repo"] if _is_web_address(b["repo"]) else os.path.basename(b["repo"].rstrip("/"))
         sections.append(f"**Repository: {label}**")
         # a fenced block with no language, in a box of about 30 lines with its
         # own scroll bar; one element, so the report's blank-line joins do not

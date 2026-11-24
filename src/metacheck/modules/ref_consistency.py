@@ -15,7 +15,7 @@ __all__ = ["ref_consistency"]
 _KEYS = ["paper_id", "bib_id"]
 
 _REPORT = {
-    "red": (
+    "yellow": (
         "There are cross-references that are not in the bibliography and/or bibliography "
         "entries not cross-referenced in the text"
     ),
@@ -214,7 +214,9 @@ def ref_consistency(paper: Any) -> dict[str, Any]:
     if len(bibs) == 0:
         tl = "na"
     elif len(table) > 0:
-        tl = "red"
+        # yellow, not red: in the Meta-Psychology run it was red for 146 of 149 papers, mostly
+        # for faults of the PDF conversion (#695, point 2)
+        tl = "yellow"
     else:
         tl = "green"
 

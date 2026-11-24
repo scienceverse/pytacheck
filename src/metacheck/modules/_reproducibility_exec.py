@@ -38,6 +38,7 @@ from metacheck.modules.reproducibility_check import (
     _tail_cap,
 )
 from metacheck.report import collapse_section, scroll_table
+from metacheck.repro.provenance import _repro_prov_note_before_run, _repro_prov_note_materialised
 
 #: R's ``layout_name``: what the scripts run against
 _LAYOUT_NAME = "the repository"
@@ -325,6 +326,7 @@ def _execute(
         sandbox_root,
         deadline=time.time() if no_time else core._repro_clock_deadline(total_timeout),
     )
+    _repro_prov_note_materialised(a.get("prov"), ml)
     not_copied = getattr(ml, "attrs", {}).get("not_copied_time") or 0
     dbg(
         f"  materialised {_n_ok(ml)}/{_n_rows(ml)} files."
@@ -449,7 +451,13 @@ def _execute(
         )
         if sandbox == "docker":
             install_results = docker.repro_install_deps_docker(
-                to_install, lib_dir, image=docker_image or "", timeout=install_limit
+                to_install,
+                lib_dir,
+                image=docker_image or "",
+                timeout=install_limit,
+                deposit_pkgs=docker._repro_deposit_packages(
+                    sandbox_root, h._chr_col(to_install, "package")
+                ),
             )
         else:
             # as before, no limit unless one was asked for or versions are recorded
@@ -564,6 +572,8 @@ def _execute(
     dbg(f"running {len(run_order_names)} script(s) in order: ", " -> ".join(run_order_names))
     if state.get("script_deadline") is None:
         state["script_deadline"] = core._repro_deadline(total_timeout)
+    # the run folder before the first script runs, hashed; before the scripts' time starts
+    _repro_prov_note_before_run(a.get("prov"), run_tbl, sandbox_root)
     # the files there before the run, to see which a script wrote (see the end)
     r_names_before = layout._repro_sandbox_names(sandbox_root)
     run_results = run_r_scripts(run_tbl, run_order_names)
@@ -591,6 +601,16 @@ def _execute(
     library_injections: dict[str, list[str]] = {}
     # file_name -> the scripts to load first in the re-run
     run_after: dict[str, list[str]] = {}
+
+    def _unavailable_deps() -> list[str]:
+        # Without installs, failed_deps holds every package the code uses; one already
+        # installed here is there for a script run outside Docker, so its library() line can
+        # be added (#648)
+        if not install_r and sandbox != "docker":
+            here_ok = runsupport._repro_installed_here(failed_deps)
+            return [p for p, ok in zip(failed_deps, here_ok, strict=True) if not ok]
+        return failed_deps
+
     err_types = h._chr_col(run_results, "error_type")
     undef_idx = [i for i, t in enumerate(err_types) if t == "undefined_variable"]
     if undef_idx:
@@ -656,11 +676,7 @@ def _execute(
                 # Without installs, failed_deps holds every package the code uses; one
                 # already installed here is there for a script run outside Docker, so its
                 # library() line can be added (#648)
-                if not install_r and sandbox != "docker":
-                    here_ok = runsupport._repro_installed_here(failed_deps)
-                    unavailable = [p for p, ok in zip(failed_deps, here_ok, strict=True) if not ok]
-                else:
-                    unavailable = failed_deps
+                unavailable = _unavailable_deps()
                 pkgs = runsupport._repro_missing_fn_pkgs(
                     str(v), str(user), code_text_list, candidate_pkgs, unavailable=unavailable
                 )
@@ -857,6 +873,10 @@ def _execute(
     # A script whose write stopped on a folder the deposit does not have runs once more
     # after the folder is made (#591; see _repro_make_failed_write_folders())
     r_folders_made = pd.DataFrame({"script": [], "folder": []}, dtype="string")
+    # packages named in errors that were installed now, for the scripts that ran again with
+    # them (#587)
+    r_pkgs_tried: list[str] = []
+    r_pkgs_installed = pd.DataFrame({"script": [], "package": []}, dtype="string")
     for _ in range(5):
         names_after = layout._repro_sandbox_names(sandbox_root)
         later = layout._repro_written_later(run_results, r_names_before, names_after)
@@ -881,16 +901,136 @@ def _execute(
             run_results, run_tbl, sandbox_root, _folders_by_script(r_folders_made)
         )
         r_folders_made = bind_rows([r_folders_made, made])
+        # A script that now stops on a function no script defines gets library() lines for
+        # it, as the corrective run gives them for the first run's errors only (#592; see
+        # _repro_more_library_lines()).
+        more_libs = runsupport._repro_more_library_lines(
+            run_results,
+            code_text_list,
+            list(
+                dict.fromkeys(
+                    [*(h._chr_col(deps, "package") if deps is not None else []),
+                     *core._repro_common_pkgs()]
+                )
+            ),
+            unavailable=_unavailable_deps(),
+            injected=library_injections,
+        )  # fmt: skip
+        for s_, pkgs_ in more_libs.items():
+            library_injections[s_] = [*library_injections.get(s_, []), *pkgs_]
+        if more_libs:
+            prepend_lines = dict(rec._repro_run_after_lines(run_after, run_tbl, sandbox_root) or {})
+            for f, kinds in old_defaults_used.items():
+                prepend_lines[f] = [*rec._repro_old_default_lines(kinds), *prepend_lines.get(f, [])]
+            run_tbl = write(inject_libs=library_injections, prepend=prepend_lines)
+        # A script that stops on a package no script loads, which another package needs for
+        # one of its functions, gets it installed (#587; see _repro_missing_pkg_names()).
+        # Each package is tried once.
+        pkg_redo: list[str] = []
+        if install_r and not core._repro_short_of_time(total_timeout, 120):
+            named = runsupport._repro_missing_pkg_names(_msgs(run_results))
+            outcomes_now = h._chr_col(run_results, "outcome")
+            stopped_pkg = [
+                o == "errored" and n is not None for o, n in zip(outcomes_now, named, strict=True)
+            ]
+            have = (
+                set(h._chr_col(install_results, "package"))
+                if install_results is not None
+                else set()
+            )
+            new_pkgs: list[str] = [
+                p
+                for p in dict.fromkeys(n for n, st in zip(named, stopped_pkg, strict=True) if st)
+                if p is not None and p not in have and p not in r_pkgs_tried
+            ]
+            if new_pkgs:
+                r_pkgs_tried += new_pkgs
+                dbg(
+                    f"installing {len(new_pkgs)} package(s) named in scripts' errors: ",
+                    ", ".join(map(str, new_pkgs)),
+                )
+                more = pd.DataFrame(
+                    {
+                        "package": pd.array(new_pkgs, dtype="string"),
+                        "source": pd.array(["cran"] * len(new_pkgs), dtype="string"),
+                        "ref": pd.array([None] * len(new_pkgs), dtype="string"),
+                    }
+                )
+                more_limit = core._repro_install_limit(
+                    a.get("install_timeout"), timeout, total_timeout
+                )
+                if sandbox == "docker":
+                    got_inst = docker.repro_install_deps_docker(
+                        more,
+                        lib_dir,
+                        image=docker_image or "",
+                        timeout=more_limit,
+                        deposit_pkgs=docker._repro_deposit_packages(sandbox_root, new_pkgs),
+                    )
+                else:
+                    got_inst = core.repro_install_deps(
+                        more,
+                        lib_dir,
+                        cran_to_main_lib=h._is_true(a.get("cran_install_main")),
+                        **_given(
+                            deadline=time.time() + more_limit
+                            if isinstance(total_timeout, _dt.datetime)
+                            else None
+                        ),
+                    )
+                install_results = bind_rows([install_results, got_inst])
+                got_pkgs = h._chr_col(got_inst, "package")
+                got_ok = [h._is_true(v) for v in h._col(got_inst, "installed")]
+                got_good = {p for p, ok in zip(got_pkgs, got_ok, strict=True) if ok}
+                got_bad = {p for p, ok in zip(got_pkgs, got_ok, strict=True) if not ok}
+                failed_deps = list(
+                    dict.fromkeys([*failed_deps, *(str(p) for p in got_pkgs if p in got_bad)])
+                )
+                names_rr = _names(run_results)
+                ok_rows = [st and n in got_good for st, n in zip(stopped_pkg, named, strict=True)]
+                pkg_redo = [str(f) for f, k in zip(names_rr, ok_rows, strict=True) if k]
+                r_pkgs_installed = bind_rows(
+                    [
+                        r_pkgs_installed,
+                        pd.DataFrame(
+                            {
+                                "script": pd.array(pkg_redo, dtype="string"),
+                                "package": pd.array(
+                                    [str(n) for n, k in zip(named, ok_rows, strict=True) if k],
+                                    dtype="string",
+                                ),
+                            }
+                        ),
+                    ]
+                )
+                # a package that could not be installed: the script could not run here
+                no = [st and n in got_bad for st, n in zip(stopped_pkg, named, strict=True)]
+                if any(no):
+                    run_results = run_results.copy()
+                    oc = h._chr_col(run_results, "outcome")
+                    et = h._chr_col(run_results, "error_type")
+                    for i, hit in enumerate(no):
+                        if hit:
+                            oc[i] = et[i] = "dependency_unavailable"
+                    _set_col(run_results, "outcome", oc)
+                    _set_col(run_results, "error_type", et)
         redo = list(
             dict.fromkeys(
-                [*later, *h._chr_col(from_deposit, "script"), *h._chr_col(made, "script")]
+                [
+                    *later,
+                    *h._chr_col(from_deposit, "script"),
+                    *h._chr_col(made, "script"),
+                    *more_libs,
+                    *pkg_redo,
+                ]
             )
         )
         if not redo:
             break
         dbg(
             f"re-running {len(redo)} script(s) that stopped on a file another script wrote, "
-            "the deposit holds elsewhere, or a folder a write needed: ",
+            "the deposit holds elsewhere, a folder a write needed, a missing function or a "
+            "package installed now: ",
             ", ".join(map(str, redo)),
         )
         # a script this pass was to run but had no time for is skipped_time_limit, not the
@@ -990,6 +1130,18 @@ def _execute(
     r_lfs_stopped = layout._repro_lfs_stopped(run_results, sandbox_root)
     reason = ["file" if f in r_lfs_stopped else r for f, r in zip(rr_names, reason, strict=True)]
     _set_col(run_results, "reason", reason)
+    # code recovered from a knitted report, which leaves out the chunks it does not show, is
+    # not blamed for stopping (#648, K8a)
+    from_report_failed = outcomes._repro_from_report_failed(
+        run_results, outcomes._repro_from_report_names(code_tbl)
+    )
+    reason = ["from_report" if ff else r for ff, r in zip(from_report_failed, reason, strict=True)]
+    _set_col(run_results, "reason", reason)
+    # ran, did not reproduce, a package or program not available, out of time, or could not
+    # be checked automatically (#580)
+    _set_col(
+        run_results, "checked", outcomes._repro_check_group(outcome, reason, _msgs(run_results))
+    )
     run_results.attrs["reran_for_order"] = reran
     run_results.attrs["reran_for_reorder"] = reran_for_reorder
 
@@ -1073,6 +1225,7 @@ def _execute(
         "r_placed": r_placed,
         "r_deposit_placed": r_deposit_placed,
         "r_folders_made": r_folders_made,
+        "r_pkgs_installed": r_pkgs_installed,
         # for the report
         "definer_lookup": definer_lookup,
         "run_by_source": run_by_source,

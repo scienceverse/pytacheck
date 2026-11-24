@@ -105,7 +105,15 @@ def test_offline_no_code(stub_repo_check: list[dict[str, Any]]) -> None:
     paper = pc.test_paper(["no text"])
     mo = module_run(paper, "code_check")
     assert stub_repo_check == [
-        {"local_only": False, "cache": False, "osf_max_requests": 50, "skip_on_api_limit": False}
+        {
+            "local_only": False,
+            "cache": False,
+            "osf_max_requests": 50,
+            "skip_on_api_limit": False,
+            # the download limits go to repo_check, for ResearchBox boxes (#699)
+            "max_file_size": 100,
+            "max_download_size": 500,
+        }
     ]
     assert mo.traffic_light == "na"
     assert len(mo.table) == 0
@@ -663,6 +671,8 @@ def test_parse_errors() -> None:
         "files_written": [""] * 8,
         "loaded_files_missing": [0, 0, 0, 1, 0, 0, 0, 0],
         "loaded_files_missing_names": ["", "", "", "file.csv", "", "", "", ""],
+        # no fixture downloads or unpacks files it does not name (metacheck 0.4.4.18, #648)
+        "loaded_files_fetched_names": [None] * 8,
     }
     for name, values in exp.items():
         got = [None if pd.isna(v) else v for v in obs[name].tolist()]
@@ -682,8 +692,96 @@ def test_parse_errors() -> None:
         "code_min_comments": 0.2,
         "code_parse_errors": 4,
         "code_packages_n": 2,
+        "code_files_failed": 0,
         "code_version_pinned": False,
     }
+
+
+def test_files_a_download_or_unpacking_in_the_code_may_make_are_not_missing(
+    tmp_path: Path,
+) -> None:
+    # R: "files a download or unpacking in the code may make are not missing (#648, K3a)"
+    from metacheck.codecheck.core import _code_fetches_unnamed
+
+    assert _code_fetches_unnamed(
+        ['osf_retrieve_node("x") %>% osf_ls_files(pattern = "a.Rda") %>% osf_download()']
+    )
+    assert _code_fetches_unnamed(['unzip("data.zip")'])
+    assert _code_fetches_unnamed(['zipfile.ZipFile(p).extractall("data")'])
+    assert not _code_fetches_unnamed(['x <- read.csv("a.csv")'])
+    write(
+        tmp_path / "0_fetch.R",
+        ['osf_retrieve_node("abcde") %>% osf_ls_files(pattern = "VIA.Rda") %>% osf_download()'],
+    )
+    write(tmp_path / "1_fit.R", ['load("VIA.Rda")', 'x <- read.csv("present.csv")'])
+    write(tmp_path / "present.csv", ["a,b"])
+    mo = run_dir(tmp_path)
+    t = mo.table.sort_values("file_name").reset_index(drop=True)
+    assert t["loaded_files_missing"].tolist() == [0, 0]
+    assert t.loc[t["file_name"] == "1_fit.R", "loaded_files_fetched_names"].tolist() == ["VIA.Rda"]
+    assert "fetches_unnamed" not in t.columns
+    rep = report_text(mo)
+    assert "All other files loaded in the code were present" in rep
+    assert "is not counted as missing: VIA.Rda" in rep
+    # without the script that downloads, the file is missing
+    (tmp_path / "0_fetch.R").unlink()
+    mo = run_dir(tmp_path)
+    assert mo.table["loaded_files_missing_names"].tolist() == ["VIA.Rda"]
+
+
+def test_all_present_is_said_only_of_the_files_that_were_read(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # #648: "all files present" for code the check could not look at (7 preprints)
+    import metacheck.archives.download as dl
+
+    monkeypatch.setattr(dl, "download_repo_files", _failing_download(with_paper_id=False))
+    write(tmp_path / "ok.R", ["x <- 1"])
+    paper = pc.test_paper(["x"])
+    table = _remote_listing(
+        [
+            {
+                "paper_id": paper.paper_id,
+                "file_name": name,
+                "repo_url": "https://osf.io/x",
+                "file_url": f"file://{tmp_path}/{name}",
+                "file_location": loc,
+            }
+            for name, loc in (("ok.R", str(tmp_path / "ok.R")), ("gone.R", None))
+        ]
+    )
+    mo = module_run(fake_repo_check(table, paper=paper), "code_check")
+    assert mo.table.set_index("file_name")["loaded_files_missing"].isna().tolist() == [False, True]
+    assert (
+        "All files loaded in the 1 of 2 code files we could read were present in the repository."
+        in report_text(mo)
+    )
+    # nothing could be read
+    none = _remote_listing([{**table.iloc[1].to_dict()}])
+    mo = module_run(fake_repo_check(none, paper=paper), "code_check")
+    assert (
+        "We could not read any code file, so we could not check which files the code loads."
+        in report_text(mo)
+    )
+
+
+def test_code_by_others_the_deposit_bundles_is_not_the_authors(tmp_path: Path) -> None:
+    # #648, K5: Stata packages in extra_ados/, minified JavaScript
+    write(tmp_path / "analysis.do", ["use data"])
+    write(tmp_path / "extra_ados" / "pkg.ado", ["program define pkg"])
+    write(tmp_path / "vendor" / "lib.R", ["y <- 2"])
+    mo = run_dir(tmp_path)
+    assert mo.table["file_name"].tolist() == ["analysis.do"]
+
+
+def test_the_r_part_of_the_advice_needs_r_code_and_other_software_gets_a_note(
+    tmp_path: Path,
+) -> None:
+    # #648, K2c: a deposit of Stata code was told to add an renv.lock
+    write(tmp_path / "analysis.do", ["use data"])
+    rep = report_text(run_dir(tmp_path))
+    assert "No `renv.lock` file, `sessionInfo()`" not in rep
+    assert "The repository holds Stata code. State the version of Stata used in the README" in rep
 
 
 def test_green_light_and_parse_errors(tmp_path: Path) -> None:
@@ -770,6 +868,8 @@ def test_local_path_forces_a_fresh_repo_check(stub_repo_check: list[dict[str, An
             "cache": False,
             "osf_max_requests": 50,
             "skip_on_api_limit": False,
+            "max_file_size": 100,
+            "max_download_size": 500,
         }
     ]
     assert mo.table["file_name"].tolist() == ["helper.R"]
@@ -901,11 +1001,13 @@ def test_repo_check_local_only_false_is_the_default() -> None:
 
 @needs_repo_check
 def test_repo_check_osf_without_code() -> None:
-    from tests.httpmock import replay
+    from tests.archives_osf.osfmock import replay_osf
 
+    # (metacheck's OSF recordings, with its redactor: an unrecorded listing is a failed one, which
+    # code_check now names and answers with a yellow light, #681)
     for url in ("https://osf.io/y6a34", "https://osf.io/m4nbv"):
         paper = pc.test_paper(["x"], url=[url])
-        with replay("apis"), warnings.catch_warnings():
+        with replay_osf("apis"), warnings.catch_warnings():
             warnings.simplefilter("ignore")
             mo = module_run(paper, "code_check")
         assert mo.traffic_light == "na"
@@ -1024,16 +1126,17 @@ def test_na_paper_id_scans_every_r_text(scenario: str) -> None:
     assert mo.summary_table["code_version_pinned"].tolist() == [False]
 
 
-def test_na_file_url_is_read_as_the_path_na() -> None:
-    # R: file_path <- the_file$file_url is NA_character_, which the readers take
-    # as the path "NA"
+def test_na_file_url_is_not_read_from_the_web() -> None:
+    # R (#699): a file without an address of its own is listed as not read, with the reason
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         mo = cc_run("review_locs", download=False)
     errors = dict(zip(mo.table["file_name"], mo.table["error"], strict=True))
     assert pd.isna(errors["clean.R"])
     for name in ("naloc.R", "naloc.Rmd", "naloc.py"):
-        assert errors[name].startswith("Could not resolve hostname [NA]")
+        # a file without an address of its own (a member of an archive) is said so at once
+        # (#699); it was read as the address "NA", which took 10 seconds to fail
+        assert errors[name].startswith("it has no web address of its own")
     assert mo.table["checked"].tolist() == [True] * 4
 
 
@@ -1109,9 +1212,10 @@ def test_refused_repository_is_reported_once(monkeypatch: pytest.MonkeyPatch) ->
 
     counts: list[dict[Any, int]] = []
 
-    def fake(files: pd.DataFrame, repo_file_counts: Any = None, **kwargs: Any) -> pd.DataFrame:
-        counts.append(dict(repo_file_counts))
-        n = repo_file_counts["https://osf.io/x"]
+    def fake(files: pd.DataFrame, repo_listing: Any = None, **kwargs: Any) -> pd.DataFrame:
+        # the whole listing is passed, from which the counts are taken (#699)
+        counts.append(repo_listing["repo_url"].value_counts().to_dict())
+        n = int((repo_listing["repo_url"] == "https://osf.io/x").sum())
         out = files.copy()
         out["file_location"] = None
         out.attrs["gated"] = pd.DataFrame(
@@ -1152,6 +1256,8 @@ def test_refused_repository_is_reported_once(monkeypatch: pytest.MonkeyPatch) ->
         skip_on_api_limit: bool = False,
         cache: bool = False,
         max_download_size: Any = 500,
+        max_file_size: Any = 100,
+        max_files_per_repo: Any = float("inf"),
     ) -> pd.DataFrame:
         member = all_files.iloc[[0]].copy()
         member["file_name"] = "member.R"
@@ -1311,12 +1417,23 @@ def test_zip_expansion_forwards_skip_on_api_limit_and_cache(
     )
     _code_expand_zip(table, skip_on_api_limit=True, cache=True)
     _code_expand_zip(table, max_download_size=1)
+    _code_expand_zip(table, max_download_size=50, max_file_size=20)
+    _code_expand_zip(table, max_download_size=5, max_file_size=20)
     both = {"skip_on_api_limit": True, "cache": True, "size": 2048.0}
     neither = {"skip_on_api_limit": False, "cache": False, "size": 2048.0}
-    assert [s[1] for s in seen if s[0] == "peek"] == [both, neither]
+    assert [s[1] for s in seen if s[0] == "peek"] == [both, neither, neither, neither]
     fetched = [s[1] for s in seen if s[0] == "fetch"]
-    assert [{k: f[k] for k in both} for f in fetched] == [both, neither]
-    assert [f["max_whole_bytes"] for f in fetched] == [500 * 1048576, 1048576]
+    assert [{k: f[k] for k in both} for f in fetched] == [both, neither, neither, neither]
+    # (the defaults: max_download_size 500, max_file_size 100). The members are fetched by
+    # download_repo_files() (#699): a whole copy may use what is left of the repository's budget
+    # after the zip's own place in the choice of files (2048 bytes) and the member (1 byte), and
+    # is held to max_file_size as well
+    assert [f["max_whole_bytes"] for f in fetched] == [
+        100 * 1048576,
+        1048576 - 2048 - 1,
+        20 * 1048576,
+        5 * 1048576 - 2048 - 1,
+    ]
     assert fetched[0]["request_bytes"] == 1048576  # not Dryad: whichever costs less
     # the archive is kept where the ordinary download would put it
     assert fetched[0]["archive_path"].endswith("code.zip")
@@ -1381,3 +1498,54 @@ def test_summary_names_the_files_to_fix(tmp_path: Path) -> None:
     text = run_dir(tmp_path).summary_text
     assert "setwd() calls were found." in text
     assert "install.packages() calls were found." in text
+
+
+def test_a_missing_file_may_be_in_a_repository_not_listed_in_full(tmp_path: Path) -> None:
+    # metacheck 0.4.4.22, #681
+    p = pc.test_paper()
+    script = tmp_path / "analysis.R"
+    script.write_text("# read the data\ndat <- read.csv('results.csv')\n", encoding="utf-8")
+    tbl = pd.DataFrame(
+        {
+            "paper_id": [p.paper_id],
+            "repo_url": ["https://osf.io/abcde"],
+            "repo_type": ["osf"],
+            "file_name": ["analysis.R"],
+            "file_path": ["analysis.R"],
+            "file_url": pd.Series([None], dtype="string"),
+            "file_size": [100.0],
+            "file_type": ["code"],
+            "file_location": [str(script)],
+        }
+    )
+    partial = pd.DataFrame(
+        {
+            "paper_id": [p.paper_id],
+            "repo_url": ["https://osf.io/abcde"],
+            "files_listed": pd.Series([1], dtype="Int64"),
+            "reason": ["refused by the OSF"],
+        }
+    )
+    prev = ModuleOutput(
+        module="repo_check",
+        title="Repository Check",
+        section="general",
+        table=tbl,
+        paper=p,
+        summary_table=pd.DataFrame({"paper_id": [p.paper_id]}),
+        extras={"partial_repos": partial},
+    )
+    mo = module_run(prev, "code_check", download=False)
+    report = " ".join(str(x) for x in mo.report)
+    assert (
+        "could not be automatically identified in the repository. This may be because a "
+        "repository was listed only in part or not at all" in report
+    )
+    assert "We could not list every file of 1 repository" in mo.summary_text
+
+    # listed in full: the sentence is as before
+    prev.extras.pop("partial_repos")
+    mo = module_run(prev, "code_check", download=False)
+    report = " ".join(str(x) for x in mo.report)
+    assert "could not be automatically identified in the repository. Check if" in report
+    assert "not listed in full" not in report

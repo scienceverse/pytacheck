@@ -779,6 +779,116 @@ add(
     },
 )
 
+# metacheck 0.4.4.8 (#648, K6): a column name is confirmed by its values when it can be, and a
+# time or a browser version is no IP address
+for tag, name, x_r, x_py in [
+    ("phone_device", "phone", 'c("iPhone", "Android")', '["iPhone", "Android"]'),
+    (
+        "phone_numbers",
+        "phone",
+        'c("+31 6 12345678", "06-87654321")',
+        '["+31 6 12345678", "06-87654321"]',
+    ),
+    ("phone_short", "phone", 'c("12345", "6789")', '["12345", "6789"]'),
+    ("ward_ip", "hosp_ward_IP", "c(3, 5, 0)", "[3.0, 5.0, 0.0]"),
+    ("ip_values", "ip_address", 'c("192.168.0.1", "10.0.0.2")', '["192.168.0.1", "10.0.0.2"]'),
+    ("ip_v6", "ipaddress", 'c("2001:db8::1", "fe80::1")', '["2001:db8::1", "fe80::1"]'),
+    ("mac_values", "mac", 'c("00:1A:2B:3C:4D:5E")', '["00:1A:2B:3C:4D:5E"]'),
+    ("mac_word", "mac", 'c("Apple", "Dell")', '["Apple", "Dell"]'),
+    ("siphy", "SiPhy_29way_logOdds", "c(1.2, 3.4)", "[1.2, 3.4]"),
+    ("hla_dob", "HLA-DOB", 'c("DOB*01:01", "DOB*01:02")', '["DOB*01:01", "DOB*01:02"]'),
+    ("hla_dob_numbers", "HLA-DOB", "c(1985.34, 2001.7, 12.5)", "[1985.34, 2001.7, 12.5]"),
+    ("dob_iso", "dob", 'c("1985-03-12", "1990-11-02")', '["1985-03-12", "1990-11-02"]'),
+    ("birthyear", "birthyear", "c(1985, 1990)", "[1985.0, 1990.0]"),
+    ("dob_text_month", "dob", 'c("15-Mar-1985")', '["15-Mar-1985"]'),
+    ("dob_long_month", "dob", 'c("March 15, 1985")', '["March 15, 1985"]'),
+    ("dob_eight_digits", "dob", 'c("19850315")', '["19850315"]'),
+    ("dob_short_year", "dob", 'c("15 Mar 85")', '["15 Mar 85"]'),
+    ("dob_dots", "dob", 'c("12.03.1985")', '["12.03.1985"]'),
+    ("dob_dutch_month", "dob", 'c("15 mei 1985")', '["15 mei 1985"]'),
+    (
+        "dob_date_column",
+        "date_of_birth",
+        'as.Date(c("1985-03-12", "1990-11-02"))',
+        "pd.Series(pd.to_datetime(['1985-03-12', '1990-11-02']))",
+    ),
+    ("village", "GEO_LOCATION_VILLAGE", 'c("Kibera", "Mathare")', '["Kibera", "Mathare"]'),
+    ("first_name", "first_name", 'c("Anna", "Ben")', '["Anna", "Ben"]'),
+    ("lat_left_to_geo", "latitude", 'c("52.1", "52.2")', '["52.1", "52.2"]'),
+]:
+    add(
+        f"data_check_pii_name.sync04418.{tag}",
+        "data_check_pii_name",
+        {"col_name": name, "x": ex(x_r, x_py)},
+    )
+add("data_check_pii_name.sync04418.no_values", "data_check_pii_name", {"col_name": "phone"})
+for tag, x_r, x_py in [
+    ("time_after_date", 'rep("06.04.2026 15.34.46.182", 5)', '["06.04.2026 15.34.46.182"] * 5'),
+    (
+        "user_agent",
+        'rep("Mozilla/5.0 AppleWebKit/537.36 Chrome/84.0.4147.89", 3)',
+        '["Mozilla/5.0 AppleWebKit/537.36 Chrome/84.0.4147.89"] * 3',
+    ),
+    ("chrome_version", 'rep("Chrome 131.0.0.0", 4)', '["Chrome 131.0.0.0"] * 4'),
+    ("longer_run", 'rep("1.2.3.4.5", 4)', '["1.2.3.4.5"] * 4'),
+    (
+        "real_ips",
+        'c("192.168.0.1", "10.0.0.2", "10.0.0.3")',
+        '["192.168.0.1", "10.0.0.2", "10.0.0.3"]',
+    ),
+    (
+        "ip_beside_version",
+        'rep("Chrome/84.0.4147.89 via 10.1.2.3", 3)',
+        '["Chrome/84.0.4147.89 via 10.1.2.3"] * 3',
+    ),
+    (
+        "mostly_versions",
+        'c(rep("Chrome 131.0.0.0", 4), "10.0.0.2")',
+        '["Chrome 131.0.0.0"] * 4 + ["10.0.0.2"]',
+    ),
+]:
+    add(f"data_check_pii_values.sync04418.{tag}", "data_check_pii_values", {"x": ex(x_r, x_py)})
+for tag, v in [("time", "06.04.2026 15.34.46.182"), ("chrome", "Chrome 131.0.0.0"),
+               ("run", "1.2.3.4.5"), ("plain", "from 10.0.0.2 today"),
+               ("none", "no address here")]:  # fmt: skip
+    add(f"pii_ip_ok.sync04418.{tag}", ".pii_ip_ok", {"value": v})
+add(
+    "pii_token_shape.sync04418.tokens",
+    ".pii_token_shape",
+    {
+        "token": {
+            "$chr": [
+                "phone",
+                "mobilenumber",
+                "telefoon",
+                "ip",
+                "ipaddress",
+                "mac",
+                "dob",
+                "birthyear",
+                "geboortedatum",
+                "latitude",
+                "gps",
+                "firstname",
+                "email",
+            ]
+        }
+    },
+)
+for tag, shape, x_r, x_py in [
+    ("phone", "phone", 'c("+31 6 12345678", "x")', '["+31 6 12345678", "x"]'),
+    ("phone_long", "phone", 'c("1234567890123456")', '["1234567890123456"]'),
+    ("geo", "geo", 'c("52.1", "4.3")', '["52.1", "4.3"]'),
+    ("birth_year_in_text", "birth", 'c("born 1985")', '["born 1985"]'),
+    ("birth_decimals", "birth", "c(1985.34, 12.5)", "[1985.34, 12.5]"),
+    ("birth_empty", "birth", 'c("", NA)', '["", None]'),
+]:
+    add(
+        f"pii_values_have_shape.sync04418.{tag}",
+        ".pii_values_have_shape",
+        {"x": ex(x_r, x_py), "shape": shape},
+    )
+
 
 def main() -> None:
     doc = {"area": "datacheck_checks_review", "cases": CASES}

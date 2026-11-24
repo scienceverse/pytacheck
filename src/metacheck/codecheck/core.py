@@ -17,9 +17,11 @@ recovery, zip peeking) are imported lazily where they are used.
 
 from __future__ import annotations
 
+import contextlib
 import math
 import os
 import re
+import tempfile
 import urllib.parse
 from collections.abc import Iterable, Mapping, Sequence
 from pathlib import Path
@@ -42,6 +44,7 @@ from metacheck._r.regex import (
 )
 from metacheck._values import field, is_missing
 from metacheck.codecheck._rcoerce import r_as_character, r_unlist_chr
+from metacheck.utils import _is_web_address
 
 __all__ = [
     "code_abs_path",
@@ -281,6 +284,65 @@ def code_read(file_path: str | os.PathLike[str]) -> list[str]:
     return decode_lines(raw)
 
 
+def _code_fetch_capped(
+    url: Any, file_name: Any, max_file_size: Any = math.inf, skip_on_api_limit: bool = False
+) -> str:
+    """A code file without a local copy, fetched into a temporary file that stops at *max_file_size* MB.
+
+    Port of ``R/code_check.R::.code_fetch_capped()``: code_check's read from the web stays within
+    the download limits; it read the whole file into memory, also a file left out for its size
+    (#699). Returns the temporary file's path, or *url* itself when it is not a web address;
+    raises with the reason when the file cannot be fetched, worded as :func:`code_read`'s errors.
+    The file keeps its extension, which the readers of .Rmd, .qmd and .ipynb files use.
+    """
+    from metacheck.archives.download import _download_capped
+    from metacheck.report.blocks import _cap_num
+
+    # A file inside an archive has no address of its own: it was read as the address "NA", which
+    # waited 10 seconds for the name to be looked up
+    if is_missing(url) or str(url) == "":
+        raise OSError(
+            "it has no web address of its own (such as a file inside an archive), "
+            "so it is read only when downloaded (download = TRUE)"
+        )
+    address = str(url)
+    if not re.match(r"https?://", address):
+        return address
+    url = address
+    try:
+        max_bytes = float(max_file_size) * 1024 * 1024
+    except (TypeError, ValueError):
+        max_bytes = math.inf
+    if math.isnan(max_bytes):
+        max_bytes = math.inf
+    ext = _file_ext("" if is_missing(file_name) else str(file_name))
+    fd, tmp = tempfile.mkstemp(suffix=f".{ext}" if ext else "")
+    os.close(fd)
+    try:
+        err, over_cap, _got = _download_capped(
+            url, tmp, max_bytes=max_bytes, skip_on_api_limit=skip_on_api_limit
+        )
+        if over_cap:
+            raise OSError(
+                "it was not read, because it is larger than the "
+                f"{_cap_num(max_file_size)} MB per-file limit (max_file_size)"
+            )
+        # an empty file is read as no lines, as code_read() reads it
+        if err == "empty response":
+            Path(tmp).write_bytes(b"")
+            return tmp
+        if err is not None:
+            m = re.fullmatch(r"HTTP ([0-9]+)", err)
+            if m:
+                raise OSError(f"cannot open URL '{url}': HTTP status was {m.group(1)}")
+            raise OSError(f"cannot open URL '{url}': {err}")
+    except BaseException:
+        with contextlib.suppress(OSError):
+            os.unlink(tmp)
+        raise
+    return tmp
+
+
 def _try_code_read(file_name: str) -> list[str] | None:
     try:
         return code_read(file_name)
@@ -511,10 +573,45 @@ def _ext_code_lang(ext: str) -> str | None:
     return None
 
 
+def _code_not_text(path: str | os.PathLike[str] | None) -> str | None:
+    """Why a file named as code is not code, from its first bytes, or ``None`` when it is text.
+
+    Port of ``R/code_check.R::.code_not_text()``. A file was taken for what its name says: saved
+    R data and a PNG image named ``.R`` showed 0 code lines and no error, and an HTML page
+    named ``.py`` was read as Python (metacheck #700). A file starting with a byte order mark
+    of UTF-16 is text (it has zero bytes between its letters).
+    """
+    try:
+        with open(path, "rb") as fh:  # type: ignore[arg-type]
+            b = fh.read(8192)
+    except (OSError, TypeError, ValueError):
+        return None
+    if not b:
+        return None
+    if b[:2] in (b"\xff\xfe", b"\xfe\xff"):
+        return None
+    if b[:2] == b"\x1f\x8b" or b[:3] == b"BZh" or b[:5] == b"\xfd7zXZ":
+        return "it is a compressed file (such as saved R data), not code"
+    if b[:4] == b"\x89PNG":
+        return "it is a PNG image, not code"
+    if b[:4] == b"%PDF":
+        return "it is a PDF file, not code"
+    if b[:4] == b"PK\x03\x04":
+        return "it is a zip archive, not code"
+    if b"\x00" in b:
+        return "it holds binary data, not text"
+    head = b[:1024].decode("latin-1")
+    if re.match(r"^[ \t\n\r\f\v]*<(!doctype html|html)", head, flags=re.IGNORECASE):
+        return "it is an HTML page, not code"
+    return None
+
+
 def _code_lang1(file_name: Any) -> str | None:
     if is_missing(file_name):
         raise ValueError("missing value where TRUE/FALSE needed")
-    ext = _file_ext(str(file_name)).lower()
+    # a space at the end of a name ("analysis.R ", which Windows cannot even store) hid the
+    # extension (metacheck #700)
+    ext = _file_ext(str(file_name).rstrip(" \t\r\n")).lower()
     if ext == "ipynb":
         return _ipynb_lang(file_name)
     if ext == "qmd":
@@ -580,6 +677,94 @@ def _in_renv_folder(files: pd.DataFrame) -> list[bool]:
     return _in_folder(files, "renv")
 
 
+#: Folders that by convention hold other people's software (``.others_code_folder_pat``).
+_OTHERS_CODE_FOLDER = re.compile(
+    r"(^|/)(node_modules|bower_components|vendor|vendored|third[_ -]?party|external|extern|"
+    r"site-packages|dist-packages|ados?|[a-z0-9]+_ados?|toolboxes)/",
+    re.IGNORECASE,
+)
+#: A folder named after a release of a program: "jspsych-6.3.1", "ants-2.4.3" (``.release_folder_pat``).
+_RELEASE_FOLDER = re.compile(r"^[a-z][a-z0-9_.]*-v?[0-9]+(?:[.][0-9]+)+$")
+
+
+def _is_others_code_path(
+    path: Sequence[Any],
+    is_code: Sequence[Any] | None = None,
+    group: Sequence[Any] | None = None,
+) -> list[bool]:
+    """Whether each path is code by others that a deposit bundles.
+
+    Port of ``R/code_check.R::.is_others_code_path()``. It is not judged as the authors' own code
+    (metacheck 0.4.4.18, #648, K5): a folder that by convention holds other people's software
+    (node_modules, vendor, third_party, external, site-packages, Stata's ado folders such as
+    extra_ados/, MATLAB toolboxes/), a folder named after a release of a program
+    ("jspsych-6.3.1/", "ANTs-2.4.3/", unpacked rather than written), or minified JavaScript
+    (".min.js", which no one writes by hand). In 8 of 132 preprints such code was counted and
+    checked as the authors': 52 of 56 code files in one were jsPsych, 27 of 43 in another Stata
+    packages. *path* is a file's path in its deposit (or its name).
+
+    A folder named after a release is by others only when the repository (*group*) also holds code
+    (*is_code*) outside it: the authors' own code released from GitHub unpacks into such a folder as
+    well ("takotsubo_ami_ai_ecg-v0.4.0/", "Coronial-NLP-Analysis-v2.1.0/": the only two such
+    folders in 620 medRxiv papers, both the authors' code), while a library sits beside the code
+    that uses it. ``is_code`` ``None`` counts every path as code, ``group`` ``None`` every path as
+    one repository.
+    """
+    n = len(path)
+    p = ["" if is_missing(x) else str(x).replace("\\", "/") for x in path]
+    out = [
+        _OTHERS_CODE_FOLDER.search(x) is not None or re.search(r"[.]min[.]js$", x, re.I) is not None
+        for x in p
+    ]
+
+    def folders_of(x: str) -> list[str]:
+        # strsplit(tolower(x), "/", fixed = TRUE), without the file name (a trailing "" is dropped)
+        parts = x.lower().split("/")
+        if parts and parts[-1] == "":
+            parts.pop()
+        return parts[:-1]
+
+    folders = [folders_of(x) for x in p]
+    # the innermost folder named after a release, in small letters (None: none)
+    release: list[str | None] = []
+    for s in folders:
+        hit = [f for f in s if _RELEASE_FOLDER.search(f)]
+        release.append(hit[-1] if hit else None)
+    cand = [i for i in range(n) if not out[i] and release[i] is not None]
+    if not cand:
+        return out
+    code = [True] * n if is_code is None else [v is True or v == 1 for v in is_code]
+    grp = [""] * n if group is None else ["" if is_missing(g) else str(g) for g in group]
+    own = [c and not o for c, o in zip(code, out, strict=True)]
+    keys = {i: f"{grp[i]}\r{release[i]}" for i in cand}
+    for k in dict.fromkeys(keys[i] for i in cand):
+        idx = [i for i in cand if keys[i] == k]
+        g, r = grp[idx[0]], release[idx[0]]
+        others = [i for i in range(n) if own[i] and grp[i] == g]
+        flag = any(r not in folders[i] for i in others)
+        for i in idx:
+            out[i] = flag
+    return out
+
+
+def _in_others_code_folder(files: pd.DataFrame) -> list[bool]:
+    """Whether each file of a listing is code by others that the deposit bundles.
+
+    Port of ``R/code_check.R::.in_others_code_folder()``; see :func:`_is_others_code_path`.
+    """
+    if len(files) == 0:
+        return []
+    paths = _col(files, "file_path")
+    names = _col(files, "file_name")
+    where = [n if is_missing(p) or str(p) == "" else p for p, n in zip(paths, names, strict=True)]
+    language = _col(files, "language")
+    if "repo_url" in files.columns:
+        group = _col(files, "repo_url")
+    else:
+        group = _col(files, "paper_id")
+    return _is_others_code_path(where, [not is_missing(v) for v in language], group)
+
+
 def _empty_loc(values: list[Any]) -> list[bool]:
     """``is.na(x) | !nzchar(x %||% "")``."""
     return [is_missing(v) or str(v) == "" for v in values]
@@ -590,23 +775,18 @@ def _has_value(values: list[Any]) -> list[bool]:
     return [not is_missing(v) and str(v) != "" for v in values]
 
 
-def _repo_file_counts(all_files: pd.DataFrame) -> dict[Any, int]:
-    """``table(all_files$repo_url)`` (NA not counted)."""
-    counts: dict[Any, int] = {}
-    for v in _col(all_files, "repo_url"):
-        if not is_missing(v):
-            counts[v] = counts.get(v, 0) + 1
-    return counts
-
-
 def _download(rows: pd.DataFrame, all_files: pd.DataFrame, **kwargs: Any) -> pd.DataFrame | None:
-    """``tryCatch(download_repo_files(...), error = function(e) NULL)``."""
+    """``tryCatch(download_repo_files(...), error = function(e) NULL)``.
+
+    *all_files* is the repository's FULL listing, not just the rows wanted: it gives the file
+    count and the choice of files for the budget (#699).
+    """
     try:
         from metacheck.archives.download import download_repo_files
 
         return download_repo_files(  # type: ignore[no-any-return]
             rows.reset_index(drop=True),
-            repo_file_counts=_repo_file_counts(all_files),
+            repo_listing=all_files,
             **kwargs,
         )
     except Exception:
@@ -958,7 +1138,9 @@ def _code_expand_html(
     all_repos = (
         _col(all_files, "repo_url") if "repo_url" in all_files.columns else [""] * len(all_names)
     )
-    is_src = grepl(r"\.(rmd|qmd)$", all_names, ignore_case=True)
+    # also a plain .R script, which rmarkdown::render() knits as well (r89cq_v1:
+    # MOS01_osf_raport.R beside MOS01_osf_raport.html; #648)
+    is_src = grepl(r"\.(rmd|qmd|r)$", all_names, ignore_case=True)
     src_key = {key(r, n) for r, n, f in zip(all_repos, all_names, is_src, strict=True) if f}
     h_repos = (
         _col(html_files, "repo_url") if "repo_url" in html_files.columns else [""] * len(html_files)
@@ -1012,20 +1194,29 @@ def _code_expand_zip(
     skip_on_api_limit: bool = False,
     cache: bool = False,
     max_download_size: Any = 500,
+    max_file_size: Any = 100,
+    max_files_per_repo: Any = math.inf,
 ) -> pd.DataFrame:
     """Fetch the code members of every unexpanded remote ``.zip`` row.
 
     Port of ``R/code_check.R::.code_expand_zip()``: the archive is peeked
     with range requests and only members :func:`code_lang` recognises are
-    fetched, one new row each (the ``.zip`` row itself is kept). Under
+    wanted, one new row each (the ``.zip`` row itself is kept). Under
     *skip_on_api_limit* a rate-limited host is skipped rather than waited
     out; both *skip_on_api_limit* and *cache* go on to the peek and to the
     member fetches. The listing's ``file_size`` saves the peek a HEAD
     request; a zip already on disk (one inside a ResearchBox, whose
-    ``file_url`` is the box's web page) is read from the file. An archive
-    within *max_download_size* (MB) is downloaded once instead of fetched by
-    range when that is cheaper (always on Dryad: metacheck #471), and kept
-    where the ordinary download would put it.
+    ``file_url`` is the box's web page) is read from the file.
+
+    The members are fetched by :func:`~metacheck.archives.download.download_repo_files`, as
+    rows with an ``archive_url`` and ``archive_member``, so that they share the repository's
+    budget with every other download (#699): fetched on their own they were held to no budget,
+    only a whole copy of the zip to *max_file_size*. Each is held to *max_file_size*, they are
+    taken smallest first from what is left after the repository's choice of files (they are not
+    in the listing), and a zip is fetched whole instead of by byte range when that is cheaper
+    and the copy fits too (always on Dryad: metacheck #471). The new rows come back in the shape
+    the listing had, without archive columns, so that later calls make the same choice of files
+    from this listing as ``data_check`` makes from its own.
     """
     names = _col(all_files, "file_name")
     urls = _col(all_files, "file_url")
@@ -1035,21 +1226,11 @@ def _code_expand_zip(
     ]
     if not any(is_zip):
         return all_files
-    from metacheck.archives.download import _repo_cache_path
-    from metacheck.archives.zip_peek import (
-        _whole_request_bytes,
-        _zip_fetch_members,
-        _zip_local_source,
-        zip_peek,
-    )
+    from metacheck.archives.zip_peek import _is_zip, _zip_local_source, zip_peek
 
     local = _zip_local_source(all_files)
     sizes = _col(all_files, "file_size")
-    try:
-        whole_bytes = float(max_download_size) * 1024 * 1024
-    except (TypeError, ValueError):
-        whole_bytes = 0.0  # R: isTRUE(NULL > 0) is FALSE, no whole download
-    new_rows: list[pd.DataFrame] = []
+    req: list[pd.DataFrame] = []
     for i, z in enumerate(is_zip):
         if not z:
             continue
@@ -1065,9 +1246,14 @@ def _code_expand_zip(
         members = peek["name"].tolist()
         # renv's own files are left out of code_check, so they are not fetched
         in_renv = _in_renv_folder(pd.DataFrame({"file_path": pd.Series(members, dtype=object)}))
+        # A zip inside the zip is fetched too, and its code files are taken out of it below (zips
+        # inside zips were not opened, metacheck #700).
+        member_zip = _is_zip(members)
         is_code = [
-            lang is not None and not r
-            for lang, r in zip(_as_lang_list(code_lang(members)), in_renv, strict=True)
+            (lang is not None or z) and not r
+            for lang, z, r in zip(
+                _as_lang_list(code_lang(members)), member_zip, in_renv, strict=True
+            )
         ]
         if not any(is_code):
             continue
@@ -1076,33 +1262,128 @@ def _code_expand_zip(
             base = "NA" if is_missing(fp) else str(fp)
         else:
             base = str(names[i])
-        # .repo_cache_path() is outside R's tryCatch(); the fetch is inside
-        dest = _repo_cache_path(_col(all_files, "repo_url")[i], f"{base}.contents", cache=cache)
+        code_names = [m for m, c in zip(members, is_code, strict=True) if c]
+        code_sizes = [m for m, c in zip(peek["size"].tolist(), is_code, strict=True) if c]
+        # One row per code file in the zip, as repo_check makes for the zips it opens
+        # (modules/repo_check.py), for download_repo_files() to fetch.
+        rows = all_files.iloc[[i] * len(code_names)].copy().reset_index(drop=True)
+        rows["file_name"] = [os.path.basename(str(n)) for n in code_names]
+        rows["file_path"] = [_r_file_path(str(base), str(n)) for n in code_names]
+        rows["file_url"] = pd.Series([None] * len(code_names), dtype=object)  # no URL of its own
+        rows["file_size"] = code_sizes
+        rows["file_location"] = pd.Series([None] * len(code_names), dtype=object)
+        rows["archive_url"] = pd.Series([url] * len(code_names), dtype=object)
+        rows["archive_member"] = pd.Series(code_names, dtype=object)
+        rows["archive_format"] = pd.Series(["zip"] * len(code_names), dtype=object)
         try:
-            fetched = _zip_fetch_members(
-                url,
-                names=[m for m, c in zip(members, is_code, strict=True) if c],
-                dest=dest,
+            arc_size = float(zip_size)
+        except (TypeError, ValueError):
+            arc_size = math.nan
+        rows["archive_size"] = [arc_size] * len(code_names)
+        req.append(rows)
+    if not req:
+        return all_files
+    from metacheck._r.frames import bind_rows
+    from metacheck.archives.download import download_repo_files
+
+    reqs = bind_rows(req).reset_index(drop=True)
+    dl = download_repo_files(
+        reqs,
+        max_file_size=max_file_size,
+        max_download_size=max_download_size,
+        max_files_per_repo=max_files_per_repo,
+        repo_listing=all_files,
+        cache=cache,
+        skip_on_api_limit=skip_on_api_limit,
+    )
+    if dl is None:
+        return all_files
+    got = [not is_missing(v) for v in dl["file_location"].tolist()]
+    if not any(got):
+        return all_files
+    keep = [c for c in all_files.columns if c in dl.columns]
+    rows = dl.loc[got, keep].reset_index(drop=True)
+    inner = _is_zip(_col(rows, "file_name"))
+    from metacheck._r.frames import bind_rows as _bind_rows
+
+    rows = _bind_rows(
+        [
+            rows.loc[[not v for v in inner]],
+            _code_expand_inner_zips(
+                rows.loc[inner].reset_index(drop=True),
+                all_files,
                 cache=cache,
-                skip_on_api_limit=skip_on_api_limit,
-                max_whole_bytes=whole_bytes,
-                archive_path=re.sub(r"\.contents$", "", str(dest)),
-                request_bytes=_whole_request_bytes(url),
-                size=zip_size,
+                max_file_size=max_file_size,
+                max_download_size=max_download_size,
+            ),
+        ]
+    ).reset_index(drop=True)
+    return _bind(all_files, [rows])
+
+
+def _code_expand_inner_zips(
+    zips: pd.DataFrame,
+    listing: pd.DataFrame,
+    cache: bool = False,
+    max_file_size: Any = 100,
+    max_download_size: Any = 500,
+    levels: int = 2,
+) -> pd.DataFrame:
+    """The code files inside zips that are themselves inside a zip.
+
+    Port of ``R/code_check.R::.code_expand_inner_zips()``: *zips* are rows of zips on disk,
+    fetched by :func:`_code_expand_zip`, taken out on disk two more levels deep (metacheck
+    #700), as data_check opens them: code and inner zips only, each file no larger than
+    *max_file_size*, within what is left of the repository's budget (``_repo_budget()``, from
+    *listing*). Returns the code files' rows.
+    """
+    from metacheck._r.frames import bind_rows
+    from metacheck.archives.download import _budget_free, _repo_budget
+    from metacheck.archives.zip_peek import _expand_zip, _in_download_folder, _is_zip
+
+    out: list[pd.DataFrame] = []
+    max_bytes = float(max_file_size) * 1024**2 if math.isfinite(float(max_file_size)) else math.inf
+    skip = ["data", "documentation", "materials", "output", "unknown"]
+    for _level in range(levels):
+        if zips is None or len(zips) == 0:
+            break
+        nxt: list[pd.DataFrame] = []
+        for j in range(len(zips)):
+            z = zips.iloc[[j]].reset_index(drop=True)
+            loc = z["file_location"].iloc[0] if "file_location" in z.columns else None
+            repo = z["repo_url"].iloc[0] if "repo_url" in z.columns else None
+            left = math.inf
+            if not is_missing(loc) and _in_download_folder(str(loc)) and not is_missing(repo):
+                left = _budget_free(
+                    _repo_budget(
+                        repo,
+                        listing,
+                        cache=cache,
+                        max_file_size=max_file_size,
+                        max_download_size=math.inf
+                        if max_download_size is None
+                        else max_download_size,
+                    )
+                )
+            try:
+                ex = _expand_zip(loc, z, skip_types=skip, max_bytes=max_bytes, max_total=left)
+            except Exception:
+                ex = z.iloc[0:0]
+            ok = [not is_missing(v) for v in _col(ex, "file_location") or []]
+            ex = ex.loc[ok].reset_index(drop=True)
+            if len(ex) == 0:
+                continue
+            ex_names = _col(ex, "file_name")
+            is_inner = _is_zip(ex_names)
+            langs = _as_lang_list(code_lang(ex_names))
+            out.append(
+                ex.loc[[(not i) and lg is not None for i, lg in zip(is_inner, langs, strict=True)]]
             )
-        except Exception:
-            fetched = None
-        if fetched is None or not any(fetched["ok"].tolist()):
-            continue
-        got = fetched.loc[fetched["ok"].astype(bool).tolist()].reset_index(drop=True)
-        rows = all_files.iloc[[i] * len(got)].copy().reset_index(drop=True)
-        rows["file_name"] = [os.path.basename(str(n)) for n in got["name"].tolist()]
-        rows["file_path"] = [_r_file_path(str(base), str(n)) for n in got["name"].tolist()]
-        rows["file_location"] = got["path"].tolist()
-        rows["file_url"] = pd.Series([None] * len(got), dtype=object)
-        rows["file_size"] = got["size"].tolist()
-        new_rows.append(rows)
-    return _bind(all_files, new_rows)
+            nxt.append(ex.loc[is_inner])
+        zips = bind_rows(nxt).reset_index(drop=True) if nxt else zips.iloc[0:0]
+    if not out:
+        return zips.iloc[0:0]
+    return bind_rows(out).reset_index(drop=True)
 
 
 # ---------------------------------------------------------------------------
@@ -1486,6 +1767,11 @@ def _code_is_abs_path(line: str | None, path: str | None) -> bool:
       (``?name=``): a regular expression, a web route. On Windows, a character Windows does not
       allow in a name or a second ":" marks a message, and a network path with mixed single and
       double backslashes is a regular expression escaped in R.
+    - it is a web route or address (0.4.4.18, #648): the first thing given to a call that serves
+      or requests one (``@app.route("/api/v1/login")``, ``client.get("/api/health")``,
+      ``requests.post()``, ``fetch()``, ``url_for()``, httr's ``GET()``; h5py's ``f.get("/Data")``
+      names a data set), or what is assigned to a name that says it is one (``API_PREFIX =
+      "/api/v1"``, ``url = "/api/v1/x/%d"``; not "prefix" or "path", which also name folders).
     - it names a device or the system (/dev/null, /proc/...).
     - it is a key in square brackets (an HDF5 data set ``f["/Data/MAG"]``) or the name inside a
       file that ``h5read()`` and the like take after the file.
@@ -1521,6 +1807,27 @@ def _code_is_abs_path(line: str | None, path: str | None) -> bool:
         # Round brackets, {}, * and ? are left out of the signs: "Dropbox (Personal)",
         # f"/Users/{user}/data" and "/Users/me/data/*.csv" are paths. "?name=" is the query of a
         # web address ("/api/audit?limit=50").
+        return False
+    # a web route or address, the first thing given to a call that serves or requests one:
+    # Flask's @app.route("/api/v1/auth/login"), a test client's client.get("/api/health"),
+    # requests.post(), fetch(), url_for(), httr's GET(); h5py's f.get("/Data") names a data
+    # set. In one deposit these were all 12 of 41 Python files flagged (#648)
+    if slash and re.search(
+        r"(?:^|[^A-Za-z0-9_])(?:[A-Za-z_][A-Za-z0-9_]*\.)*"
+        r"(?:route|api_route|get|post|put|patch|delete|head|options|fetch|url_for|"
+        r"redirect|add_url_rule|websocket|GET|POST|PUT|PATCH|DELETE|HEAD|VERB)"
+        r"\s*\(\s*[rfbu]?$",
+        before,
+    ):
+        return False
+    # or assigned to a name that says it is one (API_PREFIX = "/api/v1", url =
+    # "/api/v1/examinations/%d"); not "prefix" or "path", which also name folders (data_prefix =
+    # "/home/me/data")
+    if slash and re.search(
+        r"\b[a-z0-9_]*(?:url|uri|route|endpoint|api|href)[a-z0-9_]*\s*(?:=|<-)\s*[rfbu]?$",
+        before,
+        re.IGNORECASE,
+    ):
         return False
     if re.match(r"/(dev|proc|sys)(/|$)", path):
         return False
@@ -1986,7 +2293,72 @@ def _code_char_vector_vars(code_text: Sequence[str | None]) -> dict[str, list[st
         parts = regexec(rf"\(\s*({ident})\s+in\s+({ident})\s*\)", loop, perl=True)
         if parts[2] in out:
             out[parts[1]] = out[parts[2]]
+    # a loop over a literal vector, `for (p in c("fGarch", "dplyr"))` (metacheck #695, point 34)
+    lit_loops = regextract_all(
+        rf"\bfor\s*\(\s*({ident})\s+in\s+c\s*\([^()]*\)\s*\)", joined, perl=True
+    )
+    for loop in lit_loops:
+        v = str(sub(rf"^for\s*\(\s*({ident})\s+in.*$", r"\1", loop, perl=True))
+        strs = _code_literal_strings(str(sub(r"^[^(]*\(\s*[^ ]+\s+in\s+", "", loop, perl=True)))
+        if strs:
+            out[v] = strs
     return out
+
+
+def _code_literal_strings(x: str) -> list[str]:
+    """The quoted strings of a literal ``c("a", "b")`` (or ``"a"``), when it holds nothing else;
+    an empty list otherwise (``.code_literal_strings()``)."""
+    value = str(sub(r"(?s)^\s*c\s*\((.*)\)\s*\)?\s*$", r"\1", x, perl=True))
+    strs = regextract_all(r"(['\"])[^'\"\n]*\1", value, perl=True)
+    rest = gsub(r"(['\"])[^'\"\n]*\1", "", value, perl=True)
+    if not strs or grepl(r"[^[:space:],)]", rest):
+        return []
+    return [str(gsub(r"^['\"]|['\"]$", "", q)) for q in strs]
+
+
+def _code_loader_functions(code_text: Sequence[str | None]) -> list[str]:
+    """Functions a script defines that load or install the packages they are given
+    (``.code_loader_functions()``): a paper's own install-and-load helper, ``ipak <- function(pkg)
+    { ... install.packages(new.pkg); sapply(pkg, require, character.only = TRUE) }``. Its body
+    calls library(), require(), install.packages() or p_load() on its argument rather than on a
+    name (character.only, or install.packages() of a variable). Gmisc and epitools, given to such
+    a function in mp20212909, were never installed (metacheck #695, point 34). Returns the
+    functions' names."""
+    joined = "\n".join("NA" if s is None else s for s in code_text)
+    ident = "[.A-Za-z][.A-Za-z0-9_]*"
+    n = len(joined)
+    out: list[str] = []
+    for m in re.finditer(rf"({ident})\s*(?:<-|=)\s*function\s*\(", joined):
+        name = m.group(1)
+        # the body: from the first "{" after the arguments to its matching "}", or the rest of
+        # the line for a body without braces; at most 5,000 characters
+        seg = joined[m.end() : min(n, m.end() + 5001)]
+        opn = seg.find("{")
+        nl = seg.find("\n")
+        if opn >= 0 and (nl < 0 or opn < nl + 200):
+            depth = 0
+            end = -1
+            for i, ch in enumerate(seg):
+                if ch == "{":
+                    depth += 1
+                elif ch == "}":
+                    depth -= 1
+                if depth == 0 and i > opn:
+                    end = i
+                    break
+            body = seg[opn : (end + 1 if end >= 0 else len(seg))]
+        else:
+            body = seg[: nl + 1] if nl >= 0 else seg
+        loads_arg = (
+            re.search(r"(?:library|require)\s*\([^)]*character\.only\s*=\s*(?:TRUE|T)\b", body)
+            or re.search(
+                r"\b(?:lapply|sapply|vapply|walk|map)\s*\([^,]+,\s*(?:library|require)\b", body
+            )
+            or re.search(r"\binstall\.packages\s*\(\s*[.A-Za-z][.A-Za-z0-9_]*\s*[,)\[]", body)
+        )
+        if loads_arg:
+            out.append(name)
+    return list(dict.fromkeys(out))
 
 
 def code_library_names(
@@ -2048,7 +2420,14 @@ def code_library_names(
 
     char_only = r"character\.only\s*=\s*(TRUE|T)\b"
 
+    # Only a line with one of these words can hold a hit below: only those go through the
+    # patterns one line at a time. On every line, the patterns took most of code_check's time,
+    # 0.3 ms a line: minutes for a script of 800,000 lines (metacheck #700).
+    r_words = re.compile("library|require|p_load|install|::")
+    py_words = re.compile(r"^\s*(?:from|import)\s")
     for ln, L in enumerate(lines, start=1):
+        if L is None or not (r_words if lang == "R" else py_words).search(L):
+            continue
         if lang == "R":
             # a bare word is a package name for library()/require() unless the
             # call sets character.only = TRUE; requireNamespace() always
@@ -2140,6 +2519,44 @@ def code_library_names(
                 pkgs.extend(variables[tok] if tok in variables else arg_packages(tok, True))
             ln = joined[: start - 1].count("\n") + 1
             add([sub(r"@.*$", "", sub(r"^.*/", "", p)) for p in pkgs], "groundhog", ln)
+
+        def line_of(pos: int) -> int:
+            return joined[: pos - 1].count("\n") + 1
+
+        # c("a", "b") given straight to lapply()/sapply() with library or require, not through a
+        # variable (metacheck #695, point 34)
+        lpat = (
+            r"\b(?:lapply|sapply|vapply|walk|map)\s*\(\s*(c\s*\([^()]*\))\s*,\s*"
+            r"(?:FUN\s*=\s*)?(?:function\s*\([^)]*\)\s*\{?\s*)?(library|require)\b"
+        )
+        for (start, _length), call in zip(
+            gregexpr_all(lpat, joined, perl=True),
+            regextract_all(lpat, joined, perl=True),
+            strict=True,
+        ):
+            vec = str(sub(r"(?s)^[^(]*\(\s*(c\s*\([^()]*\)).*$", r"\1", call, perl=True))
+            fn = str(sub(r"(?s)^.*\b(library|require)$", r"\1", call, perl=True))
+            add(_code_literal_strings(vec), fn, line_of(start))
+        # the script's own install-and-load functions, called with a variable or a literal vector
+        # (see _code_loader_functions())
+        for f in _code_loader_functions(lines):
+            fpat = (
+                rf"(?<![\w.]){re.escape(f)}\s*\(\s*(c\s*\([^()]*\)|[.A-Za-z][.A-Za-z0-9_]*)\s*[,)]"
+            )
+            for (start, _length), call in zip(
+                gregexpr_all(fpat, joined, perl=True),
+                regextract_all(fpat, joined, perl=True),
+                strict=True,
+            ):
+                arg = trimws(
+                    str(sub(rf"(?s)^{re.escape(f)}\s*\(\s*(.*?)\s*[,)]$", r"\1", call, perl=True))
+                )
+                loaded = (
+                    _code_literal_strings(arg)
+                    if grepl(r"^c\s*\(", arg)
+                    else list(variables.get(arg, []))
+                )
+                add(loaded, "loader", line_of(start))
 
     if not pkgs_out:
         return _empty_packages()
@@ -3138,6 +3555,30 @@ def _code_name_match(names: Sequence[Any], candidates: Sequence[Any]) -> list[bo
     return out
 
 
+#: Calls that download or unpack files without naming them (``.code_fetch_unnamed_re``).
+_CODE_FETCH_UNNAMED = re.compile(
+    r"\b(?:osf_download|osf_retrieve_[a-z]+|unzip|untar|archive_extract|extractall|unpack_archive|"
+    r"download_zenodo|zenodo_get|snapshot_download|hf_hub_download|pb_download|drive_download|"
+    r"get_dataframe_by_name|get_file_by_name|fs_download|dataset_download_files|"
+    r"download_and_extract)\s*\(|"
+    r"\bkaggle\s+datasets\s+download\b|^\s*unzipfile\b",
+    re.IGNORECASE,
+)
+
+
+def _code_fetches_unnamed(code_text: Sequence[str | None] | None, lang: Any = None) -> bool:  # noqa: ARG001
+    """Whether code downloads or unpacks files without naming them in the call.
+
+    Port of ``R/code_check.R::.code_fetches_unnamed()``. The files it makes cannot be listed: an
+    osfr download (``osf_ls_files(pattern = "x.Rda") %>% osf_download()``), an archive unpacked
+    with ``unzip()``, ``untar()``, ``archive_extract()``, Python's ``extractall()`` or
+    ``unpack_archive()``, or a whole record fetched (Zenodo, Hugging Face, Kaggle, figshare,
+    Dataverse, Google Drive, a GitHub release). The files such code reads were reported as missing
+    from the deposit (#648, K3a: sjtp3_v2's VIA_merged_unfiltered.Rda); they may well be made by it.
+    """
+    return any(x is not None and _CODE_FETCH_UNNAMED.search(x) is not None for x in code_text or ())
+
+
 def _code_missing_files(code_files: pd.DataFrame, all_files: pd.DataFrame) -> pd.DataFrame:
     """Port of ``.code_missing_files()``: the files each code file reads that are missing.
 
@@ -3151,6 +3592,10 @@ def _code_missing_files(code_files: pd.DataFrame, all_files: pd.DataFrame) -> pd
     the repository counted, so files a script writes a few lines earlier, files a Stata script
     writes, and patterns such as "vzv_aou_ac_%s_model.csv" were reported as missing.
     ``code_files`` holds ``loaded_refs`` (the files read, joined by "\u001f"), which is dropped.
+    When a code file of the same paper downloads or unpacks files without naming them
+    (``fetches_unnamed``, see :func:`_code_fetches_unnamed`), the files not found are listed in
+    ``loaded_files_fetched_names`` instead, as files that code may make, and are not counted as
+    missing (#648, K3a).
     """
     if "loaded_refs" not in code_files.columns:
         return code_files
@@ -3158,6 +3603,12 @@ def _code_missing_files(code_files: pd.DataFrame, all_files: pd.DataFrame) -> pd
     n = len(out)
     n_missing: list[Any] = [None] * n
     names_missing: list[Any] = [None] * n
+    names_fetched: list[Any] = [None] * n
+    fetches = (
+        [v is True or (not is_missing(v) and bool(v)) for v in out["fetches_unnamed"].tolist()]
+        if "fetches_unnamed" in out.columns
+        else [False] * n
+    )
     paper = (
         [None if is_missing(v) else v for v in out["paper_id"].tolist()]
         if "paper_id" in out.columns
@@ -3179,16 +3630,23 @@ def _code_missing_files(code_files: pd.DataFrame, all_files: pd.DataFrame) -> pd
     for r, nme in zip(all_repo, all_name, strict=False):
         by_repo.setdefault(r, []).append(nme)
     by_paper: dict[Any, list[str]] = {}
-    for pid, w in zip(paper, written, strict=True):
+    fetching: set[Any] = set()
+    for pid, w, f in zip(paper, written, fetches, strict=True):
         by_paper.setdefault(pid, []).extend(w)
+        if f:
+            fetching.add(pid)
     for i in range(n):
         refs = refs_col[i]
         if is_missing(refs):
             continue
+        # a file read from a web address is not one the repository should hold:
+        # read.spss("http://journal.sjdm.org/.../study1.sav") was reported as the missing file
+        # study1.sav (#695), as .repro_ref_checkable() also leaves out.
+        # A Windows drive written as "C://" is a path, not a web address (#723).
         parts = [
             r.replace("\\", "/").rstrip("/").rsplit("/", 1)[-1]
             for r in str(refs).split("\u001f")
-            if str(refs) != ""
+            if str(refs) != "" and not _is_web_address(r)
         ]
         # a piece, and a name with a placeholder ("Ax1_s{seed}.jsonl"), are no file names, as
         # reproducibility_check also leaves them out (.repro_ref_checkable())
@@ -3200,11 +3658,15 @@ def _code_missing_files(code_files: pd.DataFrame, all_files: pd.DataFrame) -> pd
         made = by_paper.get(paper[i], [])
         ok = _code_name_match(parts, [*in_repo, *made])
         miss = [r for r, k in zip(parts, ok, strict=True) if not k]
+        if miss and paper[i] in fetching:
+            names_fetched[i] = ", ".join(miss)
+            miss = []
         n_missing[i] = len(miss)
         names_missing[i] = ", ".join(miss)
     out["loaded_files_missing"] = pd.Series(n_missing, index=out.index, dtype="Int64")
     out["loaded_files_missing_names"] = pd.Series(names_missing, index=out.index, dtype="string")
-    return out.drop(columns=["loaded_refs"])
+    out["loaded_files_fetched_names"] = pd.Series(names_fetched, index=out.index, dtype="string")
+    return out.drop(columns=[c for c in ("loaded_refs", "fetches_unnamed") if c in out.columns])
 
 
 # kept for callers that want the positions R's gregexpr() gives

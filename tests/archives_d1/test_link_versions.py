@@ -302,3 +302,39 @@ def test_a_link_whose_ending_was_written_twice_gets_its_single_form() -> None:
     repos = _frame(["https://github.com/wrshoemaker/macroeco_phylophylo"], "github")
     out = lv._repo_links_tidy(repos, paper)
     assert out["repo_url"].tolist() == ["https://github.com/wrshoemaker/macroeco_phylo"]
+
+
+def test_an_osf_project_is_one_repository_however_it_is_written() -> None:
+    """Port of "an OSF project is one repository however it is written (#648, K8c)"."""
+    assert lv._repo_link_same_key(
+        [
+            "https://doi.org/10.17605/OSF.IO/W4Q6J",
+            "osf.io/w4q6j",
+            "https://osf.io/qhwds/overview?view_only=abc",
+            "osf.io/pcjnb/files/qkx9f",
+        ]
+    ) == ["osf.io/w4q6j", "osf.io/w4q6j", "osf.io/qhwds", "osf.io/pcjnb"]
+    repos = pd.DataFrame(
+        {
+            "paper_id": pd.Series(["p"] * 5, dtype="string"),
+            "repo_type": pd.Series(["osf"] * 5, dtype="string"),
+            "repo_url": pd.Series(
+                [
+                    "osf.io/qhwds",
+                    "https://osf.io/qhwds/overview?view_only=abc",
+                    "https://osf.io/pcjnb/files/qkx9f",
+                    "osf.io/pcjnb",
+                    "https://osf.io/zzzzz/files/osfstorage/1",
+                ],
+                dtype="string",
+            ),
+        }
+    )
+    paper = _paper("No text needed here.")
+    # the form with the view-only key is kept, as only it opens a private project; the project
+    # before a file in it; a file alone stays
+    assert lv._repo_links_tidy(repos, paper)["repo_url"].tolist() == [
+        "https://osf.io/qhwds/overview?view_only=abc",
+        "osf.io/pcjnb",
+        "https://osf.io/zzzzz/files/osfstorage/1",
+    ]
